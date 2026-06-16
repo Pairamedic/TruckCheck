@@ -390,13 +390,13 @@
       <button class="btn" onclick="saveToDrive('uco')">Save to Drive</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
-    <p class="helper-text">Save to Drive logs to Google Sheet, opens the printable report, and downloads a local copy.</p>
+    <p class="helper-text">Save to Drive uploads the report to Google Drive and opens a preview.</p>
   </div>
 
 </div>
 
 <script>
-// ─── ALS-PARAMEDIC SECTIONS ───────────────────────────────────────────────────
+// ─── ALS-PARAMEDIC SECTIONS ────────────────────────────────────────────────
 
 const ALS_PARA_SECTIONS = [
   {
@@ -551,7 +551,7 @@ const ALS_PARA_SECTIONS = [
   },
 ];
 
-// ─── BLS-EMT SECTIONS ────────────────────────────────────────────────────────
+// ─── BLS-EMT SECTIONS ────────────────────────────────────────────────
 
 const BLS_EMT_SECTIONS = [
   {
@@ -693,7 +693,7 @@ const ALS_AEMT_SECTIONS = BLS_EMT_SECTIONS.map(sec => {
   }
 ]);
 
-// ─── UNIT CHECK OFF DATA ─────────────────────────────────────────────────────
+// ─── UNIT CHECK OFF DATA ───────────────────────────────────────────────────
 
 const UCO_SECTIONS = [
   { title: 'Fluids & Engine', items: ['Fuel Level','Oil Level','Radiator Water Level','P/S Fluid Level','Windshield Fluid Level','Trans Fluid Level','Belts / Hose / Wires'] },
@@ -705,7 +705,7 @@ const UCO_SECTIONS = [
   { title: 'Tire Inspection', items: ['Pressure','Wear and Cuts','Rims / Simulators'] },
 ];
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
+// ─── STATE ────────────────────────────────────────────────────────────────────────────
 
 const STORE_KEY = 'easi-checkoff-v2';
 let state = {};
@@ -732,7 +732,7 @@ function getActiveSections() {
   return [];
 }
 
-// ─── TABS ────────────────────────────────────────────────────────────────────
+// ─── TABS ────────────────────────────────────────────────────────────────────────────
 
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -741,7 +741,7 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-// ─── UNIT TYPE ────────────────────────────────────────────────────────────────
+// ─── UNIT TYPE ────────────────────────────────────────────────────────────────────────────
 
 function setUnit(unit) {
   currentUnit = unit;
@@ -750,7 +750,7 @@ function setUnit(unit) {
   saveState();
 }
 
-// ─── EQUIPMENT CHECK ──────────────────────────────────────────────────────────
+// ─── EQUIPMENT CHECK ──────────────────────────────────────────────────────────────────────
 
 function buildEquip() {
   const s = state.equip || {};
@@ -913,7 +913,7 @@ function exportEquip() {
   setTimeout(() => win.print(), 400);
 }
 
-// ─── UNIT CHECK OFF ───────────────────────────────────────────────────────────
+// ─── UNIT CHECK OFF ─────────────────────────────────────────────────────────────────────
 
 function buildUCO() {
   const s = state.uco || {};
@@ -994,7 +994,7 @@ function resetUCO() {
   saveState();
 }
 
-// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
+// ─── EMAIL MODAL ───────────────────────────────────────────────────────────────────────────
 
 let _emailForm = 'equip';
 
@@ -1063,9 +1063,9 @@ async function sendEmail() {
   }, 700);
 }
 
-// ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
+// ─── GOOGLE DRIVE UPLOAD ────────────────────────────────────────────────────────────────────
 
-const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfUrdeWsZcnw2AP56Rc_DkzU0vKOCUFgiUMvB-KayNk2GcMTKAh5hZgsKJFnygVwMtqA/exec';
+const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmgxAurWzo-5I4DCAyszBOoaVHJWROcvDH-gJY8BAYRmk7mOEstEWrf4PP7eMhPVhY/exec';
 
 function getDriveFilename(form) {
   const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
@@ -1084,61 +1084,26 @@ function getDriveFilename(form) {
 }
 
 async function saveToDrive(form) {
-  const html = form === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
-  if (!html) { alert('Fill in the form first.'); return; }
+  const reportData = form === 'equip' ? getEquipReportData() : getUCOReportData();
+  if (!reportData) { alert('Fill in the form first.'); return; }
   const isComplete = confirm('Is this check-off complete?\n\nOK → Complete\nCancel → Save as INCOMPLETE draft');
   let filename = getDriveFilename(form);
   if (!isComplete) filename = filename.replace('.html', ' - INCOMPLETE.html');
 
-  // Open formatted report in browser for viewing / printing
+  // Open formatted report in new tab for viewing / printing
+  const html = buildPrintHTML(reportData);
   const win = window.open('', '_blank');
   if (win) { win.document.write(html); win.document.close(); }
 
-  // Build compact payload for Sheet logging
-  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
-  const crew = form === 'equip'
-    ? [(s.paramedic||'').trim(), (s.emt||'').trim()].filter(Boolean).join(' & ') || 'Crew'
-    : (s.name || '').trim() || 'EMT';
-  let done = 0, total = 0;
-  if (form === 'equip') {
-    const counts = (state.equip || {}).counts || {};
-    getActiveSections().forEach((sec, si) => {
-      sec.items.forEach((item, ii) => {
-        total++;
-        const act = parseInt(counts['eq_' + si + '_' + ii] || '', 10);
-        if (!isNaN(act) && act >= item.qty) done++;
-      });
-    });
-  } else {
-    const checks = (state.uco || {}).checks || {};
-    UCO_SECTIONS.forEach((sec, si) => {
-      sec.items.forEach((_, ii) => { total++; if (checks['uco_'+si+'_'+ii]) done++; });
-    });
-  }
-  const payload = {
-    form: form === 'equip' ? 'Equipment Check' : 'Unit Check Off',
-    unit: (s.unit || '').trim(),
-    date: (s.date || todayStr()).trim(),
-    crew,
-    unitType: form === 'equip' ? (currentUnit === 'als-para' ? 'ALS-Para' : currentUnit === 'als-aemt' ? 'ALS-AEMT' : 'BLS-EMT') : 'UCO',
-    complete: isComplete,
-    done,
-    total
-  };
-  if (DRIVE_SCRIPT_URL && DRIVE_SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+  // Send full report data to Apps Script — it rebuilds the HTML and saves to Drive
+  if (DRIVE_SCRIPT_URL) {
+    const payload = Object.assign({}, reportData, { filename, complete: isComplete });
     fetch(DRIVE_SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload)), {
       mode: 'no-cors'
     }).catch(() => {});
   }
 
-  // Local download as backup
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-  showToast(isComplete ? 'Logged to Sheet + report opened ✓' : 'Logged as INCOMPLETE ✓');
+  showToast(isComplete ? 'Saved to Drive ✓' : 'Saved as INCOMPLETE to Drive ✓');
 }
 
 function showToast(msg) {
@@ -1155,9 +1120,9 @@ function showToast(msg) {
   }, 2800);
 }
 
-// ─── PRINT / EXPORT ──────────────────────────────────────────────────────────
+// ─── PRINT / EXPORT ────────────────────────────────────────────────────────────────────────
 
-function getEquipReportHTML() {
+function getEquipReportData() {
   const s = state.equip || {};
   const counts = s.counts || {};
   const expDates = s.expDates || {};
@@ -1200,15 +1165,20 @@ function getEquipReportHTML() {
     { label: 'Portable O₂ PSI', value: s.porto2 || '' },
     ...(currentUnit === 'als-para' ? [{ label: 'Narcotic Seal #', value: s.sealnum || '' }] : []),
   ];
-  return buildPrintHTML({
+  return {
     title: rptTitles[currentUnit] || 'EMS Check — Unit Stock Sheet',
     meta: rptMeta,
     sections: sectionData,
     sigs: rptSigs,
-  });
+  };
 }
 
-function getUCOReportHTML() {
+function getEquipReportHTML() {
+  const data = getEquipReportData();
+  return data ? buildPrintHTML(data) : null;
+}
+
+function getUCOReportData() {
   const s = state.uco || {};
   const checks = s.checks || {};
   const sections = UCO_SECTIONS.map((sec, si) => ({
@@ -1217,7 +1187,7 @@ function getUCOReportHTML() {
     done: sec.items.filter((_, ii) => checks['uco_'+si+'_'+ii]).length,
     total: sec.items.length
   }));
-  return buildPrintHTML({
+  return {
     title: 'EMS Check — Unit Check Off',
     meta: [
       { label: 'Unit #', value: s.unit || '' },
@@ -1229,7 +1199,11 @@ function getUCOReportHTML() {
     sections,
     sigs: ['EMT Signature', 'Supervisor'],
     closing: { repairs: s.repairs||'', fuelcard: s.fuelcard||'', extinguisher: s.extinguisher||'', maint: s.maint||null }
-  });
+  };
+}
+
+function getUCOReportHTML() {
+  return buildPrintHTML(getUCOReportData());
 }
 
 function buildPrintHTML({ title, meta, sections, sigs, closing }) {
@@ -1288,7 +1262,7 @@ function exportUCO() {
 }
 
 
-// ─── NETWORK STATUS ──────────────────────────────────────────────────────────
+// ─── NETWORK STATUS ──────────────────────────────────────────────────────────────────────
 
 function updateNetStatus() {
   const online = navigator.onLine;
@@ -1306,7 +1280,7 @@ function applyUpdate() {
   window.location.reload();
 }
 
-// ─── TEXT SIZE ────────────────────────────────────────────────────────────────
+// ─── TEXT SIZE ────────────────────────────────────────────────────────────────────────────
 
 const SIZES = ['', 'text-lg', 'text-xl'];
 const SIZE_LABELS = ['A', 'A+', 'A++'];
@@ -1322,7 +1296,7 @@ function cycleSize() {
   document.getElementById('size-btn').textContent = SIZE_LABELS[next];
 }
 
-// ─── THEME ────────────────────────────────────────────────────────────────────
+// ─── THEME ────────────────────────────────────────────────────────────────────────────────
 
 function toggleTheme() {
   const h = document.documentElement;
@@ -1354,7 +1328,7 @@ function applyPrefs() {
   }
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ─── INIT ──────────────────────────────────────────────────────────────────────────────
 
 loadState();
 buildEquip();
