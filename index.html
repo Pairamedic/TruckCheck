@@ -317,12 +317,11 @@
       <div class="field-grid">
         <div class="field"><label>Unit #</label><input id="eq-unit" type="text" placeholder="e.g. M-12"></div>
         <div class="field"><label>Date</label><input id="eq-date" type="date"></div>
-        <div class="field"><label>Lead Provider</label><input id="eq-name" type="text" placeholder="Name"></div>        
+        <div class="field"><label>Lead Provider</label><input id="eq-name" type="text" placeholder="Name"></div>
+        <div class="field"><label>Partner</label><input id="eq-partner" type="text" placeholder="Name"></div>
         <div class="field"><label>Narcotic Seal #</label><input id="narc-seal" type="text" placeholder="Seal #"></div>
         <div class="field"><label>Main 02 PSI</label><input id="eq-main" type="text" placeholder="PSI"></div>
         <div class="field"><label>Portable 02 PSI</label><input id="eq-portable" type="text" placeholder="PSI"></div>
-
-        <div class="field"><label>Partner</label><input id="eq-partner" type="text" placeholder="Name"></div>
       </div>
     </div>
 
@@ -736,10 +735,10 @@ function buildEquip() {
   document.getElementById('eq-unit').value = s.unit || '';
   document.getElementById('eq-date').value = s.date || todayStr();
   document.getElementById('eq-name').value = s.name || '';
+  document.getElementById('eq-partner').value = s.partner || '';
   document.getElementById('eq-main').value = s.name || '';
   document.getElementById('eq-portable').value = s.name || '';
   document.getElementById('eq-narc').value = s.name || '';
-  document.getElementById('eq-partner').value = s.partner || '';
 
   document.querySelectorAll('.role-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.role === currentRole);
