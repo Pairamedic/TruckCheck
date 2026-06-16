@@ -1,9 +1,10 @@
-const CACHE = 'easi-checkoff-v6';
+const CACHE = 'easi-checkoff-v7';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
+  './icon-180.png',
   './icon-192.png',
   './icon-512.png',
 ];
