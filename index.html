@@ -224,6 +224,11 @@
   .modal-send { background: var(--accent); color: #fff; }
   .modal-cancel { background: rgba(255,255,255,.07); color: var(--muted); border: 1px solid var(--border); }
 
+  .email-warning { background: rgba(239,68,68,.10); border: 1px solid rgba(239,68,68,.30); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: var(--red); margin-bottom: 14px; line-height: 1.55; }
+  .email-warning strong { color: var(--red); }
+
+  #toast { position: fixed; bottom: 72px; left: 50%; transform: translateX(-50%) translateY(20px); background: #22c55e; color: #000; padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; z-index: 998; opacity: 0; transition: opacity .25s, transform .25s; white-space: nowrap; pointer-events: none; }
+
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .app-header, .tab-bar, .btn-row, .helper-text, #update-banner, .role-bar { display: none !important; }
@@ -240,6 +245,7 @@
     <div class="modal-handle"></div>
     <div class="modal-title">Send Report</div>
     <div class="modal-sub">Select recipients — then tap Send</div>
+    <div class="email-warning">⚠ <strong>Only email supervisors if there is a significant problem requiring immediate attention.</strong> For routine check-offs, use <strong>Save to Drive</strong> instead.</div>
     <div class="recip-list">
       <div class="recip-item" data-email="smcdonnel@easimedics.com" onclick="toggleRecip(this)">
         <div class="recip-check"></div>
@@ -339,7 +345,7 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
-      <button class="btn" onclick="exportEquip()">Download</button>
+      <button class="btn" onclick="saveToDrive('equip')">Save to Drive</button>
       <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
     </div>
     <p class="helper-text">×N = required qty. Enter actual count on hand. Red = expired.</p>
@@ -381,10 +387,10 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
-      <button class="btn" onclick="exportUCO()">Download</button>
+      <button class="btn" onclick="saveToDrive('uco')">Save to Drive</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
-    <p class="helper-text">Tap Export to print/save PDF. Email — choose recipient(s) from the list.</p>
+    <p class="helper-text">Save to Drive uploads to easicheckoff@gmail.com and downloads a local copy.</p>
   </div>
 
 </div>
@@ -1055,6 +1061,61 @@ async function sendEmail() {
       + '?subject=' + encodeURIComponent(subject)
       + '&body=' + encodeURIComponent('Please attach the downloaded report: ' + filename);
   }, 700);
+}
+
+// ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
+
+const DRIVE_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+
+function getDriveFilename(form) {
+  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
+  const unit = (s.unit || 'Unit').trim();
+  const date = (s.date || todayStr()).trim();
+  if (form === 'equip') {
+    const p1 = (s.paramedic || '').trim();
+    const p2 = (s.emt || '').trim();
+    const names = [p1, p2].filter(Boolean).join(' & ') || 'Crew';
+    const type = currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS';
+    return `${unit} ${names} ${date} ${type} Stock.html`.replace(/\s+/g, ' ').trim();
+  } else {
+    const name = (s.name || '').trim() || 'EMT';
+    return `${unit} ${name} ${date} Unit Check Off.html`.replace(/\s+/g, ' ').trim();
+  }
+}
+
+async function saveToDrive(form) {
+  const html = form === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
+  if (!html) { alert('Fill in the form first.'); return; }
+  const filename = getDriveFilename(form);
+  const hasDrive = DRIVE_SCRIPT_URL && DRIVE_SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+  if (hasDrive) {
+    fetch(DRIVE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ filename, content: html }),
+    }).catch(() => {});
+  }
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  showToast(hasDrive ? 'Saved to Drive + downloaded ✓' : 'Downloaded ✓');
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  }));
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => {
+    t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2800);
 }
 
 // ─── PRINT / EXPORT ──────────────────────────────────────────────────────────
