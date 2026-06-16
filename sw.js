@@ -1,4 +1,4 @@
-const CACHE = 'easi-checkoff-v7';
+const CACHE = 'easi-checkoff-v8';
 const ASSETS = [
   './',
   './index.html',
