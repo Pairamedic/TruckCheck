@@ -142,6 +142,16 @@
   .check-item[data-level] { display: none; }
   .check-item.visible { display: flex; }
 
+  .med-expiry-input {
+    font-size: 11px; background: rgba(255,255,255,.05);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 3px 6px; color: var(--subtext);
+    outline: none; color-scheme: dark; flex-shrink: 0;
+  }
+  .med-expiry-input.exp-red { border-color: var(--red); color: var(--red); background: rgba(239,68,68,.12); }
+  .check-item.exp-red { background: rgba(239,68,68,.07); }
+  .check-item.exp-red:hover { background: rgba(239,68,68,.12); }
+
   /* Buttons */
   .btn-row { display: flex; gap: 8px; margin-top: 10px; }
   .btn {
@@ -551,6 +561,7 @@ const EQUIP_SECTIONS = [
   },
   {
     title: 'Medications',
+    medExpiry: true,
     items: [
       { label: 'Aspirin 324mg (chewable)' },
       { label: 'Oral Glucose Gel' },
@@ -791,6 +802,7 @@ function buildEquip() {
   const container = document.getElementById('equip-sections');
   container.innerHTML = '';
   const checks = s.checks || {};
+  const expDates = s.expDates || {};
 
   EQUIP_SECTIONS.forEach((sec, si) => {
     const div = document.createElement('div');
@@ -808,10 +820,18 @@ function buildEquip() {
       const visibleClass = !level ? ' visible' :
         (currentRole === 'paramedic' ? ' visible' :
           (currentRole === 'aemt' && level === 'aemt' ? ' visible' : ''));
-      return `<div class="check-item${done ? ' checked' : ''}${!level ? ' visible' : visibleClass}"
+      const expDate = sec.medExpiry ? (expDates[key] || '') : '';
+      const isExpired = !!(expDate && expDate < todayStr());
+      const expInput = sec.medExpiry
+        ? `<input type="date" class="med-expiry-input${isExpired ? ' exp-red' : ''}" value="${expDate}"
+            onclick="event.stopPropagation()"
+            onchange="setMedExpiry('${key}', this.value, this.closest('.check-item'))">`
+        : '';
+      return `<div class="check-item${done ? ' checked' : ''}${isExpired ? ' exp-red' : ''}${!level ? ' visible' : visibleClass}"
         ${levelAttr} data-key="${key}" onclick="toggleEquipItem('${key}', this)">
         <div class="check-box"></div>
         <span class="check-label"><span>${item.label}</span>${badge}</span>
+        ${expInput}
       </div>`;
     }).join('');
 
@@ -837,6 +857,17 @@ function toggleEquipItem(key, el) {
   const sec = el.closest('.section');
   const si = parseInt(key.split('_')[1]);
   updateSectionCount(sec, si, EQUIP_SECTIONS, 'equip');
+  saveState();
+}
+
+function setMedExpiry(key, val, itemEl) {
+  if (!state.equip) state.equip = {};
+  if (!state.equip.expDates) state.equip.expDates = {};
+  state.equip.expDates[key] = val;
+  const isExpired = !!(val && val < todayStr());
+  itemEl.classList.toggle('exp-red', isExpired);
+  const input = itemEl.querySelector('.med-expiry-input');
+  if (input) input.classList.toggle('exp-red', isExpired);
   saveState();
 }
 
@@ -1141,10 +1172,12 @@ function sendEmail() {
 function buildEquipText() {
   const s = state.equip || {};
   const checks = s.checks || {};
+  const expDates = s.expDates || {};
   const roleLabel = { emt: 'EMT', aemt: 'Advanced EMT', paramedic: 'Paramedic' }[currentRole];
   let txt = `EMERGENCY AMBULANCE SERVICE, INC.\nEASI EMS — EQUIPMENT CHECK\n${'═'.repeat(42)}\n`;
   txt += `Unit: ${s.unit||''}  Date: ${s.date||''}  Provider Level: ${roleLabel}\n`;
   txt += `Provider: ${s.name||''}  Partner: ${s.partner||''}\n`;
+  const today = todayStr();
   EQUIP_SECTIONS.forEach((sec, si) => {
     const visItems = sec.items.filter(item => {
       if (!item.level) return true;
@@ -1156,7 +1189,13 @@ function buildEquipText() {
     txt += `\n${sec.title.toUpperCase()}\n${'-'.repeat(32)}\n`;
     visItems.forEach(item => {
       const ii = sec.items.indexOf(item);
-      txt += `${checks['eq_' + si + '_' + ii] ? '☑' : '☐'} ${item.label}\n`;
+      const key = 'eq_' + si + '_' + ii;
+      let expStr = '';
+      if (sec.medExpiry) {
+        const exp = expDates[key] || '';
+        expStr = exp ? ` [Exp: ${exp}${exp < today ? ' — EXPIRED' : ''}]` : ' [Exp: —]';
+      }
+      txt += `${checks[key] ? '☑' : '☐'} ${item.label}${expStr}\n`;
     });
   });
   return txt;
