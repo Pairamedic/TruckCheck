@@ -396,7 +396,7 @@
 </div>
 
 <script>
-// ─── ALS-PARAMEDIC SECTIONS ────────────────────────────────────────────────
+// ─── ALS-PARAMEDIC SECTIONS ───────────────────────────────────────────────────
 
 const ALS_PARA_SECTIONS = [
   {
@@ -551,7 +551,7 @@ const ALS_PARA_SECTIONS = [
   },
 ];
 
-// ─── BLS-EMT SECTIONS ────────────────────────────────────────────────
+// ─── BLS-EMT SECTIONS ────────────────────────────────────────────────────────
 
 const BLS_EMT_SECTIONS = [
   {
@@ -669,9 +669,22 @@ const BLS_EMT_SECTIONS = [
       { label: 'Disinfectant Solution', qty: 1 },
     ]
   },
+  {
+    title: 'EMT Medications',
+    items: [
+      { label: 'Oral Glucose', qty: 1, expiry: true },
+      { label: 'Activated Charcoal', qty: 1, expiry: true },
+      { label: 'Aspirin Bottle', qty: 1, expiry: true },
+      { label: 'Albuterol (Unit Dose)', qty: 4, expiry: true },
+      { label: 'Epi Auto-Injector Adult', qty: 2, expiry: true },
+      { label: 'Epi Auto-Injector Pedi', qty: 1, expiry: true },
+      { label: 'Naloxone (Narcan) Nasal', qty: 4, expiry: true },
+      { label: 'Nitroglycerin SL', qty: 1, expiry: true },
+    ]
+  },
 ];
 
-// ALS-AEMT: all BLS items + nebulizer in Airway + advanced airway section
+// ALS-AEMT: all BLS items + nebulizer in Airway + AEMT medications + advanced airway section
 const ALS_AEMT_SECTIONS = BLS_EMT_SECTIONS.map(sec => {
   if (sec.title === 'Airway') {
     return {
@@ -680,6 +693,22 @@ const ALS_AEMT_SECTIONS = BLS_EMT_SECTIONS.map(sec => {
         ...sec.items,
         { label: 'Nebulizer', qty: 1 },
         { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
+      ]
+    };
+  }
+  if (sec.title === 'EMT Medications') {
+    return {
+      title: 'AEMT Medications',
+      items: [
+        ...sec.items,
+        { label: 'NS 1000mL', qty: 2 },
+        { label: 'NS 500mL', qty: 1 },
+        { label: 'D10', qty: 2, expiry: true },
+        { label: 'Epi 1:1000 (Injectable)', qty: 2, expiry: true },
+        { label: 'Atrovent', qty: 4, expiry: true },
+        { label: 'Glucagon', qty: 1, expiry: true },
+        { label: 'Benadryl (Diphenhydramine)', qty: 2, expiry: true },
+        { label: 'Zofran (Ondansetron)', qty: 2, expiry: true },
       ]
     };
   }
@@ -693,7 +722,7 @@ const ALS_AEMT_SECTIONS = BLS_EMT_SECTIONS.map(sec => {
   }
 ]);
 
-// ─── UNIT CHECK OFF DATA ───────────────────────────────────────────────────
+// ─── UNIT CHECK OFF DATA ─────────────────────────────────────────────────────
 
 const UCO_SECTIONS = [
   { title: 'Fluids & Engine', items: ['Fuel Level','Oil Level','Radiator Water Level','P/S Fluid Level','Windshield Fluid Level','Trans Fluid Level','Belts / Hose / Wires'] },
@@ -705,7 +734,7 @@ const UCO_SECTIONS = [
   { title: 'Tire Inspection', items: ['Pressure','Wear and Cuts','Rims / Simulators'] },
 ];
 
-// ─── STATE ────────────────────────────────────────────────────────────────────────────
+// ─── STATE ───────────────────────────────────────────────────────────────────
 
 const STORE_KEY = 'easi-checkoff-v2';
 let state = {};
@@ -732,7 +761,7 @@ function getActiveSections() {
   return [];
 }
 
-// ─── TABS ────────────────────────────────────────────────────────────────────────────
+// ─── TABS ────────────────────────────────────────────────────────────────────
 
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -741,7 +770,7 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-// ─── UNIT TYPE ────────────────────────────────────────────────────────────────────────────
+// ─── UNIT TYPE ────────────────────────────────────────────────────────────────
 
 function setUnit(unit) {
   currentUnit = unit;
@@ -750,7 +779,7 @@ function setUnit(unit) {
   saveState();
 }
 
-// ─── EQUIPMENT CHECK ──────────────────────────────────────────────────────────────────────
+// ─── EQUIPMENT CHECK ──────────────────────────────────────────────────────────
 
 function buildEquip() {
   const s = state.equip || {};
@@ -913,7 +942,7 @@ function exportEquip() {
   setTimeout(() => win.print(), 400);
 }
 
-// ─── UNIT CHECK OFF ─────────────────────────────────────────────────────────────────────
+// ─── UNIT CHECK OFF ───────────────────────────────────────────────────────────
 
 function buildUCO() {
   const s = state.uco || {};
@@ -994,7 +1023,7 @@ function resetUCO() {
   saveState();
 }
 
-// ─── EMAIL MODAL ───────────────────────────────────────────────────────────────────────────
+// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
 
 let _emailForm = 'equip';
 
@@ -1063,7 +1092,7 @@ async function sendEmail() {
   }, 700);
 }
 
-// ─── GOOGLE DRIVE UPLOAD ────────────────────────────────────────────────────────────────────
+// ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
 
 const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmgxAurWzo-5I4DCAyszBOoaVHJWROcvDH-gJY8BAYRmk7mOEstEWrf4PP7eMhPVhY/exec';
 
@@ -1120,7 +1149,7 @@ function showToast(msg) {
   }, 2800);
 }
 
-// ─── PRINT / EXPORT ────────────────────────────────────────────────────────────────────────
+// ─── PRINT / EXPORT ──────────────────────────────────────────────────────────
 
 function getEquipReportData() {
   const s = state.equip || {};
@@ -1262,7 +1291,7 @@ function exportUCO() {
 }
 
 
-// ─── NETWORK STATUS ──────────────────────────────────────────────────────────────────────
+// ─── NETWORK STATUS ──────────────────────────────────────────────────────────
 
 function updateNetStatus() {
   const online = navigator.onLine;
@@ -1280,7 +1309,7 @@ function applyUpdate() {
   window.location.reload();
 }
 
-// ─── TEXT SIZE ────────────────────────────────────────────────────────────────────────────
+// ─── TEXT SIZE ────────────────────────────────────────────────────────────────
 
 const SIZES = ['', 'text-lg', 'text-xl'];
 const SIZE_LABELS = ['A', 'A+', 'A++'];
@@ -1296,7 +1325,7 @@ function cycleSize() {
   document.getElementById('size-btn').textContent = SIZE_LABELS[next];
 }
 
-// ─── THEME ────────────────────────────────────────────────────────────────────────────────
+// ─── THEME ────────────────────────────────────────────────────────────────────
 
 function toggleTheme() {
   const h = document.documentElement;
@@ -1328,7 +1357,7 @@ function applyPrefs() {
   }
 }
 
-// ─── INIT ──────────────────────────────────────────────────────────────────────────────
+// ─── INIT ────────────────────────────────────────────────────────────────────
 
 loadState();
 buildEquip();
