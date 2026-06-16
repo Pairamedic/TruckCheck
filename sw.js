@@ -1,4 +1,4 @@
-const CACHE = 'easi-checkoff-v2';
+const CACHE = 'easi-checkoff-v3';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', e => {
