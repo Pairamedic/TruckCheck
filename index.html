@@ -6,13 +6,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0f1117">
-<title>EASI Ambulance Checkoff</title>
+<title>EMS Check</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<meta name="apple-mobile-web-app-title" content="EASI Checkoff">
+<meta name="apple-mobile-web-app-title" content="EMS Check">
 <style>
   :root {
     --bg: #0f1117;
@@ -238,68 +238,24 @@
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .app-header, .tab-bar, .btn-row, .helper-text, #update-banner,
     .role-bar { display: none !important; }
-    body { background: #fff; color: #000; font-family: Arial, sans-serif; margin: 0; }
-    .content { padding: 0; max-width: 100%; }
-    .tab-panel { display: none !important; }
-    .tab-panel.printing { display: block !important; }
-
-    .print-header {
-      text-align: center;
-      border-bottom: 2px solid #000;
-      padding-bottom: 6px; margin-bottom: 8px;
-    }
-    .print-header-org { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #555; }
-    .print-header-title { font-size: 18px; font-weight: 900; margin: 2px 0; }
-    .print-meta-row {
-      display: flex; gap: 0; border: 1px solid #000;
-      margin-bottom: 8px; font-size: 11px;
-    }
-    .print-meta-cell { padding: 4px 8px; border-right: 1px solid #000; }
-    .print-meta-cell:last-child { border-right: none; }
-    .print-meta-label { font-weight: 700; }
-
-    .print-sections { columns: 2; column-gap: 12px; }
-    .print-section { break-inside: avoid; margin-bottom: 10px; }
-    .print-section-header {
-      background: #d0e4ff !important;
-      font-size: 10px; font-weight: 800; text-transform: uppercase;
-      letter-spacing: .5px; padding: 5px 8px;
-      display: flex; justify-content: space-between;
-    }
-    .print-item {
-      display: flex; align-items: flex-start; gap: 6px;
-      padding: 3px 6px; border-bottom: 1px solid #eee; font-size: 11px;
-      break-inside: avoid;
-    }
-    .print-check { width: 14px; height: 14px; min-width: 14px; border: 1px solid #555; margin-top: 1px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; }
-    .print-item-done .print-check::after { content: '✓'; font-weight: 900; }
-    .print-item-done span { text-decoration: line-through; color: #888; }
-    .print-badge { font-size: 8px; font-weight: 700; text-transform: uppercase; margin-left: 4px; padding: 1px 4px; border-radius: 3px; }
-    .print-badge-aemt { background: #dbeafe; color: #1e40af; }
-    .print-badge-para { background: #f3e8ff; color: #7e22ce; }
-
-    .print-sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-    .print-sig { border: 1px solid #000; padding: 8px; }
-    .print-sig-label { font-size: 9px; text-transform: uppercase; color: #555; letter-spacing: .5px; }
-    .print-sig-line { height: 26px; border-bottom: 1px solid #000; margin-top: 4px; }
   }
 </style>
 </head>
 <body>
 
-<div id="update-banner" onclick="applyUpdate()">🔄 Update available — tap to refresh</div>
+<div id="update-banner" onclick="applyUpdate()">🔄 Update available — tap to reload</div>
 
-<!-- Email recipient modal -->
-<div class="modal-overlay" id="email-modal" onclick="closeEmailModal(event)">
+<!-- ── EMAIL MODAL ──────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="email-modal" onclick="if(event.target===this)closeEmailModal()">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="modal-title">Send Email</div>
-    <div class="modal-sub">Select supervisor(s) to receive this report</div>
+    <div class="modal-title">Send Report</div>
+    <div class="modal-sub">Select recipients — then tap Send</div>
     <div class="recip-list">
       <div class="recip-item" data-email="smcdonnel@easimedics.com" onclick="toggleRecip(this)">
         <div class="recip-check"></div>
         <div class="recip-info">
-          <div class="recip-name">S. McDonnel</div>
+          <div class="recip-name">Scott McDonnel</div>
           <div class="recip-email">smcdonnel@easimedics.com</div>
         </div>
         <span class="recip-tag tag-sup">Supervisor</span>
@@ -325,28 +281,26 @@
         <div class="recip-info">
           <div class="recip-name">C. McDaniel</div>
           <div class="recip-email">cmcdaniel@easimedics.com</div>
-          <div class="recip-note">⚠️ Operational concerns / new damage only — not routine</div>
+          <div class="recip-note">⚠ Operations — select only if directed</div>
         </div>
-        <span class="recip-tag tag-ops">Ops</span>
+        <span class="recip-tag tag-ops">Operations</span>
       </div>
     </div>
     <div class="modal-actions">
       <button class="modal-btn modal-cancel" onclick="closeEmailModal()">Cancel</button>
-      <button class="modal-btn modal-send" onclick="sendEmail()">✉️ Send</button>
+      <button class="modal-btn modal-send" onclick="sendEmail()">Send</button>
     </div>
   </div>
 </div>
 
-<!-- Hidden print container -->
-<div id="print-root" style="display:none"></div>
-
+<!-- ── APP SHELL ────────────────────────────────────────────────────────── -->
 <div class="app-header">
   <div class="header-top">
     <div>
-      <div class="app-title">EASI Ambulance Checkoff</div>
-      <div class="app-subtitle">Emergency Ambulance Service, Inc.</div>
+      <div class="app-title">EMS Check</div>
+      <div class="app-subtitle">Ambulance Check Off Assistant</div>
     </div>
-    <div class="save-status" id="save-status">Saved</div>
+    <div class="save-status" id="save-status"></div>
   </div>
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('equip', this)">Equipment Check</button>
@@ -356,92 +310,83 @@
 
 <div class="content">
 
-<!-- ═══════════════════════════════════════════════════════════
-     EQUIPMENT CHECK TAB
-═══════════════════════════════════════════════════════════ -->
-<div id="tab-equip" class="tab-panel active">
-
-  <div class="card">
-    <div class="card-title">EASI EMS — Equipment Check</div>
-    <div class="field-grid">
-      <div class="field"><label>Unit #</label><input type="text" id="eq-unit" placeholder="e.g. 279-ALS"></div>
-      <div class="field"><label>Date</label><input type="date" id="eq-date"></div>
-      <div class="field"><label>Lead Provider</label><input type="text" id="eq-name" placeholder="Full name"></div>
-      <div class="field"><label>Partner</label><input type="text" id="eq-partner" placeholder="Full name"></div>
-    </div>
-  </div>
-
-  <div class="role-bar">
-    <span class="role-label">Provider level:</span>
-    <div class="role-seg" id="eq-role-seg">
-      <button class="role-btn" data-role="emt" onclick="setRole('emt')">EMT</button>
-      <button class="role-btn" data-role="aemt" onclick="setRole('aemt')">AEMT</button>
-      <button class="role-btn active" data-role="paramedic" onclick="setRole('paramedic')">Paramedic</button>
-    </div>
-  </div>
-
-  <div id="equip-sections"></div>
-
-  <div class="btn-row">
-    <button class="btn btn-success" onclick="exportEquip()">📤 Export</button>
-    <button class="btn" onclick="emailForm('equip')">✉️ Email</button>
-    <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
-  </div>
-  <p class="helper-text">Tap Export to print/save PDF. Email sends to smcdonnel@easimedics.com.</p>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     UNIT CHECK OFF TAB
-═══════════════════════════════════════════════════════════ -->
-<div id="tab-uco" class="tab-panel">
-
-  <div class="card">
-    <div class="card-title">Emergency Ambulance Service, Inc. — Unit Check Off</div>
-    <div class="field-grid">
-      <div class="field"><label>Unit #</label><input type="text" id="uco-unit" placeholder="e.g. 279"></div>
-      <div class="field"><label>Date</label><input type="date" id="uco-date"></div>
-      <div class="field"><label>Mileage</label><input type="number" id="uco-mileage" placeholder="Odometer reading"></div>
-      <div class="field"><label>EMT</label><input type="text" id="uco-name" placeholder="Full name"></div>
-      <div class="field"><label>Radio #</label><input type="text" id="uco-radio" placeholder="Radio number"></div>
-    </div>
-  </div>
-
-  <div id="uco-sections"></div>
-
-  <div class="card" style="margin-top:4px">
-    <div class="card-title">Closing</div>
-    <div class="field" style="margin-bottom:8px">
-      <label>Repairs Needed / New Body Damage</label>
-      <textarea id="uco-repairs" placeholder="Describe any repairs needed or new damage..." rows="3"></textarea>
-    </div>
-    <div class="field-grid" style="margin-bottom:10px">
-      <div class="field"><label>Fuel Card</label><input type="text" id="uco-fuelcard" placeholder="Card # or N/A"></div>
-      <div class="field"><label>Fire Extinguisher</label><input type="text" id="uco-extinguisher" placeholder="Status / tag date"></div>
-    </div>
-    <div>
-      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Maintenance Request Turned In?</div>
-      <div style="display:flex;gap:8px">
-        <button class="role-btn" id="maint-yes" onclick="setMaintRequest('yes')" style="flex:0 1 80px">YES</button>
-        <button class="role-btn" id="maint-no" onclick="setMaintRequest('no')" style="flex:0 1 80px">NO</button>
+  <!-- ── EQUIPMENT CHECK TAB ──────────────────────────────────── -->
+  <div id="tab-equip" class="tab-panel active">
+    <div class="card">
+      <div class="card-title">Shift Info</div>
+      <div class="field-grid">
+        <div class="field"><label>Unit #</label><input id="eq-unit" type="text" placeholder="e.g. M-12"></div>
+        <div class="field"><label>Date</label><input id="eq-date" type="date"></div>
+        <div class="field"><label>Lead Provider</label><input id="eq-name" type="text" placeholder="Name"></div>
+        <div class="field"><label>Partner</label><input id="eq-partner" type="text" placeholder="Name"></div>
       </div>
     </div>
+
+    <div class="role-bar">
+      <span class="role-label">Level</span>
+      <div class="role-seg">
+        <button class="role-btn" data-role="emt" onclick="setRole('emt')">EMT</button>
+        <button class="role-btn" data-role="aemt" onclick="setRole('aemt')">AEMT</button>
+        <button class="role-btn active" data-role="paramedic" onclick="setRole('paramedic')">Paramedic</button>
+      </div>
+    </div>
+
+    <div id="equip-sections"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
+      <button class="btn" onclick="exportEquip()">Export PDF</button>
+      <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
+    </div>
+    <p class="helper-text">Tap Export to print/save PDF. Email — choose recipient(s) from the list.</p>
   </div>
 
-  <div class="btn-row">
-    <button class="btn btn-success" onclick="exportUCO()">📤 Export</button>
-    <button class="btn" onclick="emailForm('uco')">✉️ Email</button>
-    <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
+  <!-- ── UNIT CHECK OFF TAB ───────────────────────────────────── -->
+  <div id="tab-uco" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Unit Info</div>
+      <div class="field-grid">
+        <div class="field"><label>Unit #</label><input id="uco-unit" type="text" placeholder="e.g. M-12"></div>
+        <div class="field"><label>Date</label><input id="uco-date" type="date"></div>
+        <div class="field"><label>Mileage</label><input id="uco-mileage" type="text" placeholder="Odometer"></div>
+        <div class="field"><label>EMT</label><input id="uco-name" type="text" placeholder="Name"></div>
+        <div class="field"><label>Radio #</label><input id="uco-radio" type="text" placeholder="Radio #"></div>
+      </div>
+    </div>
+
+    <div id="uco-sections"></div>
+
+    <div class="card" style="margin-top:8px">
+      <div class="card-title">Closing</div>
+      <div class="field" style="margin-bottom:8px">
+        <label>Repairs Needed / New Body Damage</label>
+        <textarea id="uco-repairs" placeholder="Describe any repairs or body damage…"></textarea>
+      </div>
+      <div class="field-grid">
+        <div class="field"><label>Fuel Card</label><input id="uco-fuelcard" type="text" placeholder="Card #"></div>
+        <div class="field"><label>Fire Extinguisher</label><input id="uco-extinguisher" type="text" placeholder="PSI / Status"></div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Maintenance Request Turned In?</div>
+        <div style="display:flex;gap:8px">
+          <button id="maint-yes" class="btn" style="flex:1;padding:8px" onclick="setMaintRequest('yes')">YES</button>
+          <button id="maint-no" class="btn" style="flex:1;padding:8px" onclick="setMaintRequest('no')">NO</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
+      <button class="btn" onclick="exportUCO()">Export PDF</button>
+      <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
+    </div>
+    <p class="helper-text">Tap Export to print/save PDF. Email — choose recipient(s) from the list.</p>
   </div>
-  <p class="helper-text">Tap Export to print/save PDF. Email sends to smcdonnel@easimedics.com.</p>
 
-</div>
-
-</div><!-- /content -->
+</div><!-- /.content -->
 
 <script>
-// ─── EQUIPMENT CHECK DATA ────────────────────────────────────────────────────
-// level: 'emt' | 'aemt' | 'paramedic'  (null = always shown, treat as emt)
+// ─── EQUIPMENT DATA ───────────────────────────────────────────────────────────
 
 const EQUIP_SECTIONS = [
   {
@@ -618,16 +563,13 @@ const EQUIP_SECTIONS = [
       { label: 'Flashlight / Penlight' },
       { label: 'Radio — charged, correct channel' },
       { label: 'Clock / Timer System' },
-      { label: 'Stair Chair — functional', level: 'aemt' },
-      { label: 'Scoop Stretcher + Straps', level: 'aemt' },
-      { label: 'Spine Board / Long Backboard + Straps', level: 'aemt' },
-      { label: 'Head Immobilization Device (CID / blocks)', level: 'aemt' },
-      { label: 'Cervical Collars — Infant, Pedi, S, M, L, XL', level: 'aemt' },
-      { label: 'SAM Splints — multiple sizes', level: 'aemt' },
-      { label: 'Traction Splint (Sager / Hare)', level: 'aemt' },
-      { label: 'OB Delivery Kit — sealed', level: 'aemt' },
-      { label: 'Pediatric Equipment Bag / Broselow Tape', level: 'aemt' },
-      { label: 'PCR / ePCR Device — charged', level: 'aemt' },
+      { label: 'Stair Chair — functional' },
+      { label: 'Long Backboard / KED (if carried)' },
+      { label: 'Cervical Collars (various sizes)' },
+      { label: 'Pediatric Immobilization Device' },
+      { label: 'Scoop Stretcher' },
+      { label: 'Folding / Portable Stretcher' },
+      { label: 'Wheel Chair (if applicable)' },
     ]
   },
 ];
@@ -762,10 +704,9 @@ function applyRoleFilter() {
     let visible = false;
     if (currentRole === 'paramedic') visible = true;
     else if (currentRole === 'aemt') visible = level === 'aemt';
-    else visible = false; // EMT: only no-level items shown
+    else visible = false;
     el.classList.toggle('visible', visible);
   });
-  // Update section counts
   document.querySelectorAll('#equip-sections .section').forEach((sec, si) => {
     updateSectionCount(sec, si, EQUIP_SECTIONS, 'equip');
   });
@@ -773,7 +714,6 @@ function applyRoleFilter() {
 
 function updateSectionCount(secEl, si, data, formKey) {
   const checks = (state[formKey] && state[formKey].checks) || {};
-  const items = data[si].items;
   const visibleItems = secEl.querySelectorAll('.check-item.visible, .check-item:not([data-level])');
   let done = 0, total = 0;
   visibleItems.forEach(el => {
@@ -794,7 +734,6 @@ function buildEquip() {
   document.getElementById('eq-name').value = s.name || '';
   document.getElementById('eq-partner').value = s.partner || '';
 
-  // Apply role button state
   document.querySelectorAll('.role-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.role === currentRole);
   });
@@ -806,7 +745,7 @@ function buildEquip() {
 
   EQUIP_SECTIONS.forEach((sec, si) => {
     const div = document.createElement('div');
-    div.className = 'section' + (si === 0 ? ' open' : '');
+    div.className = 'section';
     const itemsHTML = sec.items.map((item, ii) => {
       const key = 'eq_' + si + '_' + ii;
       const level = item.level || null;
@@ -882,7 +821,7 @@ function bindEquipFields() {
 }
 
 function resetEquip() {
-  if (!confirm('Reset Equipment Check? All checks will be cleared.')) return;
+  if (!confirm('⚠️ Reset Equipment Check?\n\nThis will permanently clear ALL checked items, expiration dates, and saved field data for this form. This cannot be undone.\n\nContinue?')) return;
   state.equip = {};
   buildEquip();
   saveState();
@@ -893,16 +832,15 @@ function exportEquip() {
   const checks = s.checks || {};
   const roleLabel = { emt: 'EMT', aemt: 'Advanced EMT', paramedic: 'Paramedic' }[currentRole];
 
-  // Build sections that are visible at current role
   const sections = EQUIP_SECTIONS.map((sec, si) => {
-    const visibleItems = sec.items.filter((item, ii) => {
+    const visibleItems = sec.items.filter(item => {
       const level = item.level;
       if (!level) return true;
       if (currentRole === 'paramedic') return true;
       if (currentRole === 'aemt') return level === 'aemt';
       return false;
     });
-    const done = visibleItems.filter((item, localIdx) => {
+    const done = visibleItems.filter(item => {
       const ii = sec.items.indexOf(item);
       return checks['eq_' + si + '_' + ii];
     }).length;
@@ -949,28 +887,28 @@ function buildUCO() {
   const checks = s.checks || {};
 
   UCO_SECTIONS.forEach((sec, si) => {
-    const done = sec.items.filter((_, ii) => checks['uco_' + si + '_' + ii]).length;
     const div = document.createElement('div');
-    div.className = 'section' + (si === 0 ? ' open' : '');
+    div.className = 'section';
     const itemsHTML = sec.items.map((item, ii) => {
       const key = 'uco_' + si + '_' + ii;
-      const isDone = checks[key] || false;
-      return `<div class="check-item${isDone ? ' checked' : ''} visible"
-        data-key="${key}" onclick="toggleUCOItem('${key}', this)">
+      const done = checks[key] || false;
+      return `<div class="check-item visible${done ? ' checked' : ''}" data-key="${key}" onclick="toggleUCOItem('${key}', this)">
         <div class="check-box"></div>
         <span class="check-label"><span>${item}</span></span>
       </div>`;
     }).join('');
+
     div.innerHTML = `
       <div class="section-header" onclick="this.closest('.section').classList.toggle('open')">
         <span class="section-title">${sec.title}</span>
         <span style="display:flex;align-items:center;gap:6px">
-          <span class="section-meta">${done}/${sec.items.length}</span>
+          <span class="section-meta">0/0</span>
           <span class="section-arrow">▼</span>
         </span>
       </div>
       <div class="section-body">${itemsHTML}</div>`;
     container.appendChild(div);
+    updateSectionCount(div, si, UCO_SECTIONS, 'uco');
   });
 }
 
@@ -981,10 +919,18 @@ function toggleUCOItem(key, el) {
   el.classList.toggle('checked', state.uco.checks[key]);
   const sec = el.closest('.section');
   const si = parseInt(key.split('_')[1]);
-  const total = UCO_SECTIONS[si].items.length;
-  const done = UCO_SECTIONS[si].items.filter((_, ii) => state.uco.checks['uco_' + si + '_' + ii]).length;
-  sec.querySelector('.section-meta').textContent = done + '/' + total;
+  updateSectionCount(sec, si, UCO_SECTIONS, 'uco');
   saveState();
+}
+
+function setMaintRequest(val, silent) {
+  if (!silent) {
+    if (!state.uco) state.uco = {};
+    state.uco.maint = val;
+    saveState();
+  }
+  document.getElementById('maint-yes').classList.toggle('active', val === 'yes');
+  document.getElementById('maint-no').classList.toggle('active', val === 'no');
 }
 
 function bindUCOFields() {
@@ -999,83 +945,74 @@ function bindUCOFields() {
   });
 }
 
-function setMaintRequest(val, silent) {
-  if (!silent) {
-    if (!state.uco) state.uco = {};
-    state.uco.maint = val;
-    saveState();
-  }
-  document.getElementById('maint-yes').classList.toggle('active', val === 'yes');
-  document.getElementById('maint-no').classList.toggle('active', val === 'no');
-}
-
 function resetUCO() {
-  if (!confirm('Reset Unit Check Off? All checks will be cleared.')) return;
+  if (!confirm('⚠️ Reset Unit Check Off?\n\nThis will permanently clear ALL checked items and saved field data for this form. This cannot be undone.\n\nContinue?')) return;
   state.uco = {};
   buildUCO();
   saveState();
 }
 
-function exportUCO() {
-  const s = state.uco || {};
-  const checks = s.checks || {};
-  const sections = UCO_SECTIONS.map((sec, si) => ({
-    title: sec.title,
-    items: sec.items.map((label, ii) => ({ label, done: checks['uco_' + si + '_' + ii] || false })),
-    done: sec.items.filter((_, ii) => checks['uco_' + si + '_' + ii]).length,
-    total: sec.items.length,
-  }));
-  const win = window.open('', '_blank');
-  win.document.write(buildPrintHTML({
-    title: 'EMT Check Off',
-    meta: [
-      { label: 'Unit', value: s.unit || '' },
-      { label: 'Mileage', value: s.mileage || '' },
-      { label: 'Date', value: s.date || '' },
-      { label: 'Radio #', value: s.radio || '' },
-      { label: 'EMT', value: s.name || '' },
-    ],
-    sections,
-    closing: {
-      repairs: s.repairs || '',
-      fuelcard: s.fuelcard || '',
-      extinguisher: s.extinguisher || '',
-      maint: s.maint || '',
-    },
-    sigs: ['Signature'],
-  }));
-  win.document.close();
-  win.focus();
-  setTimeout(() => win.print(), 400);
+// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
+
+let _emailForm = 'equip';
+
+function openEmailModal(form) {
+  _emailForm = form;
+  document.getElementById('email-modal').classList.add('open');
 }
 
-// ─── SHARED PRINT BUILDER ────────────────────────────────────────────────────
+function closeEmailModal() {
+  document.getElementById('email-modal').classList.remove('open');
+}
+
+function toggleRecip(el) {
+  el.classList.toggle('selected');
+}
+
+function sendEmail() {
+  const recipients = [...document.querySelectorAll('.recip-item.selected')]
+    .map(el => el.dataset.email);
+  if (!recipients.length) { alert('Select at least one recipient.'); return; }
+  const body = _emailForm === 'equip' ? buildEquipText() : buildUCOText();
+  const subject = _emailForm === 'equip'
+    ? 'EASI Equipment Check — ' + (state.equip?.unit || '') + ' ' + (state.equip?.date || '')
+    : 'EASI Unit Check Off — ' + (state.uco?.unit || '') + ' ' + (state.uco?.date || '');
+  window.location.href = 'mailto:' + recipients.join(',')
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+  closeEmailModal();
+}
+
+// ─── PRINT / EXPORT ──────────────────────────────────────────────────────────
 
 function buildPrintHTML({ title, meta, sections, sigs, closing }) {
-  const metaCells = meta.map(m =>
-    `<td class="print-meta-cell"><span class="print-meta-label">${m.label}:</span> ${m.value}</td>`
+  const metaHTML = meta.map(m =>
+    `<div style="display:inline-block;margin-right:18px;margin-bottom:4px">
+      <span style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.4px">${m.label}:</span>
+      <span style="font-size:11px;font-weight:600;margin-left:4px">${m.value}</span>
+    </div>`
   ).join('');
 
   const sectionsHTML = sections.map(sec => {
-    const items = sec.items.map(item => {
-      const badgeHTML = item.level === 'aemt'
-        ? '<span class="print-badge print-badge-aemt">AEMT</span>'
-        : item.level === 'paramedic'
-          ? '<span class="print-badge print-badge-para">Paramedic</span>'
-          : '';
-      return `<div class="print-item${item.done ? ' print-item-done' : ''}">
-        <div class="print-check"></div>
-        <span>${item.label}${badgeHTML}</span>
-      </div>`;
-    }).join('');
-    return `<div class="print-section">
-      <div class="print-section-header">
-        <span>${sec.title.toUpperCase()}</span>
-        <span>${sec.done}/${sec.total}</span>
+    if (!sec.items.length) return '';
+    const itemsHTML = sec.items.map(item =>
+      `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
+        <span style="font-size:14px;line-height:1;margin-top:1px">${item.done ? '☑' : '☐'}</span>
+        <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
+      </div>`
+    ).join('');
+    return `<div style="break-inside:avoid;margin-bottom:10px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+        border-bottom:2px solid #000;padding-bottom:2px;margin-bottom:4px">${sec.title}
+        <span style="font-weight:400;font-size:9px;color:#666"> (${sec.done}/${sec.total})</span>
       </div>
-      ${items}
+      ${itemsHTML}
     </div>`;
   }).join('');
+
+  const sigsHTML = (sigs || []).map(s =>
+    `<div style="flex:1;border-top:1px solid #000;padding-top:4px;font-size:10px;color:#666">${s}</div>`
+  ).join('');
 
   const closingHTML = closing ? `
     <div style="margin-top:10px;border:1px solid #000;padding:6px 8px;font-size:11px">
@@ -1088,85 +1025,62 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
       <div style="flex:1;border:1px solid #000;padding:5px 8px"><span style="font-weight:700">Maint. Request Turned In?</span> ${closing.maint ? closing.maint.toUpperCase() : '☐ YES  ☐ NO'}</div>
     </div>` : '';
 
-  const sigsHTML = sigs.map(s =>
-    `<div class="print-sig"><div class="print-sig-label">${s}</div><div class="print-sig-line"></div></div>`
-  ).join('');
-
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${title}</title>
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    body{font-family:Arial,sans-serif;background:#fff;color:#000;padding:14px;font-size:12px}
-    .print-header{text-align:center;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:8px}
-    .print-header-org{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#555}
-    .print-header-title{font-size:17px;font-weight:900;margin:2px 0}
-    .print-meta-row{display:flex;flex-wrap:wrap;border:1px solid #000;margin-bottom:8px}
-    .print-meta-cell{padding:4px 8px;border-right:1px solid #000;font-size:11px;white-space:nowrap}
-    .print-meta-cell:last-child{border-right:none}
-    .print-meta-label{font-weight:700}
-    .print-sections{columns:2;column-gap:12px}
-    .print-section{break-inside:avoid;margin-bottom:10px}
-    .print-section-header{background:#d0e4ff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:5px 8px;display:flex;justify-content:space-between}
-    .print-item{display:flex;align-items:flex-start;gap:5px;padding:3px 5px;border-bottom:1px solid #eee;font-size:10.5px;break-inside:avoid}
-    .print-check{width:13px;height:13px;min-width:13px;border:1px solid #555;margin-top:1px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
-    .print-item-done .print-check::after{content:'✓';font-weight:900}
-    .print-item-done span{text-decoration:line-through;color:#888}
-    .print-badge{font-size:7.5px;font-weight:700;text-transform:uppercase;margin-left:3px;padding:1px 3px;border-radius:3px;vertical-align:middle}
-    .print-badge-aemt{background:#dbeafe;color:#1e40af}
-    .print-badge-para{background:#f3e8ff;color:#7e22ce}
-    .print-sig-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-    .print-sig{border:1px solid #000;padding:8px}
-    .print-sig-label{font-size:9px;text-transform:uppercase;color:#555;letter-spacing:.4px}
-    .print-sig-line{height:26px;border-bottom:1px solid #000;margin-top:4px}
-    @media print{body{padding:8px}}
+    body { font-family: Arial, sans-serif; font-size: 11px; color: #000; margin: 0; padding: 10px 14px; }
+    h1 { font-size: 14px; margin: 0 0 2px; }
+    .subtitle { font-size: 10px; color: #444; margin-bottom: 6px; }
+    .meta { background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 6px 8px; margin-bottom: 8px; }
+    .sections { columns: 2; column-gap: 16px; }
+    .sigs { display: flex; gap: 30px; margin-top: 18px; }
+    @media print { body { padding: 6px 10px; } }
   </style></head><body>
-  <div class="print-header">
-    <div class="print-header-org">Emergency Ambulance Service, Inc.</div>
-    <div class="print-header-title">${title}</div>
-  </div>
-  <div class="print-meta-row">${metaCells}</div>
-  <div class="print-sections">${sectionsHTML}</div>
+  <h1>${title}</h1>
+  <div class="subtitle">Emergency Ambulance Service, Inc.</div>
+  <div class="meta">${metaHTML}</div>
+  <div class="sections">${sectionsHTML}</div>
   ${closingHTML}
-  <div class="print-sig-row" style="grid-template-columns:${sigs.length === 1 ? '1fr 1fr' : '1fr 1fr'}">${sigsHTML}</div>
+  <div class="sigs" style="margin-top:${closing ? '14px' : '18px'}">${sigsHTML}</div>
   </body></html>`;
 }
 
-// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
+function exportUCO() {
+  const s = state.uco || {};
+  const checks = s.checks || {};
 
-let _pendingEmailForm = null;
+  const sections = UCO_SECTIONS.map((sec, si) => ({
+    title: sec.title,
+    items: sec.items.map((item, ii) => ({
+      label: item,
+      done: checks['uco_' + si + '_' + ii] || false
+    })),
+    done: sec.items.filter((_, ii) => checks['uco_' + si + '_' + ii]).length,
+    total: sec.items.length
+  }));
 
-function emailForm(formKey) {
-  _pendingEmailForm = formKey;
-  const label = formKey === 'equip' ? 'Equipment Check' : 'Unit Check Off';
-  document.getElementById('modal-title').textContent = 'Send ' + label;
-  document.getElementById('email-modal').classList.add('open');
-}
-
-function closeEmailModal(e) {
-  if (e && e.target !== document.getElementById('email-modal')) return;
-  document.getElementById('email-modal').classList.remove('open');
-}
-
-function toggleRecip(el) {
-  el.classList.toggle('selected');
-}
-
-function sendEmail() {
-  const selected = [...document.querySelectorAll('.recip-item.selected')];
-  if (!selected.length) { alert('Please select at least one recipient.'); return; }
-  const to = selected.map(el => el.dataset.email).join(',');
-  let subject, body;
-  if (_pendingEmailForm === 'equip') {
-    const s = state.equip || {};
-    const roleLabel = { emt: 'EMT', aemt: 'AEMT', paramedic: 'Paramedic' }[currentRole];
-    subject = 'Equipment Check — ' + (s.unit || 'Unit') + ' ' + (s.date || todayStr()) + ' (' + roleLabel + ')';
-    body = buildEquipText();
-  } else {
-    const s = state.uco || {};
-    subject = 'Unit Check Off — ' + (s.unit || 'Unit') + ' ' + (s.date || todayStr());
-    body = buildUCOText();
-  }
-  document.getElementById('email-modal').classList.remove('open');
-  window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  const win = window.open('', '_blank');
+  win.document.write(buildPrintHTML({
+    title: 'EASI EMS — Unit Check Off',
+    meta: [
+      { label: 'Unit #', value: s.unit || '' },
+      { label: 'Date', value: s.date || '' },
+      { label: 'Mileage', value: s.mileage || '' },
+      { label: 'EMT', value: s.name || '' },
+      { label: 'Radio #', value: s.radio || '' },
+    ],
+    sections,
+    sigs: ['EMT Signature', 'Supervisor'],
+    closing: {
+      repairs: s.repairs || '',
+      fuelcard: s.fuelcard || '',
+      extinguisher: s.extinguisher || '',
+      maint: s.maint || null,
+    }
+  }));
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 400);
 }
 
 function buildEquipText() {
@@ -1219,6 +1133,15 @@ function buildUCOText() {
   return txt;
 }
 
+// ─── SERVICE WORKER UPDATE ────────────────────────────────────────────────────
+
+function applyUpdate() {
+  if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+  }
+  window.location.reload();
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 
 loadState();
@@ -1239,14 +1162,6 @@ if ('serviceWorker' in navigator) {
         }
       });
     });
-  });
-}
-function applyUpdate() {
-  navigator.serviceWorker.getRegistration().then(reg => {
-    if (reg && reg.waiting) {
-      reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-      navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
-    } else { location.reload(); }
   });
 }
 </script>
