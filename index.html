@@ -27,7 +27,7 @@
     position: sticky; top: 0; z-index: 100;
     background: rgba(15,17,23,.94); backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
-    padding: 10px 16px 0;
+    padding: max(10px, env(safe-area-inset-top)) 16px 0;
   }
   .header-top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; }
   .app-title { font-size: 15px; font-weight: 700; }
@@ -44,7 +44,7 @@
   .tab-btn { flex-shrink: 0; padding: 8px 16px; font-size: 13px; font-weight: 500; background: transparent; border: none; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  .content { padding: 12px 14px; max-width: 700px; margin: 0 auto; }
+  .content { padding: 12px 14px 80px; max-width: 700px; margin: 0 auto; }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
@@ -66,7 +66,7 @@
   .field { display: flex; flex-direction: column; gap: 3px; }
   .field label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
   .field input, .field textarea { background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; color: var(--text); font-size: 13px; font-family: inherit; width: 100%; outline: none; transition: border-color .15s; }
-  .field input:focus, .field textarea:focus { border-color: var(--accent); }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,.18); }
   .field textarea { resize: vertical; min-height: 56px; }
 
   /* Sections */
@@ -91,7 +91,11 @@
   /* Actual qty input */
   .qty-input { width: 52px; font-size: 12px; text-align: center; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 4px; color: var(--subtext); outline: none; flex-shrink: 0; -moz-appearance: textfield; }
   .qty-input::-webkit-inner-spin-button, .qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-  .qty-input:focus { border-color: var(--accent); color: var(--text); }
+  .qty-input:focus { border-color: var(--accent); color: var(--text); box-shadow: 0 0 0 3px rgba(59,130,246,.22); width: 62px; }
+
+  /* Active row highlight — shows which item you're entering */
+  .check-item:focus-within { background: rgba(59,130,246,.11) !important; box-shadow: inset 3px 0 0 var(--accent); }
+  .check-item:focus-within .check-label { color: var(--text); font-weight: 700; }
 
   /* Item states */
   .check-item.item-ok { background: rgba(34,197,94,.06); }
@@ -130,9 +134,10 @@
 
   @media (max-width: 480px) { .field-grid { grid-template-columns: 1fr; } }
 
-  /* Control buttons */
-  .ctrl-btn { min-width: 32px; height: 32px; background: rgba(255,255,255,.08); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .12s; padding: 0 6px; flex-shrink: 0; }
-  .ctrl-btn:active { opacity: .7; }
+  /* Control buttons — fixed bottom-right FAB */
+  .ctrl-bar { position: fixed; bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px)); right: 16px; display: flex; gap: 8px; z-index: 110; }
+  .ctrl-btn { min-width: 38px; height: 38px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .12s; padding: 0 8px; box-shadow: 0 2px 10px rgba(0,0,0,.35); }
+  .ctrl-btn:active { opacity: .7; transform: scale(.95); }
 
   /* Light mode */
   html[data-theme="light"] { --bg: #f1f3f7; --card: #ffffff; --border: rgba(0,0,0,.10); --text: #111827; --subtext: #374151; --muted: #6b7280; }
@@ -154,7 +159,7 @@
   html[data-theme="light"] .check-item.item-low:hover { background: rgba(234,179,8,.15); }
   html[data-theme="light"] .check-item.exp-red { background: rgba(239,68,68,.10); }
   html[data-theme="light"] .check-box { border-color: rgba(0,0,0,.2); }
-  html[data-theme="light"] .ctrl-btn { background: rgba(0,0,0,.06); }
+  html[data-theme="light"] .ctrl-btn { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.15); }
   html[data-theme="light"] .role-bar { background: var(--card); }
   html[data-theme="light"] .btn { background: rgba(59,130,246,.08); }
   html[data-theme="light"] .btn-danger { background: rgba(239,68,68,.06); }
@@ -178,7 +183,7 @@
 
   /* Tablet / iPad layout */
   @media (min-width: 600px) {
-    .content { padding: 16px 20px; }
+    .content { padding: 16px 20px 80px; }
     .field-grid { grid-template-columns: 1fr 1fr 1fr; }
     .check-label { font-size: 14px; }
     .qty-input { width: 58px; padding: 5px 4px; }
@@ -277,6 +282,12 @@
   </div>
 </div>
 
+<!-- FLOATING CONTROLS -->
+<div class="ctrl-bar">
+  <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
+  <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
+</div>
+
 <!-- APP SHELL -->
 <div class="app-header">
   <div class="header-top">
@@ -284,16 +295,12 @@
       <div class="app-title">EMS Check</div>
       <div class="app-subtitle">Ambulance Check Off Assistant</div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
-      <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
-        <div class="net-status">
-          <div class="net-dot" id="net-dot"></div>
-          <span id="net-label">Online</span>
-        </div>
-        <div class="save-status" id="save-status"></div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+      <div class="net-status">
+        <div class="net-dot" id="net-dot"></div>
+        <span id="net-label">Online</span>
       </div>
+      <div class="save-status" id="save-status"></div>
     </div>
   </div>
   <div class="tab-bar">
@@ -335,7 +342,7 @@
       <button class="btn" onclick="exportEquip()">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
     </div>
-    <p class="helper-text">&times;N = required qty. Enter actual count on hand. Red = expired.</p>
+    <p class="helper-text">×N = required qty. Enter actual count on hand. Red = expired.</p>
   </div>
 
   <!-- UNIT CHECK OFF TAB -->
@@ -377,13 +384,13 @@
       <button class="btn" onclick="exportUCO()">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
-    <p class="helper-text">Tap Download to print/save PDF. Email — choose recipient(s) from the list.</p>
+    <p class="helper-text">Tap Export to print/save PDF. Email — choose recipient(s) from the list.</p>
   </div>
 
 </div>
 
 <script>
-// ─── ALS-PARAMEDIC SECTIONS ─────────────────────────────────────────────
+// ─── ALS-PARAMEDIC SECTIONS ───────────────────────────────────────────────────
 
 const ALS_PARA_SECTIONS = [
   {
@@ -538,7 +545,7 @@ const ALS_PARA_SECTIONS = [
   },
 ];
 
-// ─── BLS-EMT SECTIONS ────────────────────────────────────────────────
+// ─── BLS-EMT SECTIONS ────────────────────────────────────────────────────────
 
 const BLS_EMT_SECTIONS = [
   {
@@ -680,7 +687,7 @@ const ALS_AEMT_SECTIONS = BLS_EMT_SECTIONS.map(sec => {
   }
 ]);
 
-// ─── UNIT CHECK OFF DATA ───────────────────────────────────────────────────
+// ─── UNIT CHECK OFF DATA ─────────────────────────────────────────────────────
 
 const UCO_SECTIONS = [
   { title: 'Fluids & Engine', items: ['Fuel Level','Oil Level','Radiator Water Level','P/S Fluid Level','Windshield Fluid Level','Trans Fluid Level','Belts / Hose / Wires'] },
@@ -692,7 +699,7 @@ const UCO_SECTIONS = [
   { title: 'Tire Inspection', items: ['Pressure','Wear and Cuts','Rims / Simulators'] },
 ];
 
-// ─── STATE ────────────────────────────────────────────────────────────────────────────
+// ─── STATE ───────────────────────────────────────────────────────────────────
 
 const STORE_KEY = 'easi-checkoff-v2';
 let state = {};
@@ -719,7 +726,7 @@ function getActiveSections() {
   return [];
 }
 
-// ─── TABS ──────────────────────────────────────────────────────────────────────────────
+// ─── TABS ────────────────────────────────────────────────────────────────────
 
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -728,7 +735,7 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-// ─── UNIT TYPE ─────────────────────────────────────────────────────────────────────────────
+// ─── UNIT TYPE ────────────────────────────────────────────────────────────────
 
 function setUnit(unit) {
   currentUnit = unit;
@@ -737,7 +744,7 @@ function setUnit(unit) {
   saveState();
 }
 
-// ─── EQUIPMENT CHECK ──────────────────────────────────────────────────────────────────────
+// ─── EQUIPMENT CHECK ──────────────────────────────────────────────────────────
 
 function buildEquip() {
   const s = state.equip || {};
@@ -900,7 +907,7 @@ function exportEquip() {
   setTimeout(() => win.print(), 400);
 }
 
-// ─── UNIT CHECK OFF ───────────────────────────────────────────────────────────────────────
+// ─── UNIT CHECK OFF ───────────────────────────────────────────────────────────
 
 function buildUCO() {
   const s = state.uco || {};
@@ -981,7 +988,7 @@ function resetUCO() {
   saveState();
 }
 
-// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────────────────
+// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
 
 let _emailForm = 'equip';
 
@@ -1017,6 +1024,7 @@ async function sendEmail() {
   const file = new File([blob], filename, { type: 'text/html' });
 
   // Mobile: try Web Share API — opens native share sheet with file attached
+  // User picks Mail app and file is attached directly
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
       await navigator.share({
@@ -1027,6 +1035,7 @@ async function sendEmail() {
       return;
     } catch (e) {
       if (e.name === 'AbortError') return;
+      // Share failed — fall through to download+mailto
     }
   }
 
@@ -1040,6 +1049,7 @@ async function sendEmail() {
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 
+  // Open email after brief delay so download can start
   setTimeout(() => {
     window.location.href = 'mailto:' + recipients.join(',')
       + '?subject=' + encodeURIComponent(subject)
@@ -1047,7 +1057,7 @@ async function sendEmail() {
   }, 700);
 }
 
-// ─── PRINT / EXPORT ────────────────────────────────────────────────────────────────────────
+// ─── PRINT / EXPORT ──────────────────────────────────────────────────────────
 
 function getEquipReportHTML() {
   const s = state.equip || {};
@@ -1180,7 +1190,7 @@ function exportUCO() {
 }
 
 
-// ─── NETWORK STATUS ────────────────────────────────────────────────────────────────────────
+// ─── NETWORK STATUS ──────────────────────────────────────────────────────────
 
 function updateNetStatus() {
   const online = navigator.onLine;
@@ -1198,7 +1208,7 @@ function applyUpdate() {
   window.location.reload();
 }
 
-// ─── TEXT SIZE ──────────────────────────────────────────────────────────────────────────────
+// ─── TEXT SIZE ────────────────────────────────────────────────────────────────
 
 const SIZES = ['', 'text-lg', 'text-xl'];
 const SIZE_LABELS = ['A', 'A+', 'A++'];
@@ -1214,7 +1224,7 @@ function cycleSize() {
   document.getElementById('size-btn').textContent = SIZE_LABELS[next];
 }
 
-// ─── THEME ─────────────────────────────────────────────────────────────────────────────────
+// ─── THEME ────────────────────────────────────────────────────────────────────
 
 function toggleTheme() {
   const h = document.documentElement;
@@ -1223,12 +1233,12 @@ function toggleTheme() {
     delete h.dataset.theme;
     localStorage.setItem('easi-theme', 'dark');
     document.getElementById('theme-color-meta').content = '#0f1117';
-    document.getElementById('theme-btn').textContent = '☀';
+    document.getElementById('theme-btn').textContent = '☀'; // ☀
   } else {
     h.dataset.theme = 'light';
     localStorage.setItem('easi-theme', 'light');
     document.getElementById('theme-color-meta').content = '#f1f3f7';
-    document.getElementById('theme-btn').textContent = '☽';
+    document.getElementById('theme-btn').textContent = '☽'; // ☽
   }
 }
 
@@ -1246,7 +1256,7 @@ function applyPrefs() {
   }
 }
 
-// ─── INIT ───────────────────────────────────────────────────────────────────────────────────
+// ─── INIT ────────────────────────────────────────────────────────────────────
 
 loadState();
 buildEquip();
