@@ -317,7 +317,8 @@
       <div class="field-grid">
         <div class="field"><label>Unit #</label><input id="eq-unit" type="text" placeholder="e.g. M-12"></div>
         <div class="field"><label>Date</label><input id="eq-date" type="date"></div>
-        <div class="field"><label>Lead Provider</label><input id="eq-name" type="text" placeholder="Name"></div>
+        <div class="field"><label>Lead Provider</label><input id="eq-name" type="text" placeholder="Name"></div>        
+        <div class="field"><label>Narcotic Seal #</label><input id="narc-seal" type="text" placeholder="Name"></div>
         <div class="field"><label>Partner</label><input id="eq-partner" type="text" placeholder="Name"></div>
       </div>
     </div>
@@ -732,6 +733,7 @@ function buildEquip() {
   document.getElementById('eq-unit').value = s.unit || '';
   document.getElementById('eq-date').value = s.date || todayStr();
   document.getElementById('eq-name').value = s.name || '';
+    document.getElementById('eq-narc').value = s.name || '';
   document.getElementById('eq-partner').value = s.partner || '';
 
   document.querySelectorAll('.role-btn').forEach(b => {
@@ -811,7 +813,7 @@ function setMedExpiry(key, val, itemEl) {
 }
 
 function bindEquipFields() {
-  [['eq-unit','unit'],['eq-date','date'],['eq-name','name'],['eq-partner','partner']].forEach(([id, key]) => {
+  [['eq-unit','unit'],['eq-date','date'],['eq-name','name'],['eq-narc','narc'],['eq-partner','partner']].forEach(([id, key]) => {
     document.getElementById(id).addEventListener('input', e => {
       if (!state.equip) state.equip = {};
       state.equip[key] = e.target.value;
