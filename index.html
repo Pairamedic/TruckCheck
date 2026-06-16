@@ -86,7 +86,7 @@
   .check-label { font-size: 13px; line-height: 1.35; flex: 1; }
 
   /* Expected qty badge */
-  .qty-expected { font-size: 10px; color: var(--muted); background: rgba(255,255,255,.07); border-radius: 4px; padding: 2px 5px; flex-shrink: 0; min-width: 28px; text-align: center; }
+  .qty-expected { font-size: 10px; color: var(--accent); background: rgba(59,130,246,.12); border-radius: 4px; padding: 2px 5px; flex-shrink: 0; min-width: 28px; text-align: center; font-weight: 600; }
 
   /* Actual qty input */
   .qty-input { width: 52px; font-size: 12px; text-align: center; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 4px; color: var(--subtext); outline: none; flex-shrink: 0; -moz-appearance: textfield; }
@@ -113,6 +113,16 @@
   .check-item.exp-red { background: rgba(239,68,68,.07); }
   .check-item.exp-red:hover { background: rgba(239,68,68,.12); }
   .check-item.item-ok.exp-red { background: rgba(239,68,68,.07); }
+
+  /* Out of stock */
+  .oos-btn { font-size: 9px; padding: 2px 6px; border-radius: 5px; border: 1px solid rgba(239,68,68,.3); background: transparent; color: var(--muted); cursor: pointer; flex-shrink: 0; white-space: nowrap; font-family: inherit; }
+  .oos-btn:active { opacity: .7; }
+  .check-item.item-oos { background: rgba(239,68,68,.08); }
+  .check-item.item-oos:hover { background: rgba(239,68,68,.13); }
+  .check-item.item-oos .check-label { text-decoration: line-through; color: var(--muted); }
+  .check-item.item-oos .qty-input, .check-item.item-oos .med-expiry-input { opacity: 0.25; pointer-events: none; }
+  .check-item.item-oos .qty-expected { background: rgba(239,68,68,.18); color: var(--red); }
+  .check-item.item-oos .oos-btn { background: rgba(239,68,68,.18); border-color: var(--red); color: var(--red); font-weight: 700; }
 
   /* UCO checkbox items */
   .check-item.uco-item { cursor: pointer; }
@@ -448,11 +458,11 @@ const ALS_PARA_SECTIONS = [
   {
     title: 'Thomas Pack — IV Pouch 1',
     items: [
-      { label: 'NS 1000mL', qty: 1 },
+      { label: 'NS 1000mL', qty: 1, expiry: true },
       { label: '10gtt Set', qty: 1 },
       { label: 'Tourniquet', qty: 1 },
-      { label: 'Saline Lock', qty: 1 },
-      { label: 'Saline Flush', qty: 1 },
+      { label: 'Saline Lock', qty: 1, expiry: true },
+      { label: 'Saline Flush', qty: 1, expiry: true },
       { label: '14G IV Cath', qty: 2 },
       { label: '16G IV Cath', qty: 2 },
       { label: '18G IV Cath', qty: 3 },
@@ -467,11 +477,11 @@ const ALS_PARA_SECTIONS = [
   {
     title: 'Thomas Pack — IV Pouch 2',
     items: [
-      { label: 'NS 500mL', qty: 1 },
+      { label: 'NS 500mL', qty: 1, expiry: true },
       { label: '10gtt Set', qty: 1 },
       { label: 'Tourniquet', qty: 1 },
-      { label: 'Saline Lock', qty: 1 },
-      { label: 'Saline Flush', qty: 1 },
+      { label: 'Saline Lock', qty: 1, expiry: true },
+      { label: 'Saline Flush', qty: 1, expiry: true },
       { label: '14G IV Cath', qty: 2 },
       { label: '16G IV Cath', qty: 2 },
       { label: '18G IV Cath', qty: 2 },
@@ -486,11 +496,11 @@ const ALS_PARA_SECTIONS = [
   {
     title: 'Thomas Pack — Center Pouch',
     items: [
-      { label: 'Nitro', qty: 1 },
-      { label: 'Epi 1:10', qty: 1 },
-      { label: 'Atropine', qty: 1 },
-      { label: 'D10 w/ 10gtt Set', qty: 1 },
-      { label: 'Amiodarone', qty: 1 },
+      { label: 'Nitro', qty: 1, expiry: true },
+      { label: 'Epi 1:10', qty: 1, expiry: true },
+      { label: 'Atropine', qty: 1, expiry: true },
+      { label: 'D10 w/ 10gtt Set', qty: 1, expiry: true },
+      { label: 'Amiodarone', qty: 1, expiry: true },
       { label: 'Portable Sharps Container', qty: 1 },
     ]
   },
@@ -816,6 +826,7 @@ function buildEquip() {
 
   const counts = s.counts || {};
   const expDates = s.expDates || {};
+  const outOfStock = s.outOfStock || {};
 
   sections.forEach((sec, si) => {
     const div = document.createElement('div');
@@ -829,14 +840,16 @@ function buildEquip() {
       const isLow = act !== null && !isNaN(act) && act > 0 && act < item.qty;
       const expDate = item.expiry ? (expDates[key] || '') : '';
       const isExpired = !!(expDate && expDate < todayStr());
+      const isOOS = outOfStock[key] || false;
 
       let cls = 'check-item';
-      if (isOk) cls += ' item-ok';
+      if (isOOS) cls += ' item-oos';
+      else if (isOk) cls += ' item-ok';
       else if (isLow) cls += ' item-low';
-      if (isExpired) cls += ' exp-red';
+      if (isExpired && !isOOS) cls += ' exp-red';
 
       const expInput = item.expiry
-        ? `<input type="date" class="med-expiry-input${isExpired ? ' exp-red' : ''}" value="${expDate}"
+        ? `<input type="date" class="med-expiry-input${isExpired && !isOOS ? ' exp-red' : ''}" value="${expDate}"
             onclick="event.stopPropagation()"
             onchange="setMedExpiry('${key}',this.value,this.closest('.check-item'))">`
         : '';
@@ -848,6 +861,7 @@ function buildEquip() {
           onclick="event.stopPropagation()"
           oninput="handleQtyInput('${key}',this)">
         ${expInput}
+        <button class="oos-btn" onclick="event.stopPropagation();toggleOOS('${key}',this.closest('.check-item'))">OOS</button>
       </div>`;
     }).join('');
 
@@ -885,6 +899,17 @@ function handleQtyInput(key, inputEl) {
   saveState();
 }
 
+function toggleOOS(key, itemEl) {
+  if (!state.equip) state.equip = {};
+  if (!state.equip.outOfStock) state.equip.outOfStock = {};
+  const isOOS = !state.equip.outOfStock[key];
+  state.equip.outOfStock[key] = isOOS;
+  itemEl.classList.toggle('item-oos', isOOS);
+  if (isOOS) itemEl.classList.remove('item-ok', 'item-low', 'exp-red');
+  updateSectionCount(itemEl.closest('.section'), 'equip');
+  saveState();
+}
+
 function setMedExpiry(key, val, itemEl) {
   if (!state.equip) state.equip = {};
   if (!state.equip.expDates) state.equip.expDates = {};
@@ -901,7 +926,9 @@ function updateSectionCount(secEl, formKey) {
   let done = 0;
   if (formKey === 'equip') {
     const counts = (state.equip && state.equip.counts) || {};
+    const oosMap = (state.equip && state.equip.outOfStock) || {};
     items.forEach(el => {
+      if (oosMap[el.dataset.key]) return;
       const act = parseInt(counts[el.dataset.key] || '', 10);
       if (!isNaN(act) && act >= parseInt(el.dataset.qty || '1', 10)) done++;
     });
@@ -1158,20 +1185,25 @@ function getEquipReportData() {
   const sections = getActiveSections();
   const today = todayStr();
   if (!sections.length) return null;
+  const outOfStock = s.outOfStock || {};
   const sectionData = sections.map((sec, si) => {
     let done = 0;
     const items = sec.items.map((item, ii) => {
       const key = 'eq_' + si + '_' + ii;
+      const isOOS = outOfStock[key] || false;
       const act = counts[key] !== undefined ? counts[key] : '';
       const actNum = act !== '' ? parseInt(act, 10) : null;
-      const ok = actNum !== null && !isNaN(actNum) && actNum >= item.qty;
+      const ok = !isOOS && actNum !== null && !isNaN(actNum) && actNum >= item.qty;
       if (ok) done++;
       let expStr = '';
-      if (item.expiry) {
+      if (!isOOS && item.expiry) {
         const exp = expDates[key] || '';
         expStr = exp ? ` [Exp:${exp}${exp < today ? ' ⚠EXPIRED' : ''}]` : ' [Exp:—]';
       }
-      return { label: `${item.label} ×${item.qty}  Act:${act || '—'}${expStr}`, done: ok };
+      const label = isOOS
+        ? `${item.label} ×${item.qty}  — OUT OF STOCK`
+        : `${item.label} ×${item.qty}  Act:${act || '—'}${expStr}`;
+      return { label, done: ok };
     });
     return { title: sec.title, items, done, total: sec.items.length };
   });
