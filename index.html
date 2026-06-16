@@ -319,8 +319,8 @@
         <div class="field"><label>Date</label><input id="eq-date" type="date"></div>
         <div class="field"><label>Lead Provider</label><input id="eq-name" type="text" placeholder="Name"></div>        
         <div class="field"><label>Narcotic Seal #</label><input id="narc-seal" type="text" placeholder="Seal #"></div>
-        <div class="field"><label>Main 02 PSI</label><input id="main-02" type="text" placeholder="PSI"></div>
-        <div class="field"><label>Portable 02 PSI</label><input id="port-02" type="text" placeholder="PSI"></div>
+        <div class="field"><label>Main 02 PSI</label><input id="eq-main" type="text" placeholder="PSI"></div>
+        <div class="field"><label>Portable 02 PSI</label><input id="eq-portable" type="text" placeholder="PSI"></div>
 
         <div class="field"><label>Partner</label><input id="eq-partner" type="text" placeholder="Name"></div>
       </div>
@@ -736,7 +736,9 @@ function buildEquip() {
   document.getElementById('eq-unit').value = s.unit || '';
   document.getElementById('eq-date').value = s.date || todayStr();
   document.getElementById('eq-name').value = s.name || '';
-    document.getElementById('eq-narc').value = s.name || '';
+  document.getElementById('eq-main').value = s.name || '';
+  document.getElementById('eq-portable').value = s.name || '';
+  document.getElementById('eq-narc').value = s.name || '';
   document.getElementById('eq-partner').value = s.partner || '';
 
   document.querySelectorAll('.role-btn').forEach(b => {
@@ -816,7 +818,7 @@ function setMedExpiry(key, val, itemEl) {
 }
 
 function bindEquipFields() {
-  [['eq-unit','unit'],['eq-date','date'],['eq-name','name'],['eq-narc','narc'],['eq-partner','partner']].forEach(([id, key]) => {
+  [['eq-unit','unit'],['eq-date','date'],['eq-name','name'],['eq-narc','narc'],['eq-main','main'],['eq-portable','portable'],['eq-partner','partner']].forEach(([id, key]) => {
     document.getElementById(id).addEventListener('input', e => {
       if (!state.equip) state.equip = {};
       state.equip[key] = e.target.value;
