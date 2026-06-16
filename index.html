@@ -390,7 +390,7 @@
       <button class="btn" onclick="saveToDrive('uco')">Save to Drive</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
-    <p class="helper-text">Save to Drive logs to Google Sheet, opens the printable report, and downloads a local copy.</p>
+    <p class="helper-text">Save to Drive uploads to easicheckoff@gmail.com and downloads a local copy.</p>
   </div>
 
 </div>
@@ -1065,7 +1065,7 @@ async function sendEmail() {
 
 // ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
 
-const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfUrdeWsZcnw2AP56Rc_DkzU0vKOCUFgiUMvB-KayNk2GcMTKAh5hZgsKJFnygVwMtqA/exec';
+const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmgxAurWzo-5I4DCAyszBOoaVHJWROcvDH-gJY8BAYRmk7mOEstEWrf4PP7eMhPVhY/exec';
 
 function getDriveFilename(form) {
   const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
@@ -1086,59 +1086,22 @@ function getDriveFilename(form) {
 async function saveToDrive(form) {
   const html = form === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
   if (!html) { alert('Fill in the form first.'); return; }
-  const isComplete = confirm('Is this check-off complete?\n\nOK → Complete\nCancel → Save as INCOMPLETE draft');
+  const isComplete = confirm('Is this check-off complete?\n\nOK → save as Complete\nCancel → save as INCOMPLETE draft');
   let filename = getDriveFilename(form);
   if (!isComplete) filename = filename.replace('.html', ' - INCOMPLETE.html');
-
-  // Open formatted report in browser for viewing / printing
-  const win = window.open('', '_blank');
-  if (win) { win.document.write(html); win.document.close(); }
-
-  // Build compact payload for Sheet logging
-  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
-  const crew = form === 'equip'
-    ? [(s.paramedic||'').trim(), (s.emt||'').trim()].filter(Boolean).join(' & ') || 'Crew'
-    : (s.name || '').trim() || 'EMT';
-  let done = 0, total = 0;
-  if (form === 'equip') {
-    const counts = (state.equip || {}).counts || {};
-    getActiveSections().forEach((sec, si) => {
-      sec.items.forEach((item, ii) => {
-        total++;
-        const act = parseInt(counts['eq_' + si + '_' + ii] || '', 10);
-        if (!isNaN(act) && act >= item.qty) done++;
-      });
-    });
-  } else {
-    const checks = (state.uco || {}).checks || {};
-    UCO_SECTIONS.forEach((sec, si) => {
-      sec.items.forEach((_, ii) => { total++; if (checks['uco_'+si+'_'+ii]) done++; });
-    });
-  }
-  const payload = {
-    form: form === 'equip' ? 'Equipment Check' : 'Unit Check Off',
-    unit: (s.unit || '').trim(),
-    date: (s.date || todayStr()).trim(),
-    crew,
-    unitType: form === 'equip' ? (currentUnit === 'als-para' ? 'ALS-Para' : currentUnit === 'als-aemt' ? 'ALS-AEMT' : 'BLS-EMT') : 'UCO',
-    complete: isComplete,
-    done,
-    total
-  };
-  if (DRIVE_SCRIPT_URL && DRIVE_SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
-    fetch(DRIVE_SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload)), {
-      mode: 'no-cors'
-    }).catch(() => {});
-  }
-
-  // Local download as backup
+  const hasDrive = true; // URL is configured
+  fetch(DRIVE_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({ filename, content: html }),
+  }).catch(() => {});
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-  showToast(isComplete ? 'Logged to Sheet + report opened ✓' : 'Logged as INCOMPLETE ✓');
+  showToast(isComplete ? 'Saved to Drive ✓' : 'Saved as INCOMPLETE draft ✓');
 }
 
 function showToast(msg) {
