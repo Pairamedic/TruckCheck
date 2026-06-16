@@ -248,11 +248,11 @@
       <div class="field-grid">
         <div class="field"><label>Unit #</label><input id="eq-unit" type="text" placeholder="e.g. M-12"></div>
         <div class="field"><label>Date</label><input id="eq-date" type="date"></div>
-        <div class="field"><label>Paramedic</label><input id="eq-paramedic" type="text" placeholder="Name"></div>
-        <div class="field"><label>EMT</label><input id="eq-emt" type="text" placeholder="Name"></div>
+        <div class="field" id="eq-paramedic-field"><label id="eq-paramedic-label">Paramedic</label><input id="eq-paramedic" type="text" placeholder="Name"></div>
+        <div class="field"><label id="eq-emt-label">EMT</label><input id="eq-emt" type="text" placeholder="Name"></div>
         <div class="field"><label>Main O₂ (PSI)</label><input id="eq-maino2" type="text" placeholder="PSI"></div>
         <div class="field"><label>Portable O₂ (PSI)</label><input id="eq-porto2" type="text" placeholder="PSI"></div>
-        <div class="field" style="grid-column:1/-1"><label>Narcotic Seal #</label><input id="eq-sealnum" type="text" placeholder="Seal #"></div>
+        <div class="field" id="eq-sealnum-field" style="grid-column:1/-1"><label>Narcotic Seal #</label><input id="eq-sealnum" type="text" placeholder="Seal #"></div>
       </div>
     </div>
 
@@ -475,6 +475,147 @@ const ALS_PARA_SECTIONS = [
   },
 ];
 
+// ─── BLS-EMT SECTIONS ────────────────────────────────────────────────────────
+
+const BLS_EMT_SECTIONS = [
+  {
+    title: 'Soft Goods & Wound Care',
+    items: [
+      { label: '4×4 Pads', qty: 6 },
+      { label: 'ABD Pads', qty: 2 },
+      { label: 'Trauma Dressing', qty: 2 },
+      { label: 'Roller Gauze', qty: 6 },
+      { label: 'Triangular Bandages', qty: 2 },
+      { label: 'Isolation Kits', qty: 2 },
+      { label: 'Occlusive Dressing', qty: 2 },
+      { label: 'Tape 1"', qty: 2 },
+      { label: 'Tape 2"', qty: 2 },
+      { label: 'Commercial Tourniquet', qty: 1 },
+      { label: 'OB Kit', qty: 1 },
+    ]
+  },
+  {
+    title: 'Assessment & Monitoring',
+    items: [
+      { label: 'Stethoscope', qty: 1 },
+      { label: 'BP Cuff — Lg. Adult', qty: 1 },
+      { label: 'BP Cuff — Adult', qty: 1 },
+      { label: 'BP Cuff — Child', qty: 1 },
+      { label: 'BP Cuff — Infant', qty: 1 },
+      { label: 'Pulse Oximeter', qty: 1 },
+      { label: 'Pulse Ox Probe — Adult', qty: 1 },
+      { label: 'Pulse Ox Probe — Pedi', qty: 1 },
+      { label: 'Thermometer', qty: 1 },
+      { label: 'Glucometer + Strips', qty: 1 },
+      { label: 'Pediatric Drug Reference', qty: 1 },
+    ]
+  },
+  {
+    title: 'AED',
+    items: [
+      { label: 'AED Unit', qty: 1 },
+      { label: 'Adult Pads', qty: 2 },
+      { label: 'Pediatric Pads', qty: 2 },
+    ]
+  },
+  {
+    title: 'Airway',
+    items: [
+      { label: 'OPA Set (Adult / Child / Infant)', qty: 1 },
+      { label: 'NPA Set', qty: 1 },
+      { label: 'Nasal Cannula — Adult', qty: 2 },
+      { label: 'Nasal Cannula — Pedi', qty: 2 },
+      { label: 'NRB Mask — Adult', qty: 2 },
+      { label: 'NRB Mask — Pedi', qty: 2 },
+      { label: 'NRB Mask — Infant', qty: 1 },
+      { label: 'Adult BVM (>1000mL)', qty: 2 },
+      { label: 'Pedi BVM (450–750mL)', qty: 1 },
+      { label: 'Infant BVM (150–300mL)', qty: 1 },
+      { label: 'Magill Forceps — Adult', qty: 1 },
+      { label: 'Magill Forceps — Pedi', qty: 1 },
+    ]
+  },
+  {
+    title: 'Suction',
+    items: [
+      { label: 'Portable Suction Unit', qty: 1 },
+      { label: 'On-Board Suction Unit', qty: 1 },
+      { label: 'Suction Tubing', qty: 2 },
+      { label: 'Catheter 8fr / 10fr', qty: 1 },
+      { label: 'Catheter 12fr', qty: 1 },
+      { label: 'Catheter 14fr / 18fr', qty: 1 },
+      { label: 'Rigid Suction Tip', qty: 1 },
+    ]
+  },
+  {
+    title: 'Immobilization',
+    items: [
+      { label: 'KED or Equivalent', qty: 1 },
+      { label: 'Spine Board + Straps', qty: 2 },
+      { label: 'Pediatric Restraint System', qty: 1 },
+      { label: 'Head Immobilization Device', qty: 1 },
+      { label: 'Cervical Collar — Adult', qty: 3 },
+      { label: 'Cervical Collar — Pediatric', qty: 2 },
+      { label: 'Cervical Collar — Infant', qty: 1 },
+    ]
+  },
+  {
+    title: 'Splints & Transport',
+    items: [
+      { label: 'Padded Extremity Splints (set)', qty: 1 },
+      { label: 'Traction Splint', qty: 1 },
+      { label: 'Elevating Stretcher', qty: 1 },
+      { label: 'Stair Chair / Scoop Stretcher', qty: 1 },
+    ]
+  },
+  {
+    title: 'Miscellaneous',
+    items: [
+      { label: 'Fire Extinguisher', qty: 1 },
+      { label: 'HAZ-MAT Reference Guide', qty: 1 },
+      { label: 'Reflective Safety Wear', qty: 1 },
+      { label: 'Flashlight + Batteries', qty: 1 },
+      { label: 'N95 / N100 Respirator', qty: 1 },
+      { label: 'Blankets', qty: 2 },
+      { label: 'Sheets', qty: 2 },
+      { label: 'Towels', qty: 2 },
+      { label: 'Exam Gloves (1 Box)', qty: 1 },
+      { label: 'Antiseptic Hand Cleaner', qty: 1 },
+      { label: 'Betadine Solution', qty: 1 },
+      { label: 'Emesis Basin', qty: 1 },
+      { label: 'Sharps Container', qty: 1 },
+      { label: 'EMT Shears', qty: 1 },
+      { label: 'Hemostat', qty: 1 },
+      { label: 'Lubricating Jelly', qty: 1 },
+      { label: 'Window Punch', qty: 1 },
+      { label: 'Biohazard Bags', qty: 1 },
+      { label: 'Disinfectant Solution', qty: 1 },
+    ]
+  },
+];
+
+// ALS-AEMT: all BLS items + nebulizer in Airway + advanced airway section
+const ALS_AEMT_SECTIONS = BLS_EMT_SECTIONS.map(sec => {
+  if (sec.title === 'Airway') {
+    return {
+      ...sec,
+      items: [
+        ...sec.items,
+        { label: 'Nebulizer', qty: 1 },
+        { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
+      ]
+    };
+  }
+  return sec;
+}).concat([
+  {
+    title: 'AEMT Advanced Airway',
+    items: [
+      { label: 'Multi-Lumen Airway (iGel / King LT)', qty: 1 },
+    ]
+  }
+]);
+
 // ─── UNIT CHECK OFF DATA ─────────────────────────────────────────────────────
 
 const UCO_SECTIONS = [
@@ -508,7 +649,10 @@ function saveState() {
 function todayStr() { return new Date().toISOString().split('T')[0]; }
 
 function getActiveSections() {
-  return currentUnit === 'als-para' ? ALS_PARA_SECTIONS : [];
+  if (currentUnit === 'als-para') return ALS_PARA_SECTIONS;
+  if (currentUnit === 'als-aemt') return ALS_AEMT_SECTIONS;
+  if (currentUnit === 'bls-emt') return BLS_EMT_SECTIONS;
+  return [];
 }
 
 // ─── TABS ────────────────────────────────────────────────────────────────────
@@ -542,10 +686,20 @@ function buildEquip() {
   document.getElementById('eq-sealnum').value = s.sealnum || '';
   document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.unit === currentUnit));
 
+  // Update header field labels and Narcotic Seal visibility per unit type
+  document.getElementById('eq-paramedic-label').textContent =
+    currentUnit === 'als-para' ? 'Paramedic' : currentUnit === 'als-aemt' ? 'AEMT' : 'EMT 1';
+  document.getElementById('eq-emt-label').textContent =
+    currentUnit === 'bls-emt' ? 'EMT 2' : 'EMT';
+  document.getElementById('eq-sealnum-field').style.display =
+    currentUnit === 'als-para' ? '' : 'none';
+
   const container = document.getElementById('equip-sections');
   container.innerHTML = '';
 
-  if (currentUnit !== 'als-para') {
+  const sections = getActiveSections();
+
+  if (!sections.length) {
     container.innerHTML = `<div class="card" style="text-align:center;padding:28px 16px">
       <div style="font-size:28px;margin-bottom:10px">🚧</div>
       <div style="font-size:15px;font-weight:700;margin-bottom:6px">Unavailable</div>
@@ -556,7 +710,6 @@ function buildEquip() {
 
   const counts = s.counts || {};
   const expDates = s.expDates || {};
-  const sections = getActiveSections();
 
   sections.forEach((sec, si) => {
     const div = document.createElement('div');
@@ -785,11 +938,13 @@ async function sendEmail() {
   closeEmailModal();
 
   const s = _emailForm === 'equip' ? (state.equip || {}) : (state.uco || {});
+  const unitLabel = currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS';
   const subject = _emailForm === 'equip'
-    ? 'EMS Check — ALS Stock Sheet — ' + (s.unit || '') + ' ' + (s.date || '')
-    : 'EMS Check — Unit Check Off — ' + (s.unit || '') + ' ' + (s.date || '');
+    ? `EMS Check — ${unitLabel} Stock Sheet — ${s.unit || ''} ${s.date || ''}`
+    : `EMS Check — Unit Check Off — ${s.unit || ''} ${s.date || ''}`;
   const slug = (s.unit || 'unit').replace(/\W+/g, '-') + '-' + (s.date || todayStr());
-  const filename = (_emailForm === 'equip' ? 'als-stock-' : 'unit-check-') + slug + '.html';
+  const prefix = _emailForm === 'equip' ? unitLabel.toLowerCase() + '-stock-' : 'unit-check-';
+  const filename = prefix + slug + '.html';
 
   const html = _emailForm === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
   if (!html) { alert('No form configured for this unit type yet.'); return; }
@@ -857,19 +1012,30 @@ function getEquipReportHTML() {
     });
     return { title: sec.title, items, done, total: sec.items.length };
   });
+  const rptTitles = {
+    'als-para': 'EMS Check — ALS Unit Stock Sheet',
+    'als-aemt': 'EMS Check — ALS-AEMT Stock Sheet',
+    'bls-emt':  'EMS Check — BLS Unit Stock Sheet',
+  };
+  const providerLabel = currentUnit === 'als-para' ? 'Paramedic' : currentUnit === 'als-aemt' ? 'AEMT' : 'EMT 1';
+  const crewLabel     = currentUnit === 'bls-emt' ? 'EMT 2' : 'EMT';
+  const rptSigs = currentUnit === 'als-para'  ? ['Paramedic Signature', 'EMT Signature']
+                : currentUnit === 'als-aemt' ? ['AEMT Signature', 'EMT Signature']
+                : ['EMT 1 Signature', 'EMT 2 Signature'];
+  const rptMeta = [
+    { label: 'Unit #', value: s.unit || '' },
+    { label: 'Date',   value: s.date || '' },
+    { label: providerLabel, value: s.paramedic || '' },
+    { label: crewLabel,     value: s.emt || '' },
+    { label: 'Main O₂ PSI',     value: s.maino2 || '' },
+    { label: 'Portable O₂ PSI', value: s.porto2 || '' },
+    ...(currentUnit === 'als-para' ? [{ label: 'Narcotic Seal #', value: s.sealnum || '' }] : []),
+  ];
   return buildPrintHTML({
-    title: 'EMS Check — ALS Unit Stock Sheet',
-    meta: [
-      { label: 'Unit #', value: s.unit || '' },
-      { label: 'Date', value: s.date || '' },
-      { label: 'Paramedic', value: s.paramedic || '' },
-      { label: 'EMT', value: s.emt || '' },
-      { label: 'Main O₂ PSI', value: s.maino2 || '' },
-      { label: 'Portable O₂ PSI', value: s.porto2 || '' },
-      { label: 'Narcotic Seal #', value: s.sealnum || '' },
-    ],
+    title: rptTitles[currentUnit] || 'EMS Check — Unit Stock Sheet',
+    meta: rptMeta,
     sections: sectionData,
-    sigs: ['Paramedic Signature', 'EMT Signature'],
+    sigs: rptSigs,
   });
 }
 
