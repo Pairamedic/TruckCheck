@@ -326,8 +326,8 @@
         <div class="field"><label>Date</label><input id="eq-date" type="date"></div>
         <div class="field" id="eq-paramedic-field"><label id="eq-paramedic-label">Paramedic</label><input id="eq-paramedic" type="text" placeholder="Name"></div>
         <div class="field"><label id="eq-emt-label">EMT</label><input id="eq-emt" type="text" placeholder="Name"></div>
-        <div class="field"><label>Main O&#8322; (PSI)</label><input id="eq-maino2" type="text" placeholder="PSI"></div>
-        <div class="field"><label>Portable O&#8322; (PSI)</label><input id="eq-porto2" type="text" placeholder="PSI"></div>
+        <div class="field"><label>Main O₂ (PSI)</label><input id="eq-maino2" type="text" placeholder="PSI"></div>
+        <div class="field"><label>Portable O₂ (PSI)</label><input id="eq-porto2" type="text" placeholder="PSI"></div>
         <div class="field" id="eq-sealnum-field" style="grid-column:1/-1"><label>Narcotic Seal #</label><input id="eq-sealnum" type="text" placeholder="Seal #"></div>
       </div>
     </div>
@@ -1065,7 +1065,7 @@ async function sendEmail() {
 
 // ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
 
-const DRIVE_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFkVGuEr7I84K7DqLRL9nmpRN_oSdc7TzzEKa3J3youwubsh0WAbQvHvVziZk9yLj3/exec';
 
 function getDriveFilename(form) {
   const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
@@ -1086,22 +1086,22 @@ function getDriveFilename(form) {
 async function saveToDrive(form) {
   const html = form === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
   if (!html) { alert('Fill in the form first.'); return; }
-  const filename = getDriveFilename(form);
-  const hasDrive = DRIVE_SCRIPT_URL && DRIVE_SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
-  if (hasDrive) {
-    fetch(DRIVE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ filename, content: html }),
-    }).catch(() => {});
-  }
+  const isComplete = confirm('Is this check-off complete?\n\nOK → save as Complete\nCancel → save as INCOMPLETE draft');
+  let filename = getDriveFilename(form);
+  if (!isComplete) filename = filename.replace('.html', ' - INCOMPLETE.html');
+  const hasDrive = true; // URL is configured
+  fetch(DRIVE_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({ filename, content: html }),
+  }).catch(() => {});
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-  showToast(hasDrive ? 'Saved to Drive + downloaded ✓' : 'Downloaded ✓');
+  showToast(isComplete ? 'Saved to Drive ✓' : 'Saved as INCOMPLETE draft ✓');
 }
 
 function showToast(msg) {
