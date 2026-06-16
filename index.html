@@ -673,48 +673,11 @@ function resetEquip() {
 }
 
 function exportEquip() {
-  const s = state.equip || {};
-  const counts = s.counts || {};
-  const expDates = s.expDates || {};
-  const sections = getActiveSections();
-  const today = todayStr();
-
-  if (!sections.length) { alert('No form configured for this unit type yet.'); return; }
-
-  const sectionData = sections.map((sec, si) => {
-    let done = 0;
-    const items = sec.items.map((item, ii) => {
-      const key = 'eq_' + si + '_' + ii;
-      const act = counts[key] !== undefined ? counts[key] : '';
-      const actNum = act !== '' ? parseInt(act, 10) : null;
-      const ok = actNum !== null && !isNaN(actNum) && actNum >= item.qty;
-      if (ok) done++;
-      let expStr = '';
-      if (item.expiry) {
-        const exp = expDates[key] || '';
-        expStr = exp ? ` [Exp:${exp}${exp < today ? ' ⚠EXPIRED' : ''}]` : ' [Exp:—]';
-      }
-      return { label: `${item.label} ×${item.qty}  Act:${act || '—'}${expStr}`, done: ok };
-    });
-    return { title: sec.title, items, done, total: sec.items.length };
-  });
-
+  const html = getEquipReportHTML();
+  if (!html) { alert('No form configured for this unit type yet.'); return; }
   const win = window.open('', '_blank');
   if (!win) { alert('Allow pop-ups to export PDF.'); return; }
-  win.document.write(buildPrintHTML({
-    title: 'EMS Check — ALS Unit Stock Sheet',
-    meta: [
-      { label: 'Unit #', value: s.unit || '' },
-      { label: 'Date', value: s.date || '' },
-      { label: 'Paramedic', value: s.paramedic || '' },
-      { label: 'EMT', value: s.emt || '' },
-      { label: 'Main O₂ PSI', value: s.maino2 || '' },
-      { label: 'Portable O₂ PSI', value: s.porto2 || '' },
-      { label: 'Narcotic Seal #', value: s.sealnum || '' },
-    ],
-    sections: sectionData,
-    sigs: ['Paramedic Signature', 'EMT Signature'],
-  }));
+  win.document.write(html);
   win.document.close();
   win.focus();
   setTimeout(() => win.print(), 400);
@@ -816,19 +779,123 @@ function closeEmailModal() {
 
 function toggleRecip(el) { el.classList.toggle('selected'); }
 
-function sendEmail() {
+async function sendEmail() {
   const recipients = [...document.querySelectorAll('.recip-item.selected')].map(el => el.dataset.email);
   if (!recipients.length) { alert('Select at least one recipient.'); return; }
-  const body = _emailForm === 'equip' ? buildEquipText() : buildUCOText();
+  closeEmailModal();
+
   const s = _emailForm === 'equip' ? (state.equip || {}) : (state.uco || {});
   const subject = _emailForm === 'equip'
     ? 'EMS Check — ALS Stock Sheet — ' + (s.unit || '') + ' ' + (s.date || '')
     : 'EMS Check — Unit Check Off — ' + (s.unit || '') + ' ' + (s.date || '');
-  window.location.href = 'mailto:' + recipients.join(',') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  closeEmailModal();
+  const slug = (s.unit || 'unit').replace(/\W+/g, '-') + '-' + (s.date || todayStr());
+  const filename = (_emailForm === 'equip' ? 'als-stock-' : 'unit-check-') + slug + '.html';
+
+  const html = _emailForm === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
+  if (!html) { alert('No form configured for this unit type yet.'); return; }
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const file = new File([blob], filename, { type: 'text/html' });
+
+  // Mobile: try Web Share API — opens native share sheet with file attached
+  // User picks Mail app and file is attached directly
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: subject,
+        text: 'To: ' + recipients.join(', '),
+      });
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      // Share failed — fall through to download+mailto
+    }
+  }
+
+  // Desktop fallback: auto-download report file, then open email client
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+  // Open email after brief delay so download can start
+  setTimeout(() => {
+    window.location.href = 'mailto:' + recipients.join(',')
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent('Please attach the downloaded report: ' + filename);
+  }, 700);
 }
 
 // ─── PRINT / EXPORT ──────────────────────────────────────────────────────────
+
+function getEquipReportHTML() {
+  const s = state.equip || {};
+  const counts = s.counts || {};
+  const expDates = s.expDates || {};
+  const sections = getActiveSections();
+  const today = todayStr();
+  if (!sections.length) return null;
+  const sectionData = sections.map((sec, si) => {
+    let done = 0;
+    const items = sec.items.map((item, ii) => {
+      const key = 'eq_' + si + '_' + ii;
+      const act = counts[key] !== undefined ? counts[key] : '';
+      const actNum = act !== '' ? parseInt(act, 10) : null;
+      const ok = actNum !== null && !isNaN(actNum) && actNum >= item.qty;
+      if (ok) done++;
+      let expStr = '';
+      if (item.expiry) {
+        const exp = expDates[key] || '';
+        expStr = exp ? ` [Exp:${exp}${exp < today ? ' ⚠EXPIRED' : ''}]` : ' [Exp:—]';
+      }
+      return { label: `${item.label} ×${item.qty}  Act:${act || '—'}${expStr}`, done: ok };
+    });
+    return { title: sec.title, items, done, total: sec.items.length };
+  });
+  return buildPrintHTML({
+    title: 'EMS Check — ALS Unit Stock Sheet',
+    meta: [
+      { label: 'Unit #', value: s.unit || '' },
+      { label: 'Date', value: s.date || '' },
+      { label: 'Paramedic', value: s.paramedic || '' },
+      { label: 'EMT', value: s.emt || '' },
+      { label: 'Main O₂ PSI', value: s.maino2 || '' },
+      { label: 'Portable O₂ PSI', value: s.porto2 || '' },
+      { label: 'Narcotic Seal #', value: s.sealnum || '' },
+    ],
+    sections: sectionData,
+    sigs: ['Paramedic Signature', 'EMT Signature'],
+  });
+}
+
+function getUCOReportHTML() {
+  const s = state.uco || {};
+  const checks = s.checks || {};
+  const sections = UCO_SECTIONS.map((sec, si) => ({
+    title: sec.title,
+    items: sec.items.map((item, ii) => ({ label: item, done: checks['uco_'+si+'_'+ii] || false })),
+    done: sec.items.filter((_, ii) => checks['uco_'+si+'_'+ii]).length,
+    total: sec.items.length
+  }));
+  return buildPrintHTML({
+    title: 'EMS Check — Unit Check Off',
+    meta: [
+      { label: 'Unit #', value: s.unit || '' },
+      { label: 'Date', value: s.date || '' },
+      { label: 'Mileage', value: s.mileage || '' },
+      { label: 'EMT', value: s.name || '' },
+      { label: 'Radio #', value: s.radio || '' },
+    ],
+    sections,
+    sigs: ['EMT Signature', 'Supervisor'],
+    closing: { repairs: s.repairs||'', fuelcard: s.fuelcard||'', extinguisher: s.extinguisher||'', maint: s.maint||null }
+  });
+}
 
 function buildPrintHTML({ title, meta, sections, sigs, closing }) {
   const metaHTML = meta.map(m =>
@@ -877,78 +944,14 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
 }
 
 function exportUCO() {
-  const s = state.uco || {};
-  const checks = s.checks || {};
-  const sections = UCO_SECTIONS.map((sec, si) => ({
-    title: sec.title,
-    items: sec.items.map((item, ii) => ({ label: item, done: checks['uco_'+si+'_'+ii] || false })),
-    done: sec.items.filter((_, ii) => checks['uco_'+si+'_'+ii]).length,
-    total: sec.items.length
-  }));
   const win = window.open('', '_blank');
   if (!win) { alert('Allow pop-ups to export PDF.'); return; }
-  win.document.write(buildPrintHTML({
-    title: 'EMS Check — Unit Check Off',
-    meta: [
-      { label: 'Unit #', value: s.unit || '' },
-      { label: 'Date', value: s.date || '' },
-      { label: 'Mileage', value: s.mileage || '' },
-      { label: 'EMT', value: s.name || '' },
-      { label: 'Radio #', value: s.radio || '' },
-    ],
-    sections,
-    sigs: ['EMT Signature', 'Supervisor'],
-    closing: { repairs: s.repairs||'', fuelcard: s.fuelcard||'', extinguisher: s.extinguisher||'', maint: s.maint||null }
-  }));
+  win.document.write(getUCOReportHTML());
   win.document.close();
   win.focus();
   setTimeout(() => win.print(), 400);
 }
 
-function buildEquipText() {
-  const s = state.equip || {};
-  const counts = s.counts || {};
-  const expDates = s.expDates || {};
-  const today = todayStr();
-  const sections = getActiveSections();
-  let txt = `EMERGENCY AMBULANCE SERVICE, INC.\nEMS CHECK — ALS UNIT STOCK SHEET\n${'═'.repeat(42)}\n`;
-  txt += `Unit: ${s.unit||''}  Date: ${s.date||''}\n`;
-  txt += `Paramedic: ${s.paramedic||''}  EMT: ${s.emt||''}\n`;
-  txt += `Main O2 PSI: ${s.maino2||''}  Portable O2 PSI: ${s.porto2||''}\n`;
-  txt += `Narcotic Seal #: ${s.sealnum||''}\n`;
-  sections.forEach((sec, si) => {
-    txt += `\n${sec.title.toUpperCase()}\n${'-'.repeat(32)}\n`;
-    sec.items.forEach((item, ii) => {
-      const key = 'eq_'+si+'_'+ii;
-      const act = counts[key] !== undefined ? counts[key] : '';
-      const actNum = act !== '' ? parseInt(act, 10) : null;
-      const status = actNum === null ? '☐' : (actNum >= item.qty ? '☑' : '⚠');
-      let expStr = '';
-      if (item.expiry) {
-        const exp = expDates[key] || '';
-        expStr = exp ? ` [Exp:${exp}${exp < today ? ' — EXPIRED' : ''}]` : ' [Exp:—]';
-      }
-      txt += `${status} ${item.label} (×${item.qty}) Act:${act||'—'}${expStr}\n`;
-    });
-  });
-  return txt;
-}
-
-function buildUCOText() {
-  const s = state.uco || {};
-  const checks = s.checks || {};
-  let txt = `EMERGENCY AMBULANCE SERVICE, INC.\nEMS CHECK — UNIT CHECK OFF\n${'═'.repeat(42)}\n`;
-  txt += `Unit: ${s.unit||''}  Mileage: ${s.mileage||''}  Date: ${s.date||''}  Radio #: ${s.radio||''}\n`;
-  txt += `EMT: ${s.name||''}\n`;
-  UCO_SECTIONS.forEach((sec, si) => {
-    txt += `\n${sec.title.toUpperCase()}\n${'-'.repeat(32)}\n`;
-    sec.items.forEach((item, ii) => { txt += `${checks['uco_'+si+'_'+ii] ? '☑' : '☐'} ${item}\n`; });
-  });
-  txt += `\nRepairs Needed / New Body Damage:\n${s.repairs||'(none)'}\n`;
-  txt += `\nFuel Card: ${s.fuelcard||''}  Fire Extinguisher: ${s.extinguisher||''}\n`;
-  txt += `Maintenance Request Turned In? ${s.maint ? s.maint.toUpperCase() : 'N/A'}\n`;
-  return txt;
-}
 
 // ─── NETWORK STATUS ──────────────────────────────────────────────────────────
 
