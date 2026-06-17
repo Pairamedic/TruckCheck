@@ -48,7 +48,6 @@
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
-  /* Unit type selector */
   .role-bar { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; }
   .role-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-right: 4px; white-space: nowrap; }
   .role-seg { display: flex; gap: 4px; flex: 1; }
@@ -57,11 +56,9 @@
   .role-btn[data-unit="als-aemt"].active { background: rgba(59,130,246,.15); border-color: var(--aemt-color); color: var(--aemt-color); }
   .role-btn[data-unit="bls-emt"].active { background: rgba(34,197,94,.15); border-color: var(--emt-color); color: var(--emt-color); }
 
-  /* Card */
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; }
   .card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--muted); margin-bottom: 10px; }
 
-  /* Fields */
   .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .field { display: flex; flex-direction: column; gap: 3px; }
   .field label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
@@ -69,7 +66,6 @@
   .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,.18); }
   .field textarea { resize: vertical; min-height: 56px; }
 
-  /* Sections */
   .section { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
   .section-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; cursor: pointer; background: rgba(255,255,255,.03); user-select: none; }
   .section-header:hover { background: rgba(255,255,255,.06); }
@@ -80,24 +76,19 @@
   .section-body { display: none; }
   .section.open .section-body { display: block; }
 
-  /* Check items — Equipment (qty-based) */
   .check-item { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-top: 1px solid rgba(255,255,255,.04); transition: background .1s; }
   .check-item:hover { background: rgba(255,255,255,.03); }
   .check-label { font-size: 13px; line-height: 1.35; flex: 1; }
 
-  /* Expected qty badge */
-  .qty-expected { font-size: 10px; color: var(--muted); background: rgba(255,255,255,.07); border-radius: 4px; padding: 2px 5px; flex-shrink: 0; min-width: 28px; text-align: center; }
+  .qty-expected { font-size: 10px; color: var(--accent); background: rgba(59,130,246,.12); border-radius: 4px; padding: 2px 5px; flex-shrink: 0; min-width: 28px; text-align: center; font-weight: 600; }
 
-  /* Actual qty input */
   .qty-input { width: 52px; font-size: 12px; text-align: center; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 4px; color: var(--subtext); outline: none; flex-shrink: 0; -moz-appearance: textfield; }
   .qty-input::-webkit-inner-spin-button, .qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
   .qty-input:focus { border-color: var(--accent); color: var(--text); box-shadow: 0 0 0 3px rgba(59,130,246,.22); width: 62px; }
 
-  /* Active row highlight — shows which item you're entering */
   .check-item:focus-within { background: rgba(59,130,246,.11) !important; box-shadow: inset 3px 0 0 var(--accent); }
   .check-item:focus-within .check-label { color: var(--text); font-weight: 700; }
 
-  /* Item states */
   .check-item.item-ok { background: rgba(34,197,94,.06); }
   .check-item.item-ok:hover { background: rgba(34,197,94,.10); }
   .check-item.item-ok .qty-input { border-color: var(--green); color: var(--green); }
@@ -107,21 +98,27 @@
   .check-item.item-low .qty-input { border-color: var(--yellow); color: var(--yellow); }
   .check-item.item-low .qty-expected { color: var(--yellow); background: rgba(234,179,8,.12); }
 
-  /* Expiry input */
   .med-expiry-input { font-size: 11px; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; color: var(--subtext); outline: none; color-scheme: dark; flex-shrink: 0; }
   .med-expiry-input.exp-red { border-color: var(--red); color: var(--red); background: rgba(239,68,68,.12); }
   .check-item.exp-red { background: rgba(239,68,68,.07); }
   .check-item.exp-red:hover { background: rgba(239,68,68,.12); }
   .check-item.item-ok.exp-red { background: rgba(239,68,68,.07); }
 
-  /* UCO checkbox items */
+  .oos-btn { font-size: 9px; padding: 2px 6px; border-radius: 5px; border: 1px solid rgba(239,68,68,.3); background: transparent; color: var(--muted); cursor: pointer; flex-shrink: 0; white-space: nowrap; font-family: inherit; }
+  .oos-btn:active { opacity: .7; }
+  .check-item.item-oos { background: rgba(239,68,68,.08); }
+  .check-item.item-oos:hover { background: rgba(239,68,68,.13); }
+  .check-item.item-oos .check-label { text-decoration: line-through; color: var(--muted); }
+  .check-item.item-oos .qty-input, .check-item.item-oos .med-expiry-input { opacity: 0.25; pointer-events: none; }
+  .check-item.item-oos .qty-expected { background: rgba(239,68,68,.18); color: var(--red); }
+  .check-item.item-oos .oos-btn { background: rgba(239,68,68,.18); border-color: var(--red); color: var(--red); font-weight: 700; }
+
   .check-item.uco-item { cursor: pointer; }
   .check-box { width: 19px; height: 19px; min-width: 19px; border: 2px solid rgba(255,255,255,.2); border-radius: 5px; display: flex; align-items: center; justify-content: center; transition: all .12s; }
   .check-item.checked .check-box { background: var(--green); border-color: var(--green); }
   .check-item.checked .check-box::after { content: '✓'; color: #000; font-size: 12px; font-weight: 800; }
   .check-item.checked .check-label { text-decoration: line-through; color: var(--muted); }
 
-  /* Buttons */
   .btn-row { display: flex; gap: 8px; margin-top: 10px; }
   .btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--accent); background: rgba(59,130,246,.10); color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .12s; }
   .btn.active { background: rgba(59,130,246,.25); }
@@ -134,12 +131,10 @@
 
   @media (max-width: 480px) { .field-grid { grid-template-columns: 1fr; } }
 
-  /* Control buttons — fixed bottom-right FAB */
   .ctrl-bar { position: fixed; bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px)); right: 16px; display: flex; gap: 8px; z-index: 110; }
   .ctrl-btn { min-width: 38px; height: 38px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .12s; padding: 0 8px; box-shadow: 0 2px 10px rgba(0,0,0,.35); }
   .ctrl-btn:active { opacity: .7; transform: scale(.95); }
 
-  /* Light mode */
   html[data-theme="light"] { --bg: #f1f3f7; --card: #ffffff; --border: rgba(0,0,0,.10); --text: #111827; --subtext: #374151; --muted: #6b7280; }
   html[data-theme="light"] body { background: var(--bg); color: var(--text); }
   html[data-theme="light"] .app-header { background: rgba(241,243,247,.94); }
@@ -165,23 +160,19 @@
   html[data-theme="light"] .btn-danger { background: rgba(239,68,68,.06); }
   html[data-theme="light"] .btn-success { background: rgba(34,197,94,.06); }
 
-  /* Touch targets */
   .check-item { min-height: 44px; }
   .tab-btn { min-height: 40px; }
 
-  /* Text size: large (+2px) */
   html.text-lg .check-label, html.text-lg .field input, html.text-lg .field textarea,
   html.text-lg .btn, html.text-lg .tab-btn, html.text-lg .recip-name { font-size: 15px; }
   html.text-lg .section-title { font-size: 14px; }
   html.text-lg .qty-input { font-size: 14px; width: 58px; }
 
-  /* Text size: extra large (+4px) */
   html.text-xl .check-label, html.text-xl .field input, html.text-xl .field textarea,
   html.text-xl .btn, html.text-xl .tab-btn, html.text-xl .recip-name { font-size: 17px; }
   html.text-xl .section-title { font-size: 16px; }
   html.text-xl .qty-input { font-size: 16px; width: 62px; }
 
-  /* Tablet / iPad layout */
   @media (min-width: 600px) {
     .content { padding: 16px 20px 80px; }
     .field-grid { grid-template-columns: 1fr 1fr 1fr; }
@@ -192,7 +183,6 @@
     .role-btn { padding: 7px 6px; font-size: 12px; }
   }
 
-  /* Email modal */
   .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal-sheet { background: #1a1d27; border: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 20px 20px 36px; width: 100%; max-width: 540px; animation: slideUp .22s ease; }
@@ -239,7 +229,6 @@
 
 <div id="update-banner" onclick="applyUpdate()">🔄 Update available — tap to reload</div>
 
-<!-- EMAIL MODAL -->
 <div class="modal-overlay" id="email-modal" onclick="if(event.target===this)closeEmailModal()">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -288,13 +277,11 @@
   </div>
 </div>
 
-<!-- FLOATING CONTROLS -->
 <div class="ctrl-bar">
   <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
   <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
 </div>
 
-<!-- APP SHELL -->
 <div class="app-header">
   <div class="header-top">
     <div>
@@ -317,7 +304,6 @@
 
 <div class="content">
 
-  <!-- EQUIPMENT CHECK TAB -->
   <div id="tab-equip" class="tab-panel active">
     <div class="card">
       <div class="card-title">Shift Info</div>
@@ -331,27 +317,23 @@
         <div class="field" id="eq-sealnum-field" style="grid-column:1/-1"><label>Narcotic Seal #</label><input id="eq-sealnum" type="text" placeholder="Seal #"></div>
       </div>
     </div>
-
     <div class="role-bar">
       <span class="role-label">Unit Type</span>
       <div class="role-seg">
-        <button class="role-btn active" data-unit="als-para" onclick="setUnit('als-para')">ALS-Paramedic</button>
+        <button class="role-btn active" data-unit="als-para" onclick="setUnit('als-para')">ALS-PARAMEDIC</button>
         <button class="role-btn" data-unit="als-aemt" onclick="setUnit('als-aemt')">ALS-AEMT</button>
         <button class="role-btn" data-unit="bls-emt" onclick="setUnit('bls-emt')">BLS-EMT</button>
       </div>
     </div>
-
     <div id="equip-sections"></div>
-
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
-      <button class="btn" onclick="saveToDrive('equip')">Save to Drive</button>
+      <button class="btn" onclick="downloadReport('equip')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
     </div>
-    <p class="helper-text">×N = required qty. Enter actual count on hand. Red = expired.</p>
+    <p class="helper-text">×N = required qty · Enter actual count on hand · Red = expired · OOS = out of stock</p>
   </div>
 
-  <!-- UNIT CHECK OFF TAB -->
   <div id="tab-uco" class="tab-panel">
     <div class="card">
       <div class="card-title">Unit Info</div>
@@ -363,9 +345,7 @@
         <div class="field"><label>Radio #</label><input id="uco-radio" type="text" placeholder="Radio #"></div>
       </div>
     </div>
-
     <div id="uco-sections"></div>
-
     <div class="card" style="margin-top:8px">
       <div class="card-title">Closing</div>
       <div class="field" style="margin-bottom:8px">
@@ -384,345 +364,249 @@
         </div>
       </div>
     </div>
-
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
-      <button class="btn" onclick="saveToDrive('uco')">Save to Drive</button>
+      <button class="btn" onclick="downloadReport('uco')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
-    <p class="helper-text">Save to Drive uploads the report to Google Drive and opens a preview.</p>
+    <p class="helper-text">Download saves the formatted report to your device.</p>
   </div>
 
 </div>
 
 <script>
-// ─── ALS-PARAMEDIC SECTIONS ───────────────────────────────────────────────────
-
 const ALS_PARA_SECTIONS = [
-  {
-    title: 'Medications & Supplies',
-    items: [
-      { label: '18g Needles', qty: 8 },
-      { label: '20g Needles', qty: 8 },
-      { label: '21g Needles', qty: 4 },
-      { label: '60mL Syringe', qty: 1 },
-      { label: '20mL Syringe', qty: 2 },
-      { label: '10mL Syringe', qty: 8 },
-      { label: '3mL Syringe', qty: 6 },
-      { label: '1mL Syringe', qty: 1 },
-      { label: 'Albuterol', qty: 6, expiry: true },
-      { label: 'Atrovent', qty: 4, expiry: true },
-      { label: 'Atropine', qty: 3, expiry: true },
-      { label: 'Epi 1:1', qty: 1, expiry: true },
-      { label: 'Epi 1:10', qty: 2, expiry: true },
-      { label: 'Lidocaine', qty: 2, expiry: true },
-      { label: 'Lidocaine Drip', qty: 1, expiry: true },
-      { label: 'Dopamine Drip', qty: 2, expiry: true },
-      { label: 'Narcan', qty: 4, expiry: true },
-      { label: 'Magnesium', qty: 1, expiry: true },
-      { label: 'Calcium', qty: 1, expiry: true },
-      { label: 'Hydralazine', qty: 2, expiry: true },
-      { label: 'Sodium Bicarb', qty: 2, expiry: true },
-      { label: 'D10', qty: 3, expiry: true },
-      { label: 'Lasix', qty: 2, expiry: true },
-      { label: 'Adenosine', qty: 3, expiry: true },
-      { label: 'Zofran', qty: 4, expiry: true },
-      { label: 'Labetalol', qty: 2, expiry: true },
-      { label: 'Activated Charcoal', qty: 2, expiry: true },
-      { label: 'Thiamine', qty: 1, expiry: true },
-      { label: 'Nitro', qty: 2, expiry: true },
-      { label: 'Benadryl', qty: 2, expiry: true },
-      { label: 'Aspirin Bottle', qty: 1, expiry: true },
-      { label: 'Roll of Med Labels', qty: 1 },
-      { label: 'Tape', qty: 4 },
-      { label: 'Verapamil', qty: 3, expiry: true },
-      { label: 'Oral Glucose', qty: 1, expiry: true },
-      { label: 'Solu-Medrol', qty: 2, expiry: true },
-      { label: 'Bacteriostatic Water', qty: 2, expiry: true },
-      { label: 'Amiodarone', qty: 2, expiry: true },
-      { label: 'TXA', qty: 2, expiry: true },
-      { label: 'Glucagon', qty: 1, expiry: true },
-      { label: 'Diltiazem', qty: 2, expiry: true },
-    ]
-  },
-  {
-    title: 'Thomas Pack — IV Pouch 1',
-    items: [
-      { label: 'NS 1000mL', qty: 1 },
-      { label: '10gtt Set', qty: 1 },
-      { label: 'Tourniquet', qty: 1 },
-      { label: 'Saline Lock', qty: 1 },
-      { label: 'Saline Flush', qty: 1 },
-      { label: '14G IV Cath', qty: 2 },
-      { label: '16G IV Cath', qty: 2 },
-      { label: '18G IV Cath', qty: 3 },
-      { label: '20G IV Cath', qty: 2 },
-      { label: '22G IV Cath', qty: 3 },
-      { label: '24G IV Cath', qty: 3 },
-      { label: 'Alcohol Preps', qty: 4 },
-      { label: 'Non-Sterile 4×4', qty: 4 },
-      { label: '1" Clear Tape', qty: 1 },
-    ]
-  },
-  {
-    title: 'Thomas Pack — IV Pouch 2',
-    items: [
-      { label: 'NS 500mL', qty: 1 },
-      { label: '10gtt Set', qty: 1 },
-      { label: 'Tourniquet', qty: 1 },
-      { label: 'Saline Lock', qty: 1 },
-      { label: 'Saline Flush', qty: 1 },
-      { label: '14G IV Cath', qty: 2 },
-      { label: '16G IV Cath', qty: 2 },
-      { label: '18G IV Cath', qty: 2 },
-      { label: '20G IV Cath', qty: 2 },
-      { label: '22G IV Cath', qty: 3 },
-      { label: '24G IV Cath', qty: 3 },
-      { label: 'Alcohol Preps', qty: 4 },
-      { label: 'Non-Sterile 4×4', qty: 4 },
-      { label: '1" Clear Tape', qty: 1 },
-    ]
-  },
-  {
-    title: 'Thomas Pack — Center Pouch',
-    items: [
-      { label: 'Nitro', qty: 1 },
-      { label: 'Epi 1:10', qty: 1 },
-      { label: 'Atropine', qty: 1 },
-      { label: 'D10 w/ 10gtt Set', qty: 1 },
-      { label: 'Amiodarone', qty: 1 },
-      { label: 'Portable Sharps Container', qty: 1 },
-    ]
-  },
-  {
-    title: 'Thomas Pack — Top Outside Pocket',
-    items: [
-      { label: 'Trauma Dressing', qty: 2 },
-      { label: 'Adult BP Cuff', qty: 1 },
-      { label: 'Stethoscope', qty: 1 },
-    ]
-  },
-  {
-    title: 'Thomas Pack — Inside Upper Pouch',
-    items: [
-      { label: 'Adult BVM', qty: 1 },
-      { label: 'Adult Tube Turner', qty: 1 },
-      { label: '10mL Syringe', qty: 1 },
-      { label: 'Magill Forceps Adult', qty: 1 },
-      { label: 'Magill Forceps Pediatric', qty: 1 },
-      { label: '6.0 ETT', qty: 1 },
-      { label: '7.0 ETT', qty: 1 },
-      { label: '8.0 ETT', qty: 1 },
-      { label: '9.0 ETT', qty: 1 },
-    ]
-  },
-  {
-    title: 'Thomas Pack — Right Outside Pocket',
-    items: [
-      { label: 'Laryngoscope Handle', qty: 1 },
-      { label: 'Mac 2 Blade', qty: 1 },
-      { label: 'Mac 3 Blade', qty: 1 },
-      { label: 'Mac 4 Blade', qty: 1 },
-      { label: 'Miller 1 Blade', qty: 1 },
-      { label: 'Miller 2 Blade', qty: 1 },
-      { label: 'Miller 3 Blade', qty: 1 },
-      { label: 'Miller 4 Blade', qty: 1 },
-    ]
-  },
-  {
-    title: 'Thomas Pack — Front Outside Pocket',
-    items: [
-      { label: 'Non-Sterile 4×4', qty: 20 },
-      { label: '2" Silk Tape', qty: 1 },
-      { label: 'ABD Pads', qty: 2 },
-      { label: 'Vaseline Gauze', qty: 2 },
-      { label: 'Sheers', qty: 1 },
-      { label: 'Kling', qty: 4 },
-      { label: 'Hemostats', qty: 1 },
-      { label: 'CAT Tourniquet', qty: 1 },
-    ]
-  },
-  {
-    title: 'Time Critical Dx Bands',
-    items: [
-      { label: 'Trauma Bands', qty: 10 },
-      { label: 'Stroke Bands', qty: 10 },
-    ]
-  },
+  { title: 'Miscellaneous Items', items: [
+    { label: 'Fire Extinguisher', qty: 1 }, { label: 'HAZ-MAT Reference Guide', qty: 1 },
+    { label: 'Reflective Safety Wear', qty: 1 }, { label: 'Flashlight + Batteries', qty: 1 },
+    { label: 'Blankets', qty: 2 }, { label: 'Sheets', qty: 2 }, { label: 'Towels', qty: 2 },
+    { label: 'Emesis Basin', qty: 1 }, { label: 'Sharps Container', qty: 1 },
+    { label: 'EMT Shears', qty: 1 }, { label: 'Hemostat', qty: 1 },
+    { label: 'Lubricating Jelly', qty: 1 }, { label: 'Window Punch', qty: 1 },
+    { label: 'Disinfectant Solution', qty: 1 }, { label: 'Betadine Solution', qty: 1 },
+    { label: 'OB Kit', qty: 1 }, { label: 'Pediatric Drug Reference', qty: 1 },
+  ]},
+  { title: 'IO Bag', items: [
+    { label: 'IO Drill (EZ-IO)', qty: 1 }, { label: 'IO Needle 15mm (Pink)', qty: 2 },
+    { label: 'IO Needle 25mm (Blue)', qty: 2 }, { label: 'IO Needle 45mm (Yellow)', qty: 1 },
+    { label: 'IO Stabilizer', qty: 2 }, { label: 'Extension Set', qty: 2 },
+    { label: 'NS 500mL (IO Flush)', qty: 1, expiry: true }, { label: '60mL Syringe', qty: 2 },
+  ]},
+  { title: 'Suction Supplies', items: [
+    { label: 'Portable Suction Unit', qty: 1 }, { label: 'On-Board Suction Unit', qty: 1 },
+    { label: 'Suction Tubing', qty: 2 }, { label: 'Catheter 8fr / 10fr', qty: 1 },
+    { label: 'Catheter 12fr', qty: 1 }, { label: 'Catheter 14fr / 18fr', qty: 1 },
+    { label: 'Rigid Suction Tip', qty: 1 },
+  ]},
+  { title: 'Portable O₂', items: [
+    { label: 'Portable O₂ Cylinder', qty: 1 }, { label: 'O₂ Regulator', qty: 1 },
+    { label: 'Nasal Cannula — Adult', qty: 2 }, { label: 'NRB Mask — Adult', qty: 2 },
+    { label: 'Pedi BVM (450–750mL)', qty: 1 }, { label: 'Infant BVM (150–300mL)', qty: 1 },
+  ]},
+  { title: 'BSI Supplies', items: [
+    { label: 'Exam Gloves (1 Box)', qty: 1 }, { label: 'Isolation Kits', qty: 2 },
+    { label: 'N95 / N100 Respirator', qty: 1 }, { label: 'Eye Protection (Goggles)', qty: 2 },
+    { label: 'Antiseptic Hand Cleaner', qty: 1 }, { label: 'Biohazard Bags', qty: 1 },
+  ]},
+  { title: 'IV Supplies', items: [
+    { label: 'NS 1000mL', qty: 2, expiry: true }, { label: 'NS 500mL', qty: 2, expiry: true },
+    { label: '10gtt Set', qty: 4 }, { label: 'Saline Lock', qty: 4, expiry: true },
+    { label: 'Saline Flush', qty: 4, expiry: true }, { label: '14G IV Cath', qty: 2 },
+    { label: '16G IV Cath', qty: 2 }, { label: '18G IV Cath', qty: 4 },
+    { label: '20G IV Cath', qty: 4 }, { label: '22G IV Cath', qty: 4 },
+    { label: '24G IV Cath', qty: 2 }, { label: 'Tourniquet', qty: 3 },
+    { label: 'Alcohol Preps', qty: 8 }, { label: 'Non-Sterile 4×4', qty: 8 },
+    { label: '1" Clear Tape', qty: 2 },
+  ]},
+  { title: 'Airway Supplies', items: [
+    { label: 'OPA Set (Adult / Child / Infant)', qty: 1 }, { label: 'NPA Set', qty: 1 },
+    { label: 'Adult BVM (>1000mL)', qty: 2 }, { label: 'Magill Forceps — Adult', qty: 1 },
+    { label: 'Magill Forceps — Pedi', qty: 1 }, { label: 'Nebulizer', qty: 1 },
+    { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
+  ]},
+  { title: 'Cardiac Monitor', items: [
+    { label: 'Monitor Unit', qty: 1 }, { label: '12-Lead Electrodes', qty: 1 },
+    { label: 'Defib Pads — Adult', qty: 2 }, { label: 'Defib Pads — Pedi', qty: 1 },
+    { label: 'SpO₂ Probe — Adult', qty: 1 }, { label: 'SpO₂ Probe — Pedi', qty: 1 },
+    { label: 'ETCO₂ Cable + Filterline', qty: 1 }, { label: 'BP Cuff — Lg. Adult', qty: 1 },
+    { label: 'BP Cuff — Adult', qty: 1 }, { label: 'BP Cuff — Child', qty: 1 },
+    { label: 'BP Cuff — Infant', qty: 1 }, { label: 'Stethoscope', qty: 1 },
+  ]},
+  { title: 'O₂ Supplies', items: [
+    { label: 'Main O₂ Cylinder', qty: 1 }, { label: 'O₂ Regulator / Flowmeter', qty: 1 },
+    { label: 'Nasal Cannula — Adult', qty: 4 }, { label: 'Nasal Cannula — Pedi', qty: 4 },
+    { label: 'NRB Mask — Adult', qty: 4 }, { label: 'NRB Mask — Pedi', qty: 2 },
+    { label: 'NRB Mask — Infant', qty: 2 },
+  ]},
+  { title: 'Immobilization', items: [
+    { label: 'KED or Equivalent', qty: 1 }, { label: 'Spine Board + Straps', qty: 2 },
+    { label: 'Pediatric Restraint System', qty: 1 }, { label: 'Head Immobilization Device', qty: 1 },
+    { label: 'Cervical Collar — Adult', qty: 3 }, { label: 'Cervical Collar — Pediatric', qty: 2 },
+    { label: 'Cervical Collar — Infant', qty: 1 },
+  ]},
+  { title: 'Splints & Transport', items: [
+    { label: 'Padded Extremity Splints (set)', qty: 1 }, { label: 'Traction Splint', qty: 1 },
+    { label: 'Elevating Stretcher', qty: 1 }, { label: 'Stair Chair / Scoop Stretcher', qty: 1 },
+  ]},
+  { title: 'Trauma', items: [
+    { label: '4×4 Pads', qty: 6 }, { label: 'ABD Pads', qty: 4 },
+    { label: 'Trauma Dressing', qty: 4 }, { label: 'Roller Gauze', qty: 6 },
+    { label: 'Triangular Bandages', qty: 2 }, { label: 'Occlusive Dressing', qty: 2 },
+    { label: 'Commercial Tourniquet', qty: 2 }, { label: 'Vaseline Gauze', qty: 2 },
+    { label: 'Tape 1"', qty: 2 }, { label: 'TXA', qty: 2, expiry: true },
+  ]},
+  { title: 'Soft Goods & Wound Care', items: [
+    { label: '4×4 Pads', qty: 6 }, { label: 'ABD Pads', qty: 2 },
+    { label: 'Trauma Dressing', qty: 2 }, { label: 'Roller Gauze', qty: 6 },
+    { label: 'Triangular Bandages', qty: 2 }, { label: 'Tape 1"', qty: 2 },
+    { label: 'Tape 2"', qty: 2 }, { label: 'Commercial Tourniquet', qty: 1 },
+  ]},
+  { title: 'Medication Supplies', items: [
+    { label: '18g Needles', qty: 8 }, { label: '20g Needles', qty: 8 },
+    { label: '21g Needles', qty: 4 }, { label: '20mL Syringe', qty: 2 },
+    { label: '10mL Syringe', qty: 8 }, { label: '3mL Syringe', qty: 6 },
+    { label: '1mL Syringe', qty: 1 }, { label: 'Roll of Med Labels', qty: 1 },
+    { label: 'Tape', qty: 4 },
+  ]},
+  { title: 'Medications', items: [
+    { label: 'Albuterol', qty: 6, expiry: true }, { label: 'Atrovent', qty: 4, expiry: true },
+    { label: 'Atropine', qty: 3, expiry: true }, { label: 'Epi 1:1', qty: 1, expiry: true },
+    { label: 'Epi 1:10', qty: 2, expiry: true }, { label: 'Lidocaine', qty: 2, expiry: true },
+    { label: 'Lidocaine Drip', qty: 1, expiry: true }, { label: 'Dopamine Drip', qty: 2, expiry: true },
+    { label: 'Narcan', qty: 4, expiry: true }, { label: 'Magnesium', qty: 1, expiry: true },
+    { label: 'Calcium', qty: 1, expiry: true }, { label: 'Hydralazine', qty: 2, expiry: true },
+    { label: 'Sodium Bicarb', qty: 2, expiry: true }, { label: 'D10', qty: 3, expiry: true },
+    { label: 'Lasix', qty: 2, expiry: true }, { label: 'Adenosine', qty: 3, expiry: true },
+    { label: 'Zofran', qty: 4, expiry: true }, { label: 'Labetalol', qty: 2, expiry: true },
+    { label: 'Activated Charcoal', qty: 2, expiry: true }, { label: 'Thiamine', qty: 1, expiry: true },
+    { label: 'Nitro', qty: 2, expiry: true }, { label: 'Benadryl', qty: 2, expiry: true },
+    { label: 'Aspirin Bottle', qty: 1, expiry: true }, { label: 'Verapamil', qty: 3, expiry: true },
+    { label: 'Oral Glucose', qty: 1, expiry: true }, { label: 'Solu-Medrol', qty: 2, expiry: true },
+    { label: 'Bacteriostatic Water', qty: 2, expiry: true }, { label: 'Amiodarone', qty: 2, expiry: true },
+    { label: 'Glucagon', qty: 1, expiry: true }, { label: 'Diltiazem', qty: 2, expiry: true },
+  ]},
+  { title: 'Thomas Pack — IV Pouch 1', items: [
+    { label: 'NS 1000mL', qty: 1, expiry: true }, { label: '10gtt Set', qty: 1 },
+    { label: 'Tourniquet', qty: 1 }, { label: 'Saline Lock', qty: 1, expiry: true },
+    { label: 'Saline Flush', qty: 1, expiry: true }, { label: '14G IV Cath', qty: 2 },
+    { label: '16G IV Cath', qty: 2 }, { label: '18G IV Cath', qty: 3 },
+    { label: '20G IV Cath', qty: 2 }, { label: '22G IV Cath', qty: 3 },
+    { label: '24G IV Cath', qty: 3 }, { label: 'Alcohol Preps', qty: 4 },
+    { label: 'Non-Sterile 4×4', qty: 4 }, { label: '1" Clear Tape', qty: 1 },
+  ]},
+  { title: 'Thomas Pack — IV Pouch 2', items: [
+    { label: 'NS 500mL', qty: 1, expiry: true }, { label: '10gtt Set', qty: 1 },
+    { label: 'Tourniquet', qty: 1 }, { label: 'Saline Lock', qty: 1, expiry: true },
+    { label: 'Saline Flush', qty: 1, expiry: true }, { label: '14G IV Cath', qty: 2 },
+    { label: '16G IV Cath', qty: 2 }, { label: '18G IV Cath', qty: 2 },
+    { label: '20G IV Cath', qty: 2 }, { label: '22G IV Cath', qty: 3 },
+    { label: '24G IV Cath', qty: 3 }, { label: 'Alcohol Preps', qty: 4 },
+    { label: 'Non-Sterile 4×4', qty: 4 }, { label: '1" Clear Tape', qty: 1 },
+  ]},
+  { title: 'Thomas Pack — Center Pouch', items: [
+    { label: 'Nitro', qty: 1, expiry: true }, { label: 'Epi 1:10', qty: 1, expiry: true },
+    { label: 'Atropine', qty: 1, expiry: true }, { label: 'D10 w/ 10gtt Set', qty: 1, expiry: true },
+    { label: 'Amiodarone', qty: 1, expiry: true }, { label: 'Portable Sharps Container', qty: 1 },
+  ]},
+  { title: 'Thomas Pack — Top Outside Pocket', items: [
+    { label: 'Trauma Dressing', qty: 2 }, { label: 'Adult BP Cuff', qty: 1 }, { label: 'Stethoscope', qty: 1 },
+  ]},
+  { title: 'Thomas Pack — Inside Upper Pouch', items: [
+    { label: 'Adult BVM', qty: 1 }, { label: 'Adult Tube Turner', qty: 1 },
+    { label: '10mL Syringe', qty: 1 }, { label: 'Magill Forceps Adult', qty: 1 },
+    { label: 'Magill Forceps Pediatric', qty: 1 }, { label: '6.0 ETT', qty: 1 },
+    { label: '7.0 ETT', qty: 1 }, { label: '8.0 ETT', qty: 1 }, { label: '9.0 ETT', qty: 1 },
+  ]},
+  { title: 'Thomas Pack — Right Outside Pocket', items: [
+    { label: 'Laryngoscope Handle', qty: 1 }, { label: 'Mac 2 Blade', qty: 1 },
+    { label: 'Mac 3 Blade', qty: 1 }, { label: 'Mac 4 Blade', qty: 1 },
+    { label: 'Miller 1 Blade', qty: 1 }, { label: 'Miller 2 Blade', qty: 1 },
+    { label: 'Miller 3 Blade', qty: 1 }, { label: 'Miller 4 Blade', qty: 1 },
+  ]},
+  { title: 'Thomas Pack — Front Outside Pocket', items: [
+    { label: 'Non-Sterile 4×4', qty: 20 }, { label: '2" Silk Tape', qty: 1 },
+    { label: 'ABD Pads', qty: 2 }, { label: 'Vaseline Gauze', qty: 2 },
+    { label: 'Sheers', qty: 1 }, { label: 'Kling', qty: 4 },
+    { label: 'Hemostats', qty: 1 }, { label: 'CAT Tourniquet', qty: 1 },
+  ]},
+  { title: 'Time Critical Dx Bands', items: [
+    { label: 'Trauma Bands', qty: 10 }, { label: 'Stroke Bands', qty: 10 },
+  ]},
 ];
-
-// ─── BLS-EMT SECTIONS ────────────────────────────────────────────────────────
 
 const BLS_EMT_SECTIONS = [
-  {
-    title: 'Soft Goods & Wound Care',
-    items: [
-      { label: '4×4 Pads', qty: 6 },
-      { label: 'ABD Pads', qty: 2 },
-      { label: 'Trauma Dressing', qty: 2 },
-      { label: 'Roller Gauze', qty: 6 },
-      { label: 'Triangular Bandages', qty: 2 },
-      { label: 'Isolation Kits', qty: 2 },
-      { label: 'Occlusive Dressing', qty: 2 },
-      { label: 'Tape 1"', qty: 2 },
-      { label: 'Tape 2"', qty: 2 },
-      { label: 'Commercial Tourniquet', qty: 1 },
-      { label: 'OB Kit', qty: 1 },
-    ]
-  },
-  {
-    title: 'Assessment & Monitoring',
-    items: [
-      { label: 'Stethoscope', qty: 1 },
-      { label: 'BP Cuff — Lg. Adult', qty: 1 },
-      { label: 'BP Cuff — Adult', qty: 1 },
-      { label: 'BP Cuff — Child', qty: 1 },
-      { label: 'BP Cuff — Infant', qty: 1 },
-      { label: 'Pulse Oximeter', qty: 1 },
-      { label: 'Pulse Ox Probe — Adult', qty: 1 },
-      { label: 'Pulse Ox Probe — Pedi', qty: 1 },
-      { label: 'Thermometer', qty: 1 },
-      { label: 'Glucometer + Strips', qty: 1 },
-      { label: 'Pen Light', qty: 1 },
-      { label: 'Pediatric Drug Reference', qty: 1 },
-    ]
-  },
-  {
-    title: 'AED',
-    items: [
-      { label: 'AED Unit', qty: 1 },
-      { label: 'Adult Pads', qty: 2 },
-      { label: 'Pediatric Pads', qty: 2 },
-    ]
-  },
-  {
-    title: 'Airway',
-    items: [
-      { label: 'OPA Set (Adult / Child / Infant)', qty: 1 },
-      { label: 'NPA Set', qty: 1 },
-      { label: 'Nasal Cannula — Adult', qty: 4 },
-      { label: 'Nasal Cannula — Pedi', qty: 4 },
-      { label: 'NRB Mask — Adult', qty: 4 },
-      { label: 'NRB Mask — Pedi', qty: 2 },
-      { label: 'NRB Mask — Infant', qty: 2 },
-      { label: 'Adult BVM (>1000mL)', qty: 2 },
-      { label: 'Pedi BVM (450–750mL)', qty: 1 },
-      { label: 'Infant BVM (150–300mL)', qty: 1 },
-      { label: 'Magill Forceps — Adult', qty: 1 },
-      { label: 'Magill Forceps — Pedi', qty: 1 },
-    ]
-  },
-  {
-    title: 'Suction Supplies',
-    items: [
-      { label: 'Portable Suction Unit', qty: 1 },
-      { label: 'On-Board Suction Unit', qty: 1 },
-      { label: 'Suction Tubing', qty: 2 },
-      { label: 'Catheter 8fr / 10fr', qty: 1 },
-      { label: 'Catheter 12fr', qty: 1 },
-      { label: 'Catheter 14fr / 18fr', qty: 1 },
-      { label: 'Rigid Suction Tip', qty: 1 },
-    ]
-  },
-  {
-    title: 'Immobilization',
-    items: [
-      { label: 'KED or Equivalent', qty: 1 },
-      { label: 'Spine Board + Straps', qty: 2 },
-      { label: 'Pediatric Restraint System', qty: 1 },
-      { label: 'Head Immobilization Device', qty: 1 },
-      { label: 'Cervical Collar — Adult', qty: 3 },
-      { label: 'Cervical Collar — Pediatric', qty: 2 },
-      { label: 'Cervical Collar — Infant', qty: 1 },
-    ]
-  },
-  {
-    title: 'Splints & Transport',
-    items: [
-      { label: 'Padded Extremity Splints (set)', qty: 1 },
-      { label: 'Traction Splint', qty: 1 },
-      { label: 'Elevating Stretcher', qty: 1 },
-      { label: 'Stair Chair / Scoop Stretcher', qty: 1 },
-    ]
-  },
-  {
-    title: 'Miscellaneous',
-    items: [
-      { label: 'Fire Extinguisher', qty: 1 },
-      { label: 'HAZ-MAT Reference Guide', qty: 1 },
-      { label: 'Reflective Safety Wear', qty: 1 },
-      { label: 'Flashlight + Batteries', qty: 1 },
-      { label: 'N95 / N100 Respirator', qty: 1 },
-      { label: 'Blankets', qty: 2 },
-      { label: 'Sheets', qty: 2 },
-      { label: 'Towels', qty: 2 },
-      { label: 'Exam Gloves (1 Box)', qty: 1 },
-      { label: 'Antiseptic Hand Cleaner', qty: 1 },
-      { label: 'Betadine Solution', qty: 1 },
-      { label: 'Emesis Basin', qty: 1 },
-      { label: 'Sharps Container', qty: 1 },
-      { label: 'EMT Shears', qty: 1 },
-      { label: 'Hemostat', qty: 1 },
-      { label: 'Lubricating Jelly', qty: 1 },
-      { label: 'Window Punch', qty: 1 },
-      { label: 'Biohazard Bags', qty: 1 },
-      { label: 'Disinfectant Solution', qty: 1 },
-    ]
-  },
-  {
-    title: 'EMT Medications',
-    items: [
-      { label: 'Oral Glucose', qty: 1, expiry: true },
-      { label: 'Activated Charcoal', qty: 1, expiry: true },
-      { label: 'Aspirin Bottle', qty: 1, expiry: true },
-      { label: 'Albuterol (Unit Dose)', qty: 4, expiry: true },
-      { label: 'Epi Auto-Injector Adult', qty: 2, expiry: true },
-      { label: 'Epi Auto-Injector Pedi', qty: 1, expiry: true },
-      { label: 'Naloxone (Narcan) Nasal', qty: 4, expiry: true },
-      { label: 'Nitroglycerin SL', qty: 1, expiry: true },
-    ]
-  },
+  { title: 'Soft Goods & Wound Care', items: [
+    { label: '4×4 Pads', qty: 6 }, { label: 'ABD Pads', qty: 2 },
+    { label: 'Trauma Dressing', qty: 2 }, { label: 'Roller Gauze', qty: 6 },
+    { label: 'Triangular Bandages', qty: 2 }, { label: 'Isolation Kits', qty: 2 },
+    { label: 'Occlusive Dressing', qty: 2 }, { label: 'Tape 1"', qty: 2 },
+    { label: 'Tape 2"', qty: 2 }, { label: 'Commercial Tourniquet', qty: 1 }, { label: 'OB Kit', qty: 1 },
+  ]},
+  { title: 'Assessment & Monitoring', items: [
+    { label: 'Stethoscope', qty: 1 }, { label: 'BP Cuff — Lg. Adult', qty: 1 },
+    { label: 'BP Cuff — Adult', qty: 1 }, { label: 'BP Cuff — Child', qty: 1 },
+    { label: 'BP Cuff — Infant', qty: 1 }, { label: 'Pulse Oximeter', qty: 1 },
+    { label: 'Pulse Ox Probe — Adult', qty: 1 }, { label: 'Pulse Ox Probe — Pedi', qty: 1 },
+    { label: 'Thermometer', qty: 1 }, { label: 'Glucometer + Strips', qty: 1 },
+    { label: 'Pen Light', qty: 1 }, { label: 'Pediatric Drug Reference', qty: 1 },
+  ]},
+  { title: 'AED', items: [
+    { label: 'AED Unit', qty: 1 }, { label: 'Adult Pads', qty: 2 }, { label: 'Pediatric Pads', qty: 2 },
+  ]},
+  { title: 'Airway', items: [
+    { label: 'OPA Set (Adult / Child / Infant)', qty: 1 }, { label: 'NPA Set', qty: 1 },
+    { label: 'Nasal Cannula — Adult', qty: 4 }, { label: 'Nasal Cannula — Pedi', qty: 4 },
+    { label: 'NRB Mask — Adult', qty: 4 }, { label: 'NRB Mask — Pedi', qty: 2 },
+    { label: 'NRB Mask — Infant', qty: 2 }, { label: 'Adult BVM (>1000mL)', qty: 2 },
+    { label: 'Pedi BVM (450–750mL)', qty: 1 }, { label: 'Infant BVM (150–300mL)', qty: 1 },
+    { label: 'Magill Forceps — Adult', qty: 1 }, { label: 'Magill Forceps — Pedi', qty: 1 },
+  ]},
+  { title: 'Suction Supplies', items: [
+    { label: 'Portable Suction Unit', qty: 1 }, { label: 'On-Board Suction Unit', qty: 1 },
+    { label: 'Suction Tubing', qty: 2 }, { label: 'Catheter 8fr / 10fr', qty: 1 },
+    { label: 'Catheter 12fr', qty: 1 }, { label: 'Catheter 14fr / 18fr', qty: 1 },
+    { label: 'Rigid Suction Tip', qty: 1 },
+  ]},
+  { title: 'Immobilization', items: [
+    { label: 'KED or Equivalent', qty: 1 }, { label: 'Spine Board + Straps', qty: 2 },
+    { label: 'Pediatric Restraint System', qty: 1 }, { label: 'Head Immobilization Device', qty: 1 },
+    { label: 'Cervical Collar — Adult', qty: 3 }, { label: 'Cervical Collar — Pediatric', qty: 2 },
+    { label: 'Cervical Collar — Infant', qty: 1 },
+  ]},
+  { title: 'Splints & Transport', items: [
+    { label: 'Padded Extremity Splints (set)', qty: 1 }, { label: 'Traction Splint', qty: 1 },
+    { label: 'Elevating Stretcher', qty: 1 }, { label: 'Stair Chair / Scoop Stretcher', qty: 1 },
+  ]},
+  { title: 'Miscellaneous', items: [
+    { label: 'Fire Extinguisher', qty: 1 }, { label: 'HAZ-MAT Reference Guide', qty: 1 },
+    { label: 'Reflective Safety Wear', qty: 1 }, { label: 'Flashlight + Batteries', qty: 1 },
+    { label: 'N95 / N100 Respirator', qty: 1 }, { label: 'Blankets', qty: 2 },
+    { label: 'Sheets', qty: 2 }, { label: 'Towels', qty: 2 },
+    { label: 'Exam Gloves (1 Box)', qty: 1 }, { label: 'Antiseptic Hand Cleaner', qty: 1 },
+    { label: 'Betadine Solution', qty: 1 }, { label: 'Emesis Basin', qty: 1 },
+    { label: 'Sharps Container', qty: 1 }, { label: 'EMT Shears', qty: 1 },
+    { label: 'Hemostat', qty: 1 }, { label: 'Lubricating Jelly', qty: 1 },
+    { label: 'Window Punch', qty: 1 }, { label: 'Biohazard Bags', qty: 1 },
+    { label: 'Disinfectant Solution', qty: 1 },
+  ]},
+  { title: 'EMT Medications', items: [
+    { label: 'Oral Glucose', qty: 1, expiry: true }, { label: 'Activated Charcoal', qty: 1, expiry: true },
+    { label: 'Aspirin Bottle', qty: 1, expiry: true }, { label: 'Albuterol (Unit Dose)', qty: 4, expiry: true },
+    { label: 'Epi Auto-Injector Adult', qty: 2, expiry: true }, { label: 'Epi Auto-Injector Pedi', qty: 1, expiry: true },
+    { label: 'Naloxone (Narcan) Nasal', qty: 4, expiry: true }, { label: 'Nitroglycerin SL', qty: 1, expiry: true },
+  ]},
 ];
 
-// ALS-AEMT: all BLS items + nebulizer in Airway + AEMT medications + advanced airway section
 const ALS_AEMT_SECTIONS = BLS_EMT_SECTIONS.map(sec => {
-  if (sec.title === 'Airway') {
-    return {
-      ...sec,
-      items: [
-        ...sec.items,
-        { label: 'Nebulizer', qty: 1 },
-        { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
-      ]
-    };
-  }
-  if (sec.title === 'EMT Medications') {
-    return {
-      title: 'AEMT Medications',
-      items: [
-        ...sec.items,
-        { label: 'NS 1000mL', qty: 2 },
-        { label: 'NS 500mL', qty: 1 },
-        { label: 'D10', qty: 2, expiry: true },
-        { label: 'Epi 1:1000 (Injectable)', qty: 2, expiry: true },
-        { label: 'Atrovent', qty: 4, expiry: true },
-        { label: 'Glucagon', qty: 1, expiry: true },
-        { label: 'Benadryl (Diphenhydramine)', qty: 2, expiry: true },
-        { label: 'Zofran (Ondansetron)', qty: 2, expiry: true },
-      ]
-    };
-  }
+  if (sec.title === 'Airway') return { ...sec, items: [...sec.items, { label: 'Nebulizer', qty: 1 }, { label: 'Sterile Saline (for Nebulizer)', qty: 1 }] };
+  if (sec.title === 'EMT Medications') return { title: 'AEMT Medications', items: [...sec.items,
+    { label: 'NS 1000mL', qty: 2 }, { label: 'NS 500mL', qty: 1 },
+    { label: 'D10', qty: 2, expiry: true }, { label: 'Epi 1:1000 (Injectable)', qty: 2, expiry: true },
+    { label: 'Atrovent', qty: 4, expiry: true }, { label: 'Glucagon', qty: 1, expiry: true },
+    { label: 'Benadryl (Diphenhydramine)', qty: 2, expiry: true }, { label: 'Zofran (Ondansetron)', qty: 2, expiry: true },
+  ]};
   return sec;
-}).concat([
-  {
-    title: 'AEMT Advanced Airway',
-    items: [
-      { label: 'Multi-Lumen Airway (iGel / King LT)', qty: 1 },
-    ]
-  }
-]);
-
-// ─── UNIT CHECK OFF DATA ─────────────────────────────────────────────────────
+}).concat([{ title: 'AEMT Advanced Airway', items: [{ label: 'Multi-Lumen Airway (iGel / King LT)', qty: 1 }] }]);
 
 const UCO_SECTIONS = [
   { title: 'Fluids & Engine', items: ['Fuel Level','Oil Level','Radiator Water Level','P/S Fluid Level','Windshield Fluid Level','Trans Fluid Level','Belts / Hose / Wires'] },
@@ -734,8 +618,6 @@ const UCO_SECTIONS = [
   { title: 'Tire Inspection', items: ['Pressure','Wear and Cuts','Rims / Simulators'] },
 ];
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
-
 const STORE_KEY = 'easi-checkoff-v2';
 let state = {};
 let currentUnit = 'als-para';
@@ -744,43 +626,30 @@ function loadState() {
   try { state = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { state = {}; }
   currentUnit = state.unitType || 'als-para';
 }
-
 function saveState() {
   state.unitType = currentUnit;
   localStorage.setItem(STORE_KEY, JSON.stringify(state));
   const el = document.getElementById('save-status');
   if (el) el.textContent = 'Saved ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
-
 function todayStr() { return new Date().toISOString().split('T')[0]; }
-
 function getActiveSections() {
   if (currentUnit === 'als-para') return ALS_PARA_SECTIONS;
   if (currentUnit === 'als-aemt') return ALS_AEMT_SECTIONS;
   if (currentUnit === 'bls-emt') return BLS_EMT_SECTIONS;
   return [];
 }
-
-// ─── TABS ────────────────────────────────────────────────────────────────────
-
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
 }
-
-// ─── UNIT TYPE ────────────────────────────────────────────────────────────────
-
 function setUnit(unit) {
   currentUnit = unit;
   document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.unit === unit));
-  buildEquip();
-  saveState();
+  buildEquip(); saveState();
 }
-
-// ─── EQUIPMENT CHECK ──────────────────────────────────────────────────────────
-
 function buildEquip() {
   const s = state.equip || {};
   document.getElementById('eq-unit').value = s.unit || '';
@@ -791,36 +660,22 @@ function buildEquip() {
   document.getElementById('eq-porto2').value = s.porto2 || '';
   document.getElementById('eq-sealnum').value = s.sealnum || '';
   document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.unit === currentUnit));
-
-  // Update header field labels and Narcotic Seal visibility per unit type
-  document.getElementById('eq-paramedic-label').textContent =
-    currentUnit === 'als-para' ? 'Paramedic' : currentUnit === 'als-aemt' ? 'AEMT' : 'EMT 1';
-  document.getElementById('eq-emt-label').textContent =
-    currentUnit === 'bls-emt' ? 'EMT 2' : 'EMT';
-  document.getElementById('eq-sealnum-field').style.display =
-    currentUnit === 'als-para' ? '' : 'none';
-
+  document.getElementById('eq-paramedic-label').textContent = currentUnit === 'als-para' ? 'Paramedic' : currentUnit === 'als-aemt' ? 'AEMT' : 'EMT 1';
+  document.getElementById('eq-emt-label').textContent = currentUnit === 'bls-emt' ? 'EMT 2' : 'EMT';
+  document.getElementById('eq-sealnum-field').style.display = currentUnit === 'als-para' ? '' : 'none';
   const container = document.getElementById('equip-sections');
   container.innerHTML = '';
-
   const sections = getActiveSections();
-
   if (!sections.length) {
-    container.innerHTML = `<div class="card" style="text-align:center;padding:28px 16px">
-      <div style="font-size:28px;margin-bottom:10px">🚧</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Unavailable</div>
-      <div style="font-size:12px;color:var(--muted)">Check-off sheet for this unit type has not been configured yet.</div>
-    </div>`;
+    container.innerHTML = `<div class="card" style="text-align:center;padding:28px 16px"><div style="font-size:28px;margin-bottom:10px">🚧</div><div style="font-size:15px;font-weight:700;margin-bottom:6px">Unavailable</div><div style="font-size:12px;color:var(--muted)">Check-off sheet for this unit type has not been configured yet.</div></div>`;
     return;
   }
-
   const counts = s.counts || {};
   const expDates = s.expDates || {};
-
+  const outOfStock = s.outOfStock || {};
   sections.forEach((sec, si) => {
     const div = document.createElement('div');
     div.className = 'section';
-
     const itemsHTML = sec.items.map((item, ii) => {
       const key = 'eq_' + si + '_' + ii;
       const countVal = counts[key] !== undefined ? counts[key] : '';
@@ -829,62 +684,46 @@ function buildEquip() {
       const isLow = act !== null && !isNaN(act) && act > 0 && act < item.qty;
       const expDate = item.expiry ? (expDates[key] || '') : '';
       const isExpired = !!(expDate && expDate < todayStr());
-
+      const isOOS = outOfStock[key] || false;
       let cls = 'check-item';
-      if (isOk) cls += ' item-ok';
+      if (isOOS) cls += ' item-oos';
+      else if (isOk) cls += ' item-ok';
       else if (isLow) cls += ' item-low';
-      if (isExpired) cls += ' exp-red';
-
-      const expInput = item.expiry
-        ? `<input type="date" class="med-expiry-input${isExpired ? ' exp-red' : ''}" value="${expDate}"
-            onclick="event.stopPropagation()"
-            onchange="setMedExpiry('${key}',this.value,this.closest('.check-item'))">`
-        : '';
-
-      return `<div class="${cls}" data-key="${key}" data-qty="${item.qty}">
-        <span class="qty-expected">×${item.qty}</span>
-        <span class="check-label">${item.label}</span>
-        <input type="number" class="qty-input" min="0" step="1" placeholder="qty" value="${countVal}"
-          onclick="event.stopPropagation()"
-          oninput="handleQtyInput('${key}',this)">
-        ${expInput}
-      </div>`;
+      if (isExpired && !isOOS) cls += ' exp-red';
+      const expInput = item.expiry ? `<input type="date" class="med-expiry-input${isExpired && !isOOS ? ' exp-red' : ''}" value="${expDate}" onclick="event.stopPropagation()" onchange="setMedExpiry('${key}',this.value,this.closest('.check-item'))">` : '';
+      return `<div class="${cls}" data-key="${key}" data-qty="${item.qty}"><span class="qty-expected">×${item.qty}</span><span class="check-label">${item.label}</span><input type="number" class="qty-input" min="0" step="1" placeholder="qty" value="${countVal}" onclick="event.stopPropagation()" oninput="handleQtyInput('${key}',this)">${expInput}<button class="oos-btn" onclick="event.stopPropagation();toggleOOS('${key}',this.closest('.check-item'))">OOS</button></div>`;
     }).join('');
-
-    div.innerHTML = `
-      <div class="section-header" onclick="this.closest('.section').classList.toggle('open')">
-        <span class="section-title">${sec.title}</span>
-        <span style="display:flex;align-items:center;gap:6px">
-          <span class="section-meta">0/0</span>
-          <span class="section-arrow">▼</span>
-        </span>
-      </div>
-      <div class="section-body">${itemsHTML}</div>`;
+    div.innerHTML = `<div class="section-header" onclick="this.closest('.section').classList.toggle('open')"><span class="section-title">${sec.title}</span><span style="display:flex;align-items:center;gap:6px"><span class="section-meta">0/0</span><span class="section-arrow">▼</span></span></div><div class="section-body">${itemsHTML}</div>`;
     container.appendChild(div);
     updateSectionCount(div, 'equip');
   });
 }
-
 function handleQtyInput(key, inputEl) {
   const val = inputEl.value;
   if (!state.equip) state.equip = {};
   if (!state.equip.counts) state.equip.counts = {};
   state.equip.counts[key] = val;
-
   const itemEl = inputEl.closest('.check-item');
   const expectedQty = parseInt(itemEl.dataset.qty, 10);
   const act = val !== '' ? parseInt(val, 10) : null;
-
   itemEl.classList.remove('item-ok', 'item-low');
   if (act !== null && !isNaN(act)) {
     if (act >= expectedQty) itemEl.classList.add('item-ok');
     else if (act > 0) itemEl.classList.add('item-low');
   }
-
   updateSectionCount(itemEl.closest('.section'), 'equip');
   saveState();
 }
-
+function toggleOOS(key, itemEl) {
+  if (!state.equip) state.equip = {};
+  if (!state.equip.outOfStock) state.equip.outOfStock = {};
+  const isOOS = !state.equip.outOfStock[key];
+  state.equip.outOfStock[key] = isOOS;
+  itemEl.classList.toggle('item-oos', isOOS);
+  if (isOOS) itemEl.classList.remove('item-ok', 'item-low', 'exp-red');
+  updateSectionCount(itemEl.closest('.section'), 'equip');
+  saveState();
+}
 function setMedExpiry(key, val, itemEl) {
   if (!state.equip) state.equip = {};
   if (!state.equip.expDates) state.equip.expDates = {};
@@ -895,13 +734,14 @@ function setMedExpiry(key, val, itemEl) {
   if (input) input.classList.toggle('exp-red', isExpired);
   saveState();
 }
-
 function updateSectionCount(secEl, formKey) {
   const items = secEl.querySelectorAll('.check-item');
   let done = 0;
   if (formKey === 'equip') {
     const counts = (state.equip && state.equip.counts) || {};
+    const oosMap = (state.equip && state.equip.outOfStock) || {};
     items.forEach(el => {
+      if (oosMap[el.dataset.key]) return;
       const act = parseInt(counts[el.dataset.key] || '', 10);
       if (!isNaN(act) && act >= parseInt(el.dataset.qty || '1', 10)) done++;
     });
@@ -912,38 +752,23 @@ function updateSectionCount(secEl, formKey) {
   const meta = secEl.querySelector('.section-meta');
   if (meta) meta.textContent = done + '/' + items.length;
 }
-
 function bindEquipFields() {
-  [['eq-unit','unit'],['eq-date','date'],['eq-paramedic','paramedic'],
-   ['eq-emt','emt'],['eq-maino2','maino2'],['eq-porto2','porto2'],['eq-sealnum','sealnum']].forEach(([id, key]) => {
-    document.getElementById(id).addEventListener('input', e => {
-      if (!state.equip) state.equip = {};
-      state.equip[key] = e.target.value;
-      saveState();
-    });
+  [['eq-unit','unit'],['eq-date','date'],['eq-paramedic','paramedic'],['eq-emt','emt'],['eq-maino2','maino2'],['eq-porto2','porto2'],['eq-sealnum','sealnum']].forEach(([id, key]) => {
+    document.getElementById(id).addEventListener('input', e => { if (!state.equip) state.equip = {}; state.equip[key] = e.target.value; saveState(); });
   });
 }
-
 function resetEquip() {
   if (!confirm('⚠️ Reset Equipment Check?\n\nThis will permanently clear ALL entered quantities, expiration dates, and saved field data. This cannot be undone.\n\nContinue?')) return;
-  state.equip = {};
-  buildEquip();
-  saveState();
+  state.equip = {}; buildEquip(); saveState();
 }
-
 function exportEquip() {
   const html = getEquipReportHTML();
   if (!html) { alert('No form configured for this unit type yet.'); return; }
   const win = window.open('', '_blank');
   if (!win) { alert('Allow pop-ups to export PDF.'); return; }
-  win.document.write(html);
-  win.document.close();
-  win.focus();
+  win.document.write(html); win.document.close(); win.focus();
   setTimeout(() => win.print(), 400);
 }
-
-// ─── UNIT CHECK OFF ───────────────────────────────────────────────────────────
-
 function buildUCO() {
   const s = state.uco || {};
   document.getElementById('uco-unit').value = s.unit || '';
@@ -955,36 +780,22 @@ function buildUCO() {
   document.getElementById('uco-fuelcard').value = s.fuelcard || '';
   document.getElementById('uco-extinguisher').value = s.extinguisher || '';
   setMaintRequest(s.maint || null, true);
-
   const container = document.getElementById('uco-sections');
   container.innerHTML = '';
   const checks = s.checks || {};
-
   UCO_SECTIONS.forEach((sec, si) => {
     const div = document.createElement('div');
     div.className = 'section';
     const itemsHTML = sec.items.map((item, ii) => {
       const key = 'uco_' + si + '_' + ii;
       const done = checks[key] || false;
-      return `<div class="check-item uco-item${done ? ' checked' : ''}" data-key="${key}" onclick="toggleUCOItem('${key}',this)">
-        <div class="check-box"></div>
-        <span class="check-label">${item}</span>
-      </div>`;
+      return `<div class="check-item uco-item${done ? ' checked' : ''}" data-key="${key}" onclick="toggleUCOItem('${key}',this)"><div class="check-box"></div><span class="check-label">${item}</span></div>`;
     }).join('');
-    div.innerHTML = `
-      <div class="section-header" onclick="this.closest('.section').classList.toggle('open')">
-        <span class="section-title">${sec.title}</span>
-        <span style="display:flex;align-items:center;gap:6px">
-          <span class="section-meta">0/0</span>
-          <span class="section-arrow">▼</span>
-        </span>
-      </div>
-      <div class="section-body">${itemsHTML}</div>`;
+    div.innerHTML = `<div class="section-header" onclick="this.closest('.section').classList.toggle('open')"><span class="section-title">${sec.title}</span><span style="display:flex;align-items:center;gap:6px"><span class="section-meta">0/0</span><span class="section-arrow">▼</span></span></div><div class="section-body">${itemsHTML}</div>`;
     container.appendChild(div);
     updateSectionCount(div, 'uco');
   });
 }
-
 function toggleUCOItem(key, el) {
   if (!state.uco) state.uco = {};
   if (!state.uco.checks) state.uco.checks = {};
@@ -993,116 +804,55 @@ function toggleUCOItem(key, el) {
   updateSectionCount(el.closest('.section'), 'uco');
   saveState();
 }
-
 function setMaintRequest(val, silent) {
-  if (!silent) {
-    if (!state.uco) state.uco = {};
-    state.uco.maint = val;
-    saveState();
-  }
+  if (!silent) { if (!state.uco) state.uco = {}; state.uco.maint = val; saveState(); }
   document.getElementById('maint-yes').classList.toggle('active', val === 'yes');
   document.getElementById('maint-no').classList.toggle('active', val === 'no');
 }
-
 function bindUCOFields() {
-  [['uco-unit','unit'],['uco-date','date'],['uco-mileage','mileage'],
-   ['uco-name','name'],['uco-radio','radio'],
-   ['uco-repairs','repairs'],['uco-fuelcard','fuelcard'],['uco-extinguisher','extinguisher']].forEach(([id, key]) => {
-    document.getElementById(id).addEventListener('input', e => {
-      if (!state.uco) state.uco = {};
-      state.uco[key] = e.target.value;
-      saveState();
-    });
+  [['uco-unit','unit'],['uco-date','date'],['uco-mileage','mileage'],['uco-name','name'],['uco-radio','radio'],['uco-repairs','repairs'],['uco-fuelcard','fuelcard'],['uco-extinguisher','extinguisher']].forEach(([id, key]) => {
+    document.getElementById(id).addEventListener('input', e => { if (!state.uco) state.uco = {}; state.uco[key] = e.target.value; saveState(); });
   });
 }
-
 function resetUCO() {
   if (!confirm('⚠️ Reset Unit Check Off?\n\nThis will permanently clear ALL checked items and saved field data. This cannot be undone.\n\nContinue?')) return;
-  state.uco = {};
-  buildUCO();
-  saveState();
+  state.uco = {}; buildUCO(); saveState();
 }
-
-// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
-
 let _emailForm = 'equip';
-
-function openEmailModal(form) {
-  _emailForm = form;
-  document.getElementById('email-modal').classList.add('open');
-}
-
-function closeEmailModal() {
-  document.getElementById('email-modal').classList.remove('open');
-}
-
+function openEmailModal(form) { _emailForm = form; document.getElementById('email-modal').classList.add('open'); }
+function closeEmailModal() { document.getElementById('email-modal').classList.remove('open'); }
 function toggleRecip(el) { el.classList.toggle('selected'); }
-
 async function sendEmail() {
   const recipients = [...document.querySelectorAll('.recip-item.selected')].map(el => el.dataset.email);
   if (!recipients.length) { alert('Select at least one recipient.'); return; }
   closeEmailModal();
-
   const s = _emailForm === 'equip' ? (state.equip || {}) : (state.uco || {});
   const unitLabel = currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS';
-  const subject = _emailForm === 'equip'
-    ? `EMS Check — ${unitLabel} Stock Sheet — ${s.unit || ''} ${s.date || ''}`
-    : `EMS Check — Unit Check Off — ${s.unit || ''} ${s.date || ''}`;
+  const subject = _emailForm === 'equip' ? `EMS Check — ${unitLabel} Stock Sheet — ${s.unit || ''} ${s.date || ''}` : `EMS Check — Unit Check Off — ${s.unit || ''} ${s.date || ''}`;
   const slug = (s.unit || 'unit').replace(/\W+/g, '-') + '-' + (s.date || todayStr());
   const prefix = _emailForm === 'equip' ? unitLabel.toLowerCase() + '-stock-' : 'unit-check-';
   const filename = prefix + slug + '.html';
-
   const html = _emailForm === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
   if (!html) { alert('No form configured for this unit type yet.'); return; }
-
   const blob = new Blob([html], { type: 'text/html' });
   const file = new File([blob], filename, { type: 'text/html' });
-
-  // Mobile: try Web Share API — opens native share sheet with file attached
-  // User picks Mail app and file is attached directly
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({
-        files: [file],
-        title: subject,
-        text: 'To: ' + recipients.join(', '),
-      });
-      return;
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-      // Share failed — fall through to download+mailto
-    }
+    try { await navigator.share({ files: [file], title: subject, text: 'To: ' + recipients.join(', ') }); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
   }
-
-  // Desktop fallback: auto-download report file, then open email client
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-
-  // Open email after brief delay so download can start
-  setTimeout(() => {
-    window.location.href = 'mailto:' + recipients.join(',')
-      + '?subject=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent('Please attach the downloaded report: ' + filename);
-  }, 700);
+  setTimeout(() => { window.location.href = 'mailto:' + recipients.join(',') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent('Please attach the downloaded report: ' + filename); }, 700);
 }
-
-// ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
-
-const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmgxAurWzo-5I4DCAyszBOoaVHJWROcvDH-gJY8BAYRmk7mOEstEWrf4PP7eMhPVhY/exec';
-
 function getDriveFilename(form) {
   const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
   const unit = (s.unit || 'Unit').trim();
   const date = (s.date || todayStr()).trim();
   if (form === 'equip') {
-    const p1 = (s.paramedic || '').trim();
-    const p2 = (s.emt || '').trim();
+    const p1 = (s.paramedic || '').trim(); const p2 = (s.emt || '').trim();
     const names = [p1, p2].filter(Boolean).join(' & ') || 'Crew';
     const type = currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS';
     return `${unit} ${names} ${date} ${type} Stock.html`.replace(/\s+/g, ' ').trim();
@@ -1111,209 +861,99 @@ function getDriveFilename(form) {
     return `${unit} ${name} ${date} Unit Check Off.html`.replace(/\s+/g, ' ').trim();
   }
 }
-
-async function saveToDrive(form) {
+function downloadReport(form) {
   const reportData = form === 'equip' ? getEquipReportData() : getUCOReportData();
   if (!reportData) { alert('Fill in the form first.'); return; }
-  const isComplete = confirm('Is this check-off complete?\n\nOK → Complete\nCancel → Save as INCOMPLETE draft');
+  const isComplete = confirm('Is this check-off complete?\n\nOK → Complete\nCancel → Mark as INCOMPLETE');
   let filename = getDriveFilename(form);
   if (!isComplete) filename = filename.replace('.html', ' - INCOMPLETE.html');
-
-  // Open formatted report in new tab for viewing / printing
-  const html = buildPrintHTML(reportData);
-  const win = window.open('', '_blank');
-  if (win) { win.document.write(html); win.document.close(); }
-
-  // Send full report data to Apps Script — it rebuilds the HTML and saves to Drive
-  if (DRIVE_SCRIPT_URL) {
-    const payload = Object.assign({}, reportData, { filename, complete: isComplete });
-    fetch(DRIVE_SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload)), {
-      mode: 'no-cors'
-    }).catch(() => {});
-  }
-
-  showToast(isComplete ? 'Saved to Drive ✓' : 'Saved as INCOMPLETE to Drive ✓');
+  const reportHTML = buildPrintHTML(reportData);
+  const blob = new Blob([reportHTML], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  showToast('Downloaded ✓');
 }
-
 function showToast(msg) {
   let t = document.getElementById('toast');
   if (!t) { t = document.createElement('div'); t.id = 'toast'; document.body.appendChild(t); }
   t.textContent = msg;
   t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
-  }));
+  requestAnimationFrame(() => requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; }));
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => {
-    t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)';
-  }, 2800);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 2800);
 }
-
-// ─── PRINT / EXPORT ──────────────────────────────────────────────────────────
-
 function getEquipReportData() {
   const s = state.equip || {};
-  const counts = s.counts || {};
-  const expDates = s.expDates || {};
-  const sections = getActiveSections();
-  const today = todayStr();
+  const counts = s.counts || {}; const expDates = s.expDates || {};
+  const sections = getActiveSections(); const today = todayStr();
   if (!sections.length) return null;
+  const outOfStock = s.outOfStock || {};
   const sectionData = sections.map((sec, si) => {
     let done = 0;
     const items = sec.items.map((item, ii) => {
       const key = 'eq_' + si + '_' + ii;
+      const isOOS = outOfStock[key] || false;
       const act = counts[key] !== undefined ? counts[key] : '';
       const actNum = act !== '' ? parseInt(act, 10) : null;
-      const ok = actNum !== null && !isNaN(actNum) && actNum >= item.qty;
+      const ok = !isOOS && actNum !== null && !isNaN(actNum) && actNum >= item.qty;
       if (ok) done++;
       let expStr = '';
-      if (item.expiry) {
-        const exp = expDates[key] || '';
-        expStr = exp ? ` [Exp:${exp}${exp < today ? ' ⚠EXPIRED' : ''}]` : ' [Exp:—]';
-      }
-      return { label: `${item.label} ×${item.qty}  Act:${act || '—'}${expStr}`, done: ok };
+      if (!isOOS && item.expiry) { const exp = expDates[key] || ''; expStr = exp ? ` [Exp:${exp}${exp < today ? ' ⚠EXPIRED' : ''}]` : ' [Exp:—]'; }
+      const label = isOOS ? `${item.label} ×${item.qty}  — OUT OF STOCK` : `${item.label} ×${item.qty}  Act:${act || '—'}${expStr}`;
+      return { label, done: ok };
     });
     return { title: sec.title, items, done, total: sec.items.length };
   });
-  const rptTitles = {
-    'als-para': 'EMS Check — ALS Unit Stock Sheet',
-    'als-aemt': 'EMS Check — ALS-AEMT Stock Sheet',
-    'bls-emt':  'EMS Check — BLS Unit Stock Sheet',
-  };
+  const rptTitles = { 'als-para': 'EMS Check — ALS Unit Stock Sheet', 'als-aemt': 'EMS Check — ALS-AEMT Stock Sheet', 'bls-emt': 'EMS Check — BLS Unit Stock Sheet' };
   const providerLabel = currentUnit === 'als-para' ? 'Paramedic' : currentUnit === 'als-aemt' ? 'AEMT' : 'EMT 1';
-  const crewLabel     = currentUnit === 'bls-emt' ? 'EMT 2' : 'EMT';
-  const rptSigs = currentUnit === 'als-para'  ? ['Paramedic Signature', 'EMT Signature']
-                : currentUnit === 'als-aemt' ? ['AEMT Signature', 'EMT Signature']
-                : ['EMT 1 Signature', 'EMT 2 Signature'];
+  const crewLabel = currentUnit === 'bls-emt' ? 'EMT 2' : 'EMT';
+  const rptSigs = currentUnit === 'als-para' ? ['Paramedic Signature', 'EMT Signature'] : currentUnit === 'als-aemt' ? ['AEMT Signature', 'EMT Signature'] : ['EMT 1 Signature', 'EMT 2 Signature'];
   const rptMeta = [
-    { label: 'Unit #', value: s.unit || '' },
-    { label: 'Date',   value: s.date || '' },
-    { label: providerLabel, value: s.paramedic || '' },
-    { label: crewLabel,     value: s.emt || '' },
-    { label: 'Main O₂ PSI',     value: s.maino2 || '' },
-    { label: 'Portable O₂ PSI', value: s.porto2 || '' },
+    { label: 'Unit #', value: s.unit || '' }, { label: 'Date', value: s.date || '' },
+    { label: providerLabel, value: s.paramedic || '' }, { label: crewLabel, value: s.emt || '' },
+    { label: 'Main O₂ PSI', value: s.maino2 || '' }, { label: 'Portable O₂ PSI', value: s.porto2 || '' },
     ...(currentUnit === 'als-para' ? [{ label: 'Narcotic Seal #', value: s.sealnum || '' }] : []),
   ];
-  return {
-    title: rptTitles[currentUnit] || 'EMS Check — Unit Stock Sheet',
-    meta: rptMeta,
-    sections: sectionData,
-    sigs: rptSigs,
-  };
+  return { title: rptTitles[currentUnit] || 'EMS Check — Unit Stock Sheet', meta: rptMeta, sections: sectionData, sigs: rptSigs };
 }
-
-function getEquipReportHTML() {
-  const data = getEquipReportData();
-  return data ? buildPrintHTML(data) : null;
-}
-
+function getEquipReportHTML() { const data = getEquipReportData(); return data ? buildPrintHTML(data) : null; }
 function getUCOReportData() {
-  const s = state.uco || {};
-  const checks = s.checks || {};
-  const sections = UCO_SECTIONS.map((sec, si) => ({
-    title: sec.title,
-    items: sec.items.map((item, ii) => ({ label: item, done: checks['uco_'+si+'_'+ii] || false })),
-    done: sec.items.filter((_, ii) => checks['uco_'+si+'_'+ii]).length,
-    total: sec.items.length
-  }));
-  return {
-    title: 'EMS Check — Unit Check Off',
-    meta: [
-      { label: 'Unit #', value: s.unit || '' },
-      { label: 'Date', value: s.date || '' },
-      { label: 'Mileage', value: s.mileage || '' },
-      { label: 'EMT', value: s.name || '' },
-      { label: 'Radio #', value: s.radio || '' },
-    ],
-    sections,
-    sigs: ['EMT Signature', 'Supervisor'],
-    closing: { repairs: s.repairs||'', fuelcard: s.fuelcard||'', extinguisher: s.extinguisher||'', maint: s.maint||null }
-  };
+  const s = state.uco || {}; const checks = s.checks || {};
+  const sections = UCO_SECTIONS.map((sec, si) => ({ title: sec.title, items: sec.items.map((item, ii) => ({ label: item, done: checks['uco_'+si+'_'+ii] || false })), done: sec.items.filter((_, ii) => checks['uco_'+si+'_'+ii]).length, total: sec.items.length }));
+  return { title: 'EMS Check — Unit Check Off', meta: [{ label: 'Unit #', value: s.unit || '' }, { label: 'Date', value: s.date || '' }, { label: 'Mileage', value: s.mileage || '' }, { label: 'EMT', value: s.name || '' }, { label: 'Radio #', value: s.radio || '' }], sections, sigs: ['EMT Signature', 'Supervisor'], closing: { repairs: s.repairs||'', fuelcard: s.fuelcard||'', extinguisher: s.extinguisher||'', maint: s.maint||null } };
 }
-
-function getUCOReportHTML() {
-  return buildPrintHTML(getUCOReportData());
-}
-
+function getUCOReportHTML() { return buildPrintHTML(getUCOReportData()); }
 function buildPrintHTML({ title, meta, sections, sigs, closing }) {
-  const metaHTML = meta.map(m =>
-    `<div style="display:inline-block;margin-right:16px;margin-bottom:4px">
-      <span style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.4px">${m.label}:</span>
-      <span style="font-size:11px;font-weight:600;margin-left:4px">${m.value}</span>
-    </div>`).join('');
-
-  const sectionsHTML = sections.map(sec => {
-    if (!sec.items.length) return '';
-    const itemsHTML = sec.items.map(item =>
-      `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
-        <span style="font-size:14px;line-height:1;margin-top:1px">${item.done ? '☑' : '☐'}</span>
-        <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
-      </div>`).join('');
-    return `<div style="break-inside:avoid;margin-bottom:10px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;padding-bottom:2px;margin-bottom:4px">
-        ${sec.title}<span style="font-weight:400;font-size:9px;color:#666"> (${sec.done}/${sec.total})</span>
-      </div>${itemsHTML}</div>`;
-  }).join('');
-
-  const sigsHTML = (sigs || []).map(s =>
-    `<div style="flex:1;border-top:1px solid #000;padding-top:4px;font-size:10px;color:#666">${s}</div>`).join('');
-
-  const closingHTML = closing ? `
-    <div style="margin-top:10px;border:1px solid #000;padding:6px 8px;font-size:11px">
-      <div style="font-weight:700;margin-bottom:4px">Repairs Needed / New Body Damage:</div>
-      <div style="min-height:28px;border-bottom:1px solid #aaa;padding-bottom:2px">${closing.repairs || ''}</div>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:8px;font-size:11px">
-      <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fuel Card:</b> ${closing.fuelcard || ''}</div>
-      <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fire Extinguisher:</b> ${closing.extinguisher || ''}</div>
-      <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Maint. Request?</b> ${closing.maint ? closing.maint.toUpperCase() : '☐ YES  ☐ NO'}</div>
-    </div>` : '';
-
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
-  <style>body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:0;padding:10px 14px}h1{font-size:14px;margin:0 0 2px}.subtitle{font-size:10px;color:#444;margin-bottom:6px}.meta{background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:6px 8px;margin-bottom:8px}.sections{columns:2;column-gap:16px}.sigs{display:flex;gap:30px;margin-top:18px}@media print{body{padding:6px 10px}}</style>
-  </head><body>
-  <h1>${title}</h1>
-  <div class="subtitle">Emergency Ambulance Service, Inc.</div>
-  <div class="meta">${metaHTML}</div>
-  <div class="sections">${sectionsHTML}</div>
-  ${closingHTML}
-  <div class="sigs" style="margin-top:${closing?'14px':'18px'}">${sigsHTML}</div>
-  </body></html>`;
+  const metaHTML = meta.map(m => `<div style="display:inline-block;margin-right:16px;margin-bottom:4px"><span style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.4px">${m.label}:</span><span style="font-size:11px;font-weight:600;margin-left:4px">${m.value}</span></div>`).join('');
+  const sectionsHTML = sections.map(sec => { if (!sec.items.length) return ''; const itemsHTML = sec.items.map(item => `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee"><span style="font-size:14px;line-height:1;margin-top:1px">${item.done ? '☑' : '☐'}</span><span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span></div>`).join(''); return `<div style="break-inside:avoid;margin-bottom:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;padding-bottom:2px;margin-bottom:4px">${sec.title}<span style="font-weight:400;font-size:9px;color:#666"> (${sec.done}/${sec.total})</span></div>${itemsHTML}</div>`; }).join('');
+  const sigsHTML = (sigs || []).map(s => `<div style="flex:1;border-top:1px solid #000;padding-top:4px;font-size:10px;color:#666">${s}</div>`).join('');
+  const closingHTML = closing ? `<div style="margin-top:10px;border:1px solid #000;padding:6px 8px;font-size:11px"><div style="font-weight:700;margin-bottom:4px">Repairs Needed / New Body Damage:</div><div style="min-height:28px;border-bottom:1px solid #aaa;padding-bottom:2px">${closing.repairs || ''}</div></div><div style="display:flex;gap:8px;margin-top:8px;font-size:11px"><div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fuel Card:</b> ${closing.fuelcard || ''}</div><div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fire Extinguisher:</b> ${closing.extinguisher || ''}</div><div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Maint. Request?</b> ${closing.maint ? closing.maint.toUpperCase() : '☐ YES  ☐ NO'}</div></div>` : '';
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:0;padding:10px 14px}h1{font-size:14px;margin:0 0 2px}.subtitle{font-size:10px;color:#444;margin-bottom:6px}.meta{background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:6px 8px;margin-bottom:8px}.sections{columns:2;column-gap:16px}.sigs{display:flex;gap:30px;margin-top:18px}@media print{body{padding:6px 10px}}</style></head><body><h1>${title}</h1><div class="subtitle">Emergency Ambulance Service, Inc.</div><div class="meta">${metaHTML}</div><div class="sections">${sectionsHTML}</div>${closingHTML}<div class="sigs" style="margin-top:${closing?'14px':'18px'}">${sigsHTML}</div></body></html>`;
 }
-
 function exportUCO() {
   const win = window.open('', '_blank');
   if (!win) { alert('Allow pop-ups to export PDF.'); return; }
-  win.document.write(getUCOReportHTML());
-  win.document.close();
-  win.focus();
+  win.document.write(getUCOReportHTML()); win.document.close(); win.focus();
   setTimeout(() => win.print(), 400);
 }
-
-
-// ─── NETWORK STATUS ──────────────────────────────────────────────────────────
-
 function updateNetStatus() {
   const online = navigator.onLine;
-  const dot = document.getElementById('net-dot');
-  const label = document.getElementById('net-label');
+  const dot = document.getElementById('net-dot'); const label = document.getElementById('net-label');
   if (!dot) return;
   dot.classList.toggle('offline', !online);
   label.textContent = online ? 'Online' : 'Offline';
 }
 window.addEventListener('online', updateNetStatus);
 window.addEventListener('offline', updateNetStatus);
-
 function applyUpdate() {
   if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
   window.location.reload();
 }
-
-// ─── TEXT SIZE ────────────────────────────────────────────────────────────────
-
 const SIZES = ['', 'text-lg', 'text-xl'];
 const SIZE_LABELS = ['A', 'A+', 'A++'];
-
 function cycleSize() {
   const h = document.documentElement;
   const cur = SIZES.findIndex(c => c && h.classList.contains(c));
@@ -1324,25 +964,12 @@ function cycleSize() {
   localStorage.setItem('easi-textsize', SIZES[next] || '');
   document.getElementById('size-btn').textContent = SIZE_LABELS[next];
 }
-
-// ─── THEME ────────────────────────────────────────────────────────────────────
-
 function toggleTheme() {
   const h = document.documentElement;
   const light = h.dataset.theme === 'light';
-  if (light) {
-    delete h.dataset.theme;
-    localStorage.setItem('easi-theme', 'dark');
-    document.getElementById('theme-color-meta').content = '#0f1117';
-    document.getElementById('theme-btn').textContent = '☀'; // ☀
-  } else {
-    h.dataset.theme = 'light';
-    localStorage.setItem('easi-theme', 'light');
-    document.getElementById('theme-color-meta').content = '#f1f3f7';
-    document.getElementById('theme-btn').textContent = '☽'; // ☽
-  }
+  if (light) { delete h.dataset.theme; localStorage.setItem('easi-theme', 'dark'); document.getElementById('theme-color-meta').content = '#0f1117'; document.getElementById('theme-btn').textContent = '☀'; }
+  else { h.dataset.theme = 'light'; localStorage.setItem('easi-theme', 'light'); document.getElementById('theme-color-meta').content = '#f1f3f7'; document.getElementById('theme-btn').textContent = '☽'; }
 }
-
 function applyPrefs() {
   const s = localStorage.getItem('easi-textsize') || '';
   const sIdx = Math.max(0, SIZES.indexOf(s));
@@ -1351,23 +978,10 @@ function applyPrefs() {
   const isLight = document.documentElement.dataset.theme === 'light';
   const tBtn = document.getElementById('theme-btn');
   if (tBtn) tBtn.textContent = isLight ? '☽' : '☀';
-  if (isLight) {
-    const m = document.getElementById('theme-color-meta');
-    if (m) m.content = '#f1f3f7';
-  }
+  if (isLight) { const m = document.getElementById('theme-color-meta'); if (m) m.content = '#f1f3f7'; }
 }
-
-// ─── INIT ────────────────────────────────────────────────────────────────────
-
-loadState();
-buildEquip();
-bindEquipFields();
-buildUCO();
-bindUCOFields();
-updateNetStatus();
-applyPrefs();
+loadState(); buildEquip(); bindEquipFields(); buildUCO(); bindUCOFields(); updateNetStatus(); applyPrefs();
 </script>
-
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
