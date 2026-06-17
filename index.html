@@ -351,7 +351,7 @@
       <div class="card-title">Shift Info</div>
       <div class="field-grid">
         <div class="field"><label>Unit #</label><input id="eq-unit" type="text" placeholder="e.g. M-12"></div>
-        <div class="field"><label>Date</label><input id="eq-date" type="date"></div>
+        <div class="field"><label>Date</label><input id="eq-date" type="text" placeholder="MM-DD-YY" inputmode="numeric" maxlength="8"></div>
         <div class="field" id="eq-paramedic-field"><label id="eq-paramedic-label">Paramedic</label><input id="eq-paramedic" type="text" placeholder="Name"></div>
         <div class="field"><label id="eq-emt-label">EMT</label><input id="eq-emt" type="text" placeholder="Name"></div>
         <div class="field"><label>Main O₂ (PSI)</label><input id="eq-maino2" type="text" placeholder="PSI"></div>
@@ -389,7 +389,7 @@
       <div class="card-title">Unit Info</div>
       <div class="field-grid">
         <div class="field"><label>Unit #</label><input id="uco-unit" type="text" placeholder="e.g. M-12"></div>
-        <div class="field"><label>Date</label><input id="uco-date" type="date"></div>
+        <div class="field"><label>Date</label><input id="uco-date" type="text" placeholder="MM-DD-YY" inputmode="numeric" maxlength="8"></div>
         <div class="field"><label>Mileage</label><input id="uco-mileage" type="text" placeholder="Odometer"></div>
         <div class="field"><label>EMT</label><input id="uco-name" type="text" placeholder="Name"></div>
         <div class="field"><label>Radio #</label><input id="uco-radio" type="text" placeholder="Radio #"></div>
@@ -961,6 +961,7 @@ function saveState() {
 }
 
 function todayStr() { return new Date().toISOString().split('T')[0]; }
+function todayMDY() { const d=new Date(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0'),y=String(d.getFullYear()).slice(-2); return `${m}-${dd}-${y}`; }
 
 function getActiveSections() {
   if (currentUnit === 'als-para') return ALS_PARA_SECTIONS;
@@ -992,7 +993,7 @@ function setUnit(unit) {
 function buildEquip() {
   const s = state.equip || {};
   document.getElementById('eq-unit').value = s.unit || '';
-  document.getElementById('eq-date').value = s.date || todayStr();
+  document.getElementById('eq-date').value = s.date || todayMDY();
   document.getElementById('eq-paramedic').value = s.paramedic || '';
   document.getElementById('eq-emt').value = s.emt || '';
   document.getElementById('eq-maino2').value = s.maino2 || '';
@@ -1193,23 +1194,13 @@ function resetEquip() {
   saveState();
 }
 
-function exportEquip() {
-  const html = getEquipReportHTML();
-  if (!html) { alert('No form configured for this unit type yet.'); return; }
-  const win = window.open('', '_blank');
-  if (!win) { alert('Allow pop-ups to export PDF.'); return; }
-  win.document.write(html);
-  win.document.close();
-  win.focus();
-  setTimeout(() => win.print(), 400);
-}
 
 // ─── UNIT CHECK OFF ───────────────────────────────────────────────────────────
 
 function buildUCO() {
   const s = state.uco || {};
   document.getElementById('uco-unit').value = s.unit || '';
-  document.getElementById('uco-date').value = s.date || todayStr();
+  document.getElementById('uco-date').value = s.date || todayMDY();
   document.getElementById('uco-mileage').value = s.mileage || '';
   document.getElementById('uco-name').value = s.name || '';
   document.getElementById('uco-radio').value = s.radio || '';
@@ -1376,19 +1367,25 @@ function getDriveFilename(form) {
 function downloadReport(form) {
   const reportData = form === 'equip' ? getEquipReportData() : getUCOReportData();
   if (!reportData) { alert('Fill in the form first.'); return; }
-  const isComplete = confirm('Is this check-off complete?\n\nOK → Complete\nCancel → Mark as INCOMPLETE');
-  let filename = getDriveFilename(form);
-  if (!isComplete) filename = filename.replace('.html', ' - INCOMPLETE.html');
-
   const reportHTML = buildPrintHTML(reportData);
-  const blob = new Blob([reportHTML], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-  showToast('Downloaded ✓');
+  const win = window.open('', '_blank');
+  if (win) {
+    win.document.write(reportHTML);
+    win.document.close();
+    win.focus();
+    setTimeout(() => { win.print(); }, 500);
+    showToast('Print / Save as PDF');
+  } else {
+    // Fallback: direct HTML download if pop-ups are blocked
+    const blob = new Blob([reportHTML], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = getDriveFilename(form);
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    showToast('Downloaded ✓');
+  }
 }
 
 function showToast(msg) {
@@ -1430,9 +1427,9 @@ function getEquipReportData() {
         expStr = exp ? ` [Exp:${exp}${exp < today ? ' ⚠EXPIRED' : ''}]` : ' [Exp:—]';
       }
       const label = isOOS
-        ? `${item.label} ×${item.qty}  — OUT OF STOCK`
+        ? `${item.label} ×${item.qty}`
         : `${item.label} ×${item.qty}  Act:${act || '—'}${expStr}`;
-      return { label, done: ok };
+      return { label, done: ok, oos: isOOS };
     });
     return { title: sec.title, items, done, total: sec.items.length };
   });
@@ -1505,11 +1502,19 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
 
   const sectionsHTML = sections.map(sec => {
     if (!sec.items.length) return '';
-    const itemsHTML = sec.items.map(item =>
-      `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
+    const itemsHTML = sec.items.map(item => {
+      if (item.oos) {
+        return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee;background:#fff3f3">
+          <span style="font-size:11px;line-height:1.4;margin-top:2px;color:#c00;font-weight:700">✗</span>
+          <span style="font-size:11px;line-height:1.4;flex:1;text-decoration:line-through;color:#999">${item.label}</span>
+          <span style="font-size:9px;font-weight:700;color:#c00;white-space:nowrap;margin-top:2px">OUT OF STOCK</span>
+        </div>`;
+      }
+      return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
         <span style="font-size:14px;line-height:1;margin-top:1px">${item.done ? '☑' : '☐'}</span>
         <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     return `<div style="break-inside:avoid;margin-bottom:10px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;padding-bottom:2px;margin-bottom:4px">
         ${sec.title}<span style="font-weight:400;font-size:9px;color:#666"> (${sec.done}/${sec.total})</span>
@@ -1542,14 +1547,6 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
   </body></html>`;
 }
 
-function exportUCO() {
-  const win = window.open('', '_blank');
-  if (!win) { alert('Allow pop-ups to export PDF.'); return; }
-  win.document.write(getUCOReportHTML());
-  win.document.close();
-  win.focus();
-  setTimeout(() => win.print(), 400);
-}
 
 
 // ─── NETWORK STATUS ──────────────────────────────────────────────────────────
