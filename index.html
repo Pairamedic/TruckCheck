@@ -441,7 +441,7 @@ const ALS_PARA_SECTIONS = [
       { label: 'Tape 1"', qty: 2 },
       { label: 'Tape 2"', qty: 2 },
       { label: 'Commercial Tourniquet', qty: 1 },
-      { label: 'OB Kit', qty: 1 },
+      { label: 'OB Kit', qty: 2 },
     ]
   },
   {
@@ -578,7 +578,7 @@ const ALS_PARA_SECTIONS = [
     items: [
       { label: 'Trauma Dressing', qty: 4 },
       { label: 'Occlusive Dressing', qty: 2 },
-      { label: 'Vaseline Gauze', qty: 2 },
+      { label: 'Vaseline Gauze', qty: 1 },
       { label: 'Hemostatic Agent', qty: 1 },
       { label: 'Commercial Tourniquet (CAT)', qty: 2 },
       { label: 'TXA', qty: 2, expiry: true },
@@ -603,6 +603,7 @@ const ALS_PARA_SECTIONS = [
       { label: 'Disinfectant Solution', qty: 1 },
       { label: 'Betadine Solution', qty: 1 },
       { label: 'Pediatric Drug Reference', qty: 1 },
+      { label: 'Sterile Water', qty: 1 },
     ]
   },
   {
@@ -652,6 +653,7 @@ const ALS_PARA_SECTIONS = [
       { label: 'Amiodarone', qty: 2, expiry: true },
       { label: 'Glucagon', qty: 1, expiry: true },
       { label: 'Diltiazem', qty: 2, expiry: true },
+      { label: 'MAD Device (Mucosal Atomizer)', qty: 1 },
     ]
   },
   {
@@ -775,7 +777,7 @@ const BLS_EMT_SECTIONS = [
       { label: 'Tape 1"', qty: 2 },
       { label: 'Tape 2"', qty: 2 },
       { label: 'Commercial Tourniquet', qty: 1 },
-      { label: 'OB Kit', qty: 1 },
+      { label: 'OB Kit', qty: 2 },
     ]
   },
   {
@@ -887,7 +889,7 @@ const BLS_EMT_SECTIONS = [
       { label: 'Epi Auto-Injector Adult', qty: 2, expiry: true },
       { label: 'Epi Auto-Injector Pedi', qty: 1, expiry: true },
       { label: 'Naloxone (Narcan) Nasal', qty: 4, expiry: true },
-      { label: 'Nitroglycerin SL', qty: 1, expiry: true },
+      { label: 'MAD Device (Mucosal Atomizer)', qty: 1 },
     ]
   },
 ];
@@ -1238,8 +1240,7 @@ function buildUCO() {
         <span style="display:flex;align-items:center;gap:6px">
           <span class="section-meta">0/0</span>
           <span class="section-arrow">▼</span>
-        </span>
-      </div>
+        </span></div>
       <div class="section-body">${itemsHTML}</div>`;
     container.appendChild(div);
     updateSectionCount(div, 'uco');
