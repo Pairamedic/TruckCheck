@@ -108,7 +108,7 @@
   .check-item.item-low .qty-expected { color: var(--yellow); background: rgba(234,179,8,.12); }
 
   /* Expiry input */
-  .med-expiry-input { font-size: 11px; width: 68px; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; color: var(--subtext); outline: none; flex-shrink: 0; }
+  .med-expiry-input { font-size: 11px; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; color: var(--subtext); outline: none; color-scheme: dark; flex-shrink: 0; }
   .med-expiry-input.exp-red { border-color: var(--red); color: var(--red); background: rgba(239,68,68,.12); }
   .check-item.exp-red { background: rgba(239,68,68,.07); }
   .check-item.exp-red:hover { background: rgba(239,68,68,.12); }
@@ -159,7 +159,7 @@
   html[data-theme="light"] .modal-btn.modal-cancel { background: rgba(0,0,0,.07); color: var(--text); }
   html[data-theme="light"] .field input, html[data-theme="light"] .field textarea { background: rgba(0,0,0,.04); color: var(--text); }
   html[data-theme="light"] .qty-input { background: rgba(0,0,0,.04); color: var(--subtext); }
-  html[data-theme="light"] .med-expiry-input { background: rgba(0,0,0,.04); color: var(--subtext); }
+  html[data-theme="light"] .med-expiry-input { background: rgba(0,0,0,.04); color: var(--subtext); color-scheme: light; }
   html[data-theme="light"] .section-header { background: rgba(0,0,0,.02); }
   html[data-theme="light"] .section-header:hover { background: rgba(0,0,0,.05); }
   html[data-theme="light"] .check-item:hover { background: rgba(0,0,0,.03); }
@@ -380,7 +380,7 @@
       <button class="btn" onclick="downloadReport('equip')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
     </div>
-    <p class="helper-text">×N = required qty · Enter actual count · EXP = MM-YY · Red = expired · OOS = out of stock</p>
+    <p class="helper-text">×N = required qty · Enter actual count on hand · Red = expired · OOS = out of stock</p>
   </div>
 
   <!-- UNIT CHECK OFF TAB -->
@@ -442,6 +442,7 @@ const ALS_PARA_SECTIONS = [
       { label: 'Tape 2"', qty: 2 },
       { label: 'Commercial Tourniquet', qty: 1 },
       { label: 'OB Kit', qty: 2 },
+      { label: 'Sterile Water', qty: 1 },
     ]
   },
   {
@@ -578,7 +579,7 @@ const ALS_PARA_SECTIONS = [
     items: [
       { label: 'Trauma Dressing', qty: 4 },
       { label: 'Occlusive Dressing', qty: 2 },
-      { label: 'Vaseline Gauze', qty: 1 },
+      { label: 'Vaseline Gauze', qty: 2 },
       { label: 'Hemostatic Agent', qty: 1 },
       { label: 'Commercial Tourniquet (CAT)', qty: 2 },
       { label: 'TXA', qty: 2, expiry: true },
@@ -603,7 +604,6 @@ const ALS_PARA_SECTIONS = [
       { label: 'Disinfectant Solution', qty: 1 },
       { label: 'Betadine Solution', qty: 1 },
       { label: 'Pediatric Drug Reference', qty: 1 },
-      { label: 'Sterile Water', qty: 1 },
     ]
   },
   {
@@ -653,7 +653,6 @@ const ALS_PARA_SECTIONS = [
       { label: 'Amiodarone', qty: 2, expiry: true },
       { label: 'Glucagon', qty: 1, expiry: true },
       { label: 'Diltiazem', qty: 2, expiry: true },
-      { label: 'MAD Device (Mucosal Atomizer)', qty: 1 },
     ]
   },
   {
@@ -777,7 +776,8 @@ const BLS_EMT_SECTIONS = [
       { label: 'Tape 1"', qty: 2 },
       { label: 'Tape 2"', qty: 2 },
       { label: 'Commercial Tourniquet', qty: 1 },
-      { label: 'OB Kit', qty: 2 },
+      { label: 'OB Kit', qty: 1 },
+      { label: 'Sterile Water', qty: 1 },
     ]
   },
   {
@@ -889,7 +889,7 @@ const BLS_EMT_SECTIONS = [
       { label: 'Epi Auto-Injector Adult', qty: 2, expiry: true },
       { label: 'Epi Auto-Injector Pedi', qty: 1, expiry: true },
       { label: 'Naloxone (Narcan) Nasal', qty: 4, expiry: true },
-      { label: 'MAD Device (Mucosal Atomizer)', qty: 1 },
+      { label: 'Mucosal Atomization Device', qty: 1, expiry: true },
     ]
   },
 ];
@@ -963,13 +963,6 @@ function saveState() {
 }
 
 function todayStr() { return new Date().toISOString().split('T')[0]; }
-function isExpiredMMYY(val) {
-  if (!val) return false;
-  const m = val.match(/^(\d{1,2})-(\d{2})$/);
-  if (!m) return false;
-  const today = new Date();
-  return (2000 + parseInt(m[2], 10)) * 100 + parseInt(m[1], 10) < today.getFullYear() * 100 + today.getMonth() + 1;
-}
 function todayMDY() { const d=new Date(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0'),y=String(d.getFullYear()).slice(-2); return `${m}-${dd}-${y}`; }
 
 function getActiveSections() {
@@ -1055,7 +1048,7 @@ function buildEquip() {
       const isOk = act !== null && !isNaN(act) && act >= item.qty;
       const isLow = act !== null && !isNaN(act) && act > 0 && act < item.qty;
       const expDate = item.expiry ? (expDates[key] || '') : '';
-      const isExpired = isExpiredMMYY(expDate);
+      const isExpired = !!(expDate && expDate < todayStr());
       const isOOS = outOfStock[key] || false;
 
       let cls = 'check-item';
@@ -1065,8 +1058,7 @@ function buildEquip() {
       if (isExpired && !isOOS) cls += ' exp-red';
 
       const expInput = item.expiry
-        ? `<input type="text" class="med-expiry-input${isExpired && !isOOS ? ' exp-red' : ''}" value="${expDate}"
-            placeholder="EXP MM-YY" maxlength="5" inputmode="numeric"
+        ? `<input type="date" class="med-expiry-input${isExpired && !isOOS ? ' exp-red' : ''}" value="${expDate}"
             onclick="event.stopPropagation()"
             onchange="setMedExpiry('${key}',this.value,this.closest('.check-item'))">`
         : '';
@@ -1133,7 +1125,7 @@ function setMedExpiry(key, val, itemEl) {
   if (!state.equip) state.equip = {};
   if (!state.equip.expDates) state.equip.expDates = {};
   state.equip.expDates[key] = val;
-  const isExpired = isExpiredMMYY(val);
+  const isExpired = !!(val && val < todayStr());
   itemEl.classList.toggle('exp-red', isExpired);
   const input = itemEl.querySelector('.med-expiry-input');
   if (input) input.classList.toggle('exp-red', isExpired);
@@ -1240,7 +1232,8 @@ function buildUCO() {
         <span style="display:flex;align-items:center;gap:6px">
           <span class="section-meta">0/0</span>
           <span class="section-arrow">▼</span>
-        </span></div>
+        </span>
+      </div>
       <div class="section-body">${itemsHTML}</div>`;
     container.appendChild(div);
     updateSectionCount(div, 'uco');
@@ -1433,7 +1426,7 @@ function getEquipReportData() {
       let expStr = '';
       if (!isOOS && item.expiry) {
         const exp = expDates[key] || '';
-        expStr = exp ? ` [Exp:${exp}${isExpiredMMYY(exp) ? ' ⚠EXPIRED' : ''}]` : ' [Exp:—]';
+        expStr = exp ? ` [Exp:${exp}${exp < today ? ' ⚠EXPIRED' : ''}]` : ' [Exp:—]';
       }
       const label = isOOS
         ? `${item.label} ×${item.qty}`
