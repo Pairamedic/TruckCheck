@@ -239,6 +239,24 @@
 
   #toast { position: fixed; bottom: 72px; left: 50%; transform: translateX(-50%) translateY(20px); background: #22c55e; color: #000; padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; z-index: 998; opacity: 0; transition: opacity .25s, transform .25s; white-space: nowrap; pointer-events: none; }
 
+  /* Thomas Pack group divider */
+  .thomas-pack-divider { display: flex; align-items: center; gap: 10px; margin: 16px 0 8px; }
+  .thomas-pack-divider-line { flex: 1; height: 1px; background: var(--border); }
+  .thomas-pack-divider-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); white-space: nowrap; }
+
+  /* Section complete state */
+  .section.section-done .section-title { color: var(--green); }
+  .section.section-done .section-meta { color: var(--green); font-weight: 700; }
+  .section.section-done .section-header { background: rgba(34,197,94,.06); }
+  .section.section-done .section-arrow { color: var(--green); }
+
+  /* Overall progress bar */
+  .equip-progress { margin-bottom: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+  .equip-progress-bar { height: 5px; background: rgba(255,255,255,.08); border-radius: 3px; overflow: hidden; margin-bottom: 5px; }
+  .equip-progress-fill { height: 100%; background: var(--accent); border-radius: 3px; width: 0%; transition: width .35s ease; }
+  .equip-progress-label { font-size: 10px; color: var(--muted); display: flex; justify-content: space-between; }
+  html[data-theme="light"] .equip-progress-bar { background: rgba(0,0,0,.08); }
+
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .app-header, .tab-bar, .btn-row, .helper-text, #update-banner, .role-bar { display: none !important; }
@@ -351,6 +369,10 @@
       </div>
     </div>
 
+    <div id="equip-progress" class="equip-progress" style="display:none">
+      <div class="equip-progress-bar"><div id="equip-progress-fill" class="equip-progress-fill"></div></div>
+      <div class="equip-progress-label"><span id="equip-progress-count">0 / 0 items</span><span id="equip-progress-pct">0%</span></div>
+    </div>
     <div id="equip-sections"></div>
 
     <div class="btn-row">
@@ -410,38 +432,30 @@
 
 const ALS_PARA_SECTIONS = [
   {
-    title: 'Miscellaneous Items',
+    title: 'Soft Goods & Wound Care',
     items: [
-      { label: 'Fire Extinguisher', qty: 1 },
-      { label: 'HAZ-MAT Reference Guide', qty: 1 },
-      { label: 'Reflective Safety Wear', qty: 1 },
-      { label: 'Flashlight + Batteries', qty: 1 },
-      { label: 'Blankets', qty: 2 },
-      { label: 'Sheets', qty: 2 },
-      { label: 'Towels', qty: 2 },
-      { label: 'Emesis Basin', qty: 1 },
-      { label: 'Sharps Container', qty: 1 },
-      { label: 'EMT Shears', qty: 1 },
-      { label: 'Hemostat', qty: 1 },
-      { label: 'Lubricating Jelly', qty: 1 },
-      { label: 'Window Punch', qty: 1 },
-      { label: 'Disinfectant Solution', qty: 1 },
-      { label: 'Betadine Solution', qty: 1 },
+      { label: '4×4 Pads', qty: 6 },
+      { label: 'ABD Pads', qty: 2 },
+      { label: 'Roller Gauze', qty: 6 },
+      { label: 'Triangular Bandages', qty: 2 },
+      { label: 'Tape 1"', qty: 2 },
+      { label: 'Tape 2"', qty: 2 },
+      { label: 'Commercial Tourniquet', qty: 1 },
       { label: 'OB Kit', qty: 1 },
-      { label: 'Pediatric Drug Reference', qty: 1 },
     ]
   },
   {
-    title: 'IO Bag',
+    title: 'Airway Supplies',
     items: [
-      { label: 'IO Drill (EZ-IO)', qty: 1 },
-      { label: 'IO Needle 15mm (Pink)', qty: 2 },
-      { label: 'IO Needle 25mm (Blue)', qty: 2 },
-      { label: 'IO Needle 45mm (Yellow)', qty: 1 },
-      { label: 'IO Stabilizer', qty: 2 },
-      { label: 'Extension Set', qty: 2 },
-      { label: 'NS 500mL (IO Flush)', qty: 1, expiry: true },
-      { label: '60mL Syringe', qty: 2 },
+      { label: 'OPA Set (Adult / Child / Infant)', qty: 1 },
+      { label: 'NPA Set', qty: 1 },
+      { label: 'Adult BVM (>1000mL)', qty: 2 },
+      { label: 'Pedi BVM (450–750mL)', qty: 1 },
+      { label: 'Infant BVM (150–300mL)', qty: 1 },
+      { label: 'Magill Forceps — Adult', qty: 1 },
+      { label: 'Magill Forceps — Pedi', qty: 1 },
+      { label: 'Nebulizer', qty: 1 },
+      { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
     ]
   },
   {
@@ -457,25 +471,41 @@ const ALS_PARA_SECTIONS = [
     ]
   },
   {
+    title: 'O₂ Supplies',
+    items: [
+      { label: 'Main O₂ Cylinder', qty: 1 },
+      { label: 'O₂ Regulator / Flowmeter', qty: 1 },
+      { label: 'Nasal Cannula — Adult', qty: 4 },
+      { label: 'Nasal Cannula — Pedi', qty: 4 },
+      { label: 'NRB Mask — Adult', qty: 4 },
+      { label: 'NRB Mask — Pedi', qty: 2 },
+      { label: 'NRB Mask — Infant', qty: 2 },
+    ]
+  },
+  {
     title: 'Portable O₂',
     items: [
       { label: 'Portable O₂ Cylinder', qty: 1 },
       { label: 'O₂ Regulator', qty: 1 },
       { label: 'Nasal Cannula — Adult', qty: 2 },
       { label: 'NRB Mask — Adult', qty: 2 },
-      { label: 'Pedi BVM (450–750mL)', qty: 1 },
-      { label: 'Infant BVM (150–300mL)', qty: 1 },
     ]
   },
   {
-    title: 'BSI Supplies',
+    title: 'Cardiac Monitor',
     items: [
-      { label: 'Exam Gloves (1 Box)', qty: 1 },
-      { label: 'Isolation Kits', qty: 2 },
-      { label: 'N95 / N100 Respirator', qty: 1 },
-      { label: 'Eye Protection (Goggles)', qty: 2 },
-      { label: 'Antiseptic Hand Cleaner', qty: 1 },
-      { label: 'Biohazard Bags', qty: 1 },
+      { label: 'Monitor Unit', qty: 1 },
+      { label: '12-Lead Electrodes', qty: 1 },
+      { label: 'Defib Pads — Adult', qty: 2 },
+      { label: 'Defib Pads — Pedi', qty: 1 },
+      { label: 'SpO₂ Probe — Adult', qty: 1 },
+      { label: 'SpO₂ Probe — Pedi', qty: 1 },
+      { label: 'ETCO₂ Cable + Filterline', qty: 1 },
+      { label: 'BP Cuff — Lg. Adult', qty: 1 },
+      { label: 'BP Cuff — Adult', qty: 1 },
+      { label: 'BP Cuff — Child', qty: 1 },
+      { label: 'BP Cuff — Infant', qty: 1 },
+      { label: 'Stethoscope', qty: 1 },
     ]
   },
   {
@@ -499,44 +529,27 @@ const ALS_PARA_SECTIONS = [
     ]
   },
   {
-    title: 'Airway Supplies',
+    title: 'IO Bag',
     items: [
-      { label: 'OPA Set (Adult / Child / Infant)', qty: 1 },
-      { label: 'NPA Set', qty: 1 },
-      { label: 'Adult BVM (>1000mL)', qty: 2 },
-      { label: 'Magill Forceps — Adult', qty: 1 },
-      { label: 'Magill Forceps — Pedi', qty: 1 },
-      { label: 'Nebulizer', qty: 1 },
-      { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
+      { label: 'IO Drill (EZ-IO)', qty: 1 },
+      { label: 'IO Needle 15mm (Pink)', qty: 2 },
+      { label: 'IO Needle 25mm (Blue)', qty: 2 },
+      { label: 'IO Needle 45mm (Yellow)', qty: 1 },
+      { label: 'IO Stabilizer', qty: 2 },
+      { label: 'Extension Set', qty: 2 },
+      { label: 'NS 500mL (IO Flush)', qty: 1, expiry: true },
+      { label: '60mL Syringe', qty: 2 },
     ]
   },
   {
-    title: 'Cardiac Monitor',
+    title: 'BSI Supplies',
     items: [
-      { label: 'Monitor Unit', qty: 1 },
-      { label: '12-Lead Electrodes', qty: 1 },
-      { label: 'Defib Pads — Adult', qty: 2 },
-      { label: 'Defib Pads — Pedi', qty: 1 },
-      { label: 'SpO₂ Probe — Adult', qty: 1 },
-      { label: 'SpO₂ Probe — Pedi', qty: 1 },
-      { label: 'ETCO₂ Cable + Filterline', qty: 1 },
-      { label: 'BP Cuff — Lg. Adult', qty: 1 },
-      { label: 'BP Cuff — Adult', qty: 1 },
-      { label: 'BP Cuff — Child', qty: 1 },
-      { label: 'BP Cuff — Infant', qty: 1 },
-      { label: 'Stethoscope', qty: 1 },
-    ]
-  },
-  {
-    title: 'O₂ Supplies',
-    items: [
-      { label: 'Main O₂ Cylinder', qty: 1 },
-      { label: 'O₂ Regulator / Flowmeter', qty: 1 },
-      { label: 'Nasal Cannula — Adult', qty: 4 },
-      { label: 'Nasal Cannula — Pedi', qty: 4 },
-      { label: 'NRB Mask — Adult', qty: 4 },
-      { label: 'NRB Mask — Pedi', qty: 2 },
-      { label: 'NRB Mask — Infant', qty: 2 },
+      { label: 'Exam Gloves (1 Box)', qty: 1 },
+      { label: 'Isolation Kits', qty: 2 },
+      { label: 'N95 / N100 Respirator', qty: 1 },
+      { label: 'Eye Protection (Goggles)', qty: 2 },
+      { label: 'Antiseptic Hand Cleaner', qty: 1 },
+      { label: 'Biohazard Bags', qty: 1 },
     ]
   },
   {
@@ -563,29 +576,33 @@ const ALS_PARA_SECTIONS = [
   {
     title: 'Trauma',
     items: [
-      { label: '4×4 Pads', qty: 6 },
-      { label: 'ABD Pads', qty: 4 },
       { label: 'Trauma Dressing', qty: 4 },
-      { label: 'Roller Gauze', qty: 6 },
-      { label: 'Triangular Bandages', qty: 2 },
       { label: 'Occlusive Dressing', qty: 2 },
-      { label: 'Commercial Tourniquet', qty: 2 },
       { label: 'Vaseline Gauze', qty: 2 },
-      { label: 'Tape 1"', qty: 2 },
+      { label: 'Hemostatic Agent', qty: 1 },
+      { label: 'Commercial Tourniquet (CAT)', qty: 2 },
       { label: 'TXA', qty: 2, expiry: true },
     ]
   },
   {
-    title: 'Soft Goods & Wound Care',
+    title: 'Miscellaneous',
     items: [
-      { label: '4×4 Pads', qty: 6 },
-      { label: 'ABD Pads', qty: 2 },
-      { label: 'Trauma Dressing', qty: 2 },
-      { label: 'Roller Gauze', qty: 6 },
-      { label: 'Triangular Bandages', qty: 2 },
-      { label: 'Tape 1"', qty: 2 },
-      { label: 'Tape 2"', qty: 2 },
-      { label: 'Commercial Tourniquet', qty: 1 },
+      { label: 'Fire Extinguisher', qty: 1 },
+      { label: 'HAZ-MAT Reference Guide', qty: 1 },
+      { label: 'Reflective Safety Wear', qty: 1 },
+      { label: 'Flashlight + Batteries', qty: 1 },
+      { label: 'Blankets', qty: 2 },
+      { label: 'Sheets', qty: 2 },
+      { label: 'Towels', qty: 2 },
+      { label: 'Emesis Basin', qty: 1 },
+      { label: 'Sharps Container', qty: 1 },
+      { label: 'EMT Shears', qty: 1 },
+      { label: 'Hemostat', qty: 1 },
+      { label: 'Lubricating Jelly', qty: 1 },
+      { label: 'Window Punch', qty: 1 },
+      { label: 'Disinfectant Solution', qty: 1 },
+      { label: 'Betadine Solution', qty: 1 },
+      { label: 'Pediatric Drug Reference', qty: 1 },
     ]
   },
   {
@@ -1009,7 +1026,15 @@ function buildEquip() {
   const expDates = s.expDates || {};
   const outOfStock = s.outOfStock || {};
 
+  let _tpDividerDone = false;
   sections.forEach((sec, si) => {
+    if (!_tpDividerDone && sec.title.startsWith('Thomas Pack')) {
+      _tpDividerDone = true;
+      const divider = document.createElement('div');
+      divider.className = 'thomas-pack-divider';
+      divider.innerHTML = '<div class="thomas-pack-divider-line"></div><span class="thomas-pack-divider-label">Thomas Pack</span><div class="thomas-pack-divider-line"></div>';
+      container.appendChild(divider);
+    }
     const div = document.createElement('div');
     div.className = 'section';
 
@@ -1058,6 +1083,8 @@ function buildEquip() {
     container.appendChild(div);
     updateSectionCount(div, 'equip');
   });
+  updateOverallProgress();
+  document.getElementById('equip-progress').style.display = '';
 }
 
 function handleQtyInput(key, inputEl) {
@@ -1119,6 +1146,33 @@ function updateSectionCount(secEl, formKey) {
   }
   const meta = secEl.querySelector('.section-meta');
   if (meta) meta.textContent = done + '/' + items.length;
+  const oosCount = formKey === 'equip'
+    ? [...items].filter(el => ((state.equip && state.equip.outOfStock) || {})[el.dataset.key]).length
+    : 0;
+  secEl.classList.toggle('section-done', items.length > 0 && done === items.length - oosCount);
+  if (formKey === 'equip') updateOverallProgress();
+}
+
+function updateOverallProgress() {
+  const sections = document.querySelectorAll('#equip-sections .section');
+  let total = 0, done = 0;
+  const counts = (state.equip && state.equip.counts) || {};
+  const oosMap = (state.equip && state.equip.outOfStock) || {};
+  sections.forEach(secEl => {
+    secEl.querySelectorAll('.check-item').forEach(el => {
+      if (oosMap[el.dataset.key]) return;
+      total++;
+      const act = parseInt(counts[el.dataset.key] || '', 10);
+      if (!isNaN(act) && act >= parseInt(el.dataset.qty || '1', 10)) done++;
+    });
+  });
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  const fill = document.getElementById('equip-progress-fill');
+  const countEl = document.getElementById('equip-progress-count');
+  const pctEl = document.getElementById('equip-progress-pct');
+  if (fill) { fill.style.width = pct + '%'; fill.style.background = pct === 100 ? 'var(--green)' : 'var(--accent)'; }
+  if (countEl) countEl.textContent = done + ' / ' + total + ' items';
+  if (pctEl) pctEl.textContent = pct + '%';
 }
 
 function bindEquipFields() {
