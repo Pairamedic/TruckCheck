@@ -345,7 +345,7 @@
     <div class="role-bar">
       <span class="role-label">Unit Type</span>
       <div class="role-seg">
-        <button class="role-btn active" data-unit="als-para" onclick="setUnit('als-para')">ALS-Paramedic</button>
+        <button class="role-btn active" data-unit="als-para" onclick="setUnit('als-para')">ALS-PARAMEDIC</button>
         <button class="role-btn" data-unit="als-aemt" onclick="setUnit('als-aemt')">ALS-AEMT</button>
         <button class="role-btn" data-unit="bls-emt" onclick="setUnit('bls-emt')">BLS-EMT</button>
       </div>
@@ -355,10 +355,10 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
-      <button class="btn" onclick="saveToDrive('equip')">Save to Drive</button>
+      <button class="btn" onclick="downloadReport('equip')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
     </div>
-    <p class="helper-text">×N = required qty. Enter actual count on hand. Red = expired.</p>
+    <p class="helper-text">×N = required qty · Enter actual count on hand · Red = expired · OOS = out of stock</p>
   </div>
 
   <!-- UNIT CHECK OFF TAB -->
@@ -397,10 +397,10 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
-      <button class="btn" onclick="saveToDrive('uco')">Save to Drive</button>
+      <button class="btn" onclick="downloadReport('uco')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
-    <p class="helper-text">Save to Drive uploads the report to Google Drive and opens a preview.</p>
+    <p class="helper-text">Download saves the formatted report to your device.</p>
   </div>
 
 </div>
@@ -410,16 +410,201 @@
 
 const ALS_PARA_SECTIONS = [
   {
-    title: 'Medications & Supplies',
+    title: 'Miscellaneous Items',
+    items: [
+      { label: 'Fire Extinguisher', qty: 1 },
+      { label: 'HAZ-MAT Reference Guide', qty: 1 },
+      { label: 'Reflective Safety Wear', qty: 1 },
+      { label: 'Flashlight + Batteries', qty: 1 },
+      { label: 'Blankets', qty: 2 },
+      { label: 'Sheets', qty: 2 },
+      { label: 'Towels', qty: 2 },
+      { label: 'Emesis Basin', qty: 1 },
+      { label: 'Sharps Container', qty: 1 },
+      { label: 'EMT Shears', qty: 1 },
+      { label: 'Hemostat', qty: 1 },
+      { label: 'Lubricating Jelly', qty: 1 },
+      { label: 'Window Punch', qty: 1 },
+      { label: 'Disinfectant Solution', qty: 1 },
+      { label: 'Betadine Solution', qty: 1 },
+      { label: 'OB Kit', qty: 1 },
+      { label: 'Pediatric Drug Reference', qty: 1 },
+    ]
+  },
+  {
+    title: 'IO Bag',
+    items: [
+      { label: 'IO Drill (EZ-IO)', qty: 1 },
+      { label: 'IO Needle 15mm (Pink)', qty: 2 },
+      { label: 'IO Needle 25mm (Blue)', qty: 2 },
+      { label: 'IO Needle 45mm (Yellow)', qty: 1 },
+      { label: 'IO Stabilizer', qty: 2 },
+      { label: 'Extension Set', qty: 2 },
+      { label: 'NS 500mL (IO Flush)', qty: 1, expiry: true },
+      { label: '60mL Syringe', qty: 2 },
+    ]
+  },
+  {
+    title: 'Suction Supplies',
+    items: [
+      { label: 'Portable Suction Unit', qty: 1 },
+      { label: 'On-Board Suction Unit', qty: 1 },
+      { label: 'Suction Tubing', qty: 2 },
+      { label: 'Catheter 8fr / 10fr', qty: 1 },
+      { label: 'Catheter 12fr', qty: 1 },
+      { label: 'Catheter 14fr / 18fr', qty: 1 },
+      { label: 'Rigid Suction Tip', qty: 1 },
+    ]
+  },
+  {
+    title: 'Portable O₂',
+    items: [
+      { label: 'Portable O₂ Cylinder', qty: 1 },
+      { label: 'O₂ Regulator', qty: 1 },
+      { label: 'Nasal Cannula — Adult', qty: 2 },
+      { label: 'NRB Mask — Adult', qty: 2 },
+      { label: 'Pedi BVM (450–750mL)', qty: 1 },
+      { label: 'Infant BVM (150–300mL)', qty: 1 },
+    ]
+  },
+  {
+    title: 'BSI Supplies',
+    items: [
+      { label: 'Exam Gloves (1 Box)', qty: 1 },
+      { label: 'Isolation Kits', qty: 2 },
+      { label: 'N95 / N100 Respirator', qty: 1 },
+      { label: 'Eye Protection (Goggles)', qty: 2 },
+      { label: 'Antiseptic Hand Cleaner', qty: 1 },
+      { label: 'Biohazard Bags', qty: 1 },
+    ]
+  },
+  {
+    title: 'IV Supplies',
+    items: [
+      { label: 'NS 1000mL', qty: 2, expiry: true },
+      { label: 'NS 500mL', qty: 2, expiry: true },
+      { label: '10gtt Set', qty: 4 },
+      { label: 'Saline Lock', qty: 4, expiry: true },
+      { label: 'Saline Flush', qty: 4, expiry: true },
+      { label: '14G IV Cath', qty: 2 },
+      { label: '16G IV Cath', qty: 2 },
+      { label: '18G IV Cath', qty: 4 },
+      { label: '20G IV Cath', qty: 4 },
+      { label: '22G IV Cath', qty: 4 },
+      { label: '24G IV Cath', qty: 2 },
+      { label: 'Tourniquet', qty: 3 },
+      { label: 'Alcohol Preps', qty: 8 },
+      { label: 'Non-Sterile 4×4', qty: 8 },
+      { label: '1" Clear Tape', qty: 2 },
+    ]
+  },
+  {
+    title: 'Airway Supplies',
+    items: [
+      { label: 'OPA Set (Adult / Child / Infant)', qty: 1 },
+      { label: 'NPA Set', qty: 1 },
+      { label: 'Adult BVM (>1000mL)', qty: 2 },
+      { label: 'Magill Forceps — Adult', qty: 1 },
+      { label: 'Magill Forceps — Pedi', qty: 1 },
+      { label: 'Nebulizer', qty: 1 },
+      { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
+    ]
+  },
+  {
+    title: 'Cardiac Monitor',
+    items: [
+      { label: 'Monitor Unit', qty: 1 },
+      { label: '12-Lead Electrodes', qty: 1 },
+      { label: 'Defib Pads — Adult', qty: 2 },
+      { label: 'Defib Pads — Pedi', qty: 1 },
+      { label: 'SpO₂ Probe — Adult', qty: 1 },
+      { label: 'SpO₂ Probe — Pedi', qty: 1 },
+      { label: 'ETCO₂ Cable + Filterline', qty: 1 },
+      { label: 'BP Cuff — Lg. Adult', qty: 1 },
+      { label: 'BP Cuff — Adult', qty: 1 },
+      { label: 'BP Cuff — Child', qty: 1 },
+      { label: 'BP Cuff — Infant', qty: 1 },
+      { label: 'Stethoscope', qty: 1 },
+    ]
+  },
+  {
+    title: 'O₂ Supplies',
+    items: [
+      { label: 'Main O₂ Cylinder', qty: 1 },
+      { label: 'O₂ Regulator / Flowmeter', qty: 1 },
+      { label: 'Nasal Cannula — Adult', qty: 4 },
+      { label: 'Nasal Cannula — Pedi', qty: 4 },
+      { label: 'NRB Mask — Adult', qty: 4 },
+      { label: 'NRB Mask — Pedi', qty: 2 },
+      { label: 'NRB Mask — Infant', qty: 2 },
+    ]
+  },
+  {
+    title: 'Immobilization',
+    items: [
+      { label: 'KED or Equivalent', qty: 1 },
+      { label: 'Spine Board + Straps', qty: 2 },
+      { label: 'Pediatric Restraint System', qty: 1 },
+      { label: 'Head Immobilization Device', qty: 1 },
+      { label: 'Cervical Collar — Adult', qty: 3 },
+      { label: 'Cervical Collar — Pediatric', qty: 2 },
+      { label: 'Cervical Collar — Infant', qty: 1 },
+    ]
+  },
+  {
+    title: 'Splints & Transport',
+    items: [
+      { label: 'Padded Extremity Splints (set)', qty: 1 },
+      { label: 'Traction Splint', qty: 1 },
+      { label: 'Elevating Stretcher', qty: 1 },
+      { label: 'Stair Chair / Scoop Stretcher', qty: 1 },
+    ]
+  },
+  {
+    title: 'Trauma',
+    items: [
+      { label: '4×4 Pads', qty: 6 },
+      { label: 'ABD Pads', qty: 4 },
+      { label: 'Trauma Dressing', qty: 4 },
+      { label: 'Roller Gauze', qty: 6 },
+      { label: 'Triangular Bandages', qty: 2 },
+      { label: 'Occlusive Dressing', qty: 2 },
+      { label: 'Commercial Tourniquet', qty: 2 },
+      { label: 'Vaseline Gauze', qty: 2 },
+      { label: 'Tape 1"', qty: 2 },
+      { label: 'TXA', qty: 2, expiry: true },
+    ]
+  },
+  {
+    title: 'Soft Goods & Wound Care',
+    items: [
+      { label: '4×4 Pads', qty: 6 },
+      { label: 'ABD Pads', qty: 2 },
+      { label: 'Trauma Dressing', qty: 2 },
+      { label: 'Roller Gauze', qty: 6 },
+      { label: 'Triangular Bandages', qty: 2 },
+      { label: 'Tape 1"', qty: 2 },
+      { label: 'Tape 2"', qty: 2 },
+      { label: 'Commercial Tourniquet', qty: 1 },
+    ]
+  },
+  {
+    title: 'Medication Supplies',
     items: [
       { label: '18g Needles', qty: 8 },
       { label: '20g Needles', qty: 8 },
       { label: '21g Needles', qty: 4 },
-      { label: '60mL Syringe', qty: 1 },
       { label: '20mL Syringe', qty: 2 },
       { label: '10mL Syringe', qty: 8 },
       { label: '3mL Syringe', qty: 6 },
       { label: '1mL Syringe', qty: 1 },
+      { label: 'Roll of Med Labels', qty: 1 },
+      { label: 'Tape', qty: 4 },
+    ]
+  },
+  {
+    title: 'Medications',
+    items: [
       { label: 'Albuterol', qty: 6, expiry: true },
       { label: 'Atrovent', qty: 4, expiry: true },
       { label: 'Atropine', qty: 3, expiry: true },
@@ -443,14 +628,11 @@ const ALS_PARA_SECTIONS = [
       { label: 'Nitro', qty: 2, expiry: true },
       { label: 'Benadryl', qty: 2, expiry: true },
       { label: 'Aspirin Bottle', qty: 1, expiry: true },
-      { label: 'Roll of Med Labels', qty: 1 },
-      { label: 'Tape', qty: 4 },
       { label: 'Verapamil', qty: 3, expiry: true },
       { label: 'Oral Glucose', qty: 1, expiry: true },
       { label: 'Solu-Medrol', qty: 2, expiry: true },
       { label: 'Bacteriostatic Water', qty: 2, expiry: true },
       { label: 'Amiodarone', qty: 2, expiry: true },
-      { label: 'TXA', qty: 2, expiry: true },
       { label: 'Glucagon', qty: 1, expiry: true },
       { label: 'Diltiazem', qty: 2, expiry: true },
     ]
@@ -560,7 +742,6 @@ const ALS_PARA_SECTIONS = [
     ]
   },
 ];
-
 // ─── BLS-EMT SECTIONS ────────────────────────────────────────────────────────
 
 const BLS_EMT_SECTIONS = [
@@ -1121,7 +1302,6 @@ async function sendEmail() {
 
 // ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
 
-const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmgxAurWzo-5I4DCAyszBOoaVHJWROcvDH-gJY8BAYRmk7mOEstEWrf4PP7eMhPVhY/exec';
 
 function getDriveFilename(form) {
   const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
@@ -1139,27 +1319,22 @@ function getDriveFilename(form) {
   }
 }
 
-async function saveToDrive(form) {
+function downloadReport(form) {
   const reportData = form === 'equip' ? getEquipReportData() : getUCOReportData();
   if (!reportData) { alert('Fill in the form first.'); return; }
-  const isComplete = confirm('Is this check-off complete?\n\nOK → Complete\nCancel → Save as INCOMPLETE draft');
+  const isComplete = confirm('Is this check-off complete?\n\nOK → Complete\nCancel → Mark as INCOMPLETE');
   let filename = getDriveFilename(form);
   if (!isComplete) filename = filename.replace('.html', ' - INCOMPLETE.html');
 
-  // Open formatted report in new tab for viewing / printing
-  const html = buildPrintHTML(reportData);
-  const win = window.open('', '_blank');
-  if (win) { win.document.write(html); win.document.close(); }
-
-  // Send full report data to Apps Script — it rebuilds the HTML and saves to Drive
-  if (DRIVE_SCRIPT_URL) {
-    const payload = Object.assign({}, reportData, { filename, complete: isComplete });
-    fetch(DRIVE_SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload)), {
-      mode: 'no-cors'
-    }).catch(() => {});
-  }
-
-  showToast(isComplete ? 'Saved to Drive ✓' : 'Saved as INCOMPLETE to Drive ✓');
+  const reportHTML = buildPrintHTML(reportData);
+  const blob = new Blob([reportHTML], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  showToast('Downloaded ✓');
 }
 
 function showToast(msg) {
