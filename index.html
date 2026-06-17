@@ -405,7 +405,13 @@
         <textarea id="uco-repairs" placeholder="Describe any repairs or body damage…"></textarea>
       </div>
       <div class="field-grid">
-        <div class="field"><label>Fuel Card</label><input id="uco-fuelcard" type="text" placeholder="Card #"></div>
+        <div class="field">
+          <label>Fuel Card?</label>
+          <div style="display:flex;gap:6px;margin-top:4px">
+            <button id="fuelcard-yes" class="btn" style="flex:1;padding:6px;font-size:12px" onclick="setFuelCard('yes')">YES</button>
+            <button id="fuelcard-no" class="btn" style="flex:1;padding:6px;font-size:12px" onclick="setFuelCard('no')">NO</button>
+          </div>
+        </div>
         <div class="field"><label>Fire Extinguisher</label><input id="uco-extinguisher" type="text" placeholder="PSI / Status"></div>
       </div>
       <div style="margin-top:10px">
@@ -1215,7 +1221,7 @@ function buildUCO() {
   document.getElementById('uco-name').value = s.name || '';
   document.getElementById('uco-radio').value = s.radio || '';
   document.getElementById('uco-repairs').value = s.repairs || '';
-  document.getElementById('uco-fuelcard').value = s.fuelcard || '';
+  setFuelCard(s.fuelcard || null, true);
   document.getElementById('uco-extinguisher').value = s.extinguisher || '';
   setMaintRequest(s.maint || null, true);
 
@@ -1257,6 +1263,16 @@ function toggleUCOItem(key, el) {
   saveState();
 }
 
+function setFuelCard(val, silent) {
+  if (!silent) {
+    if (!state.uco) state.uco = {};
+    state.uco.fuelcard = val;
+    saveState();
+  }
+  document.getElementById('fuelcard-yes').classList.toggle('active', val === 'yes');
+  document.getElementById('fuelcard-no').classList.toggle('active', val === 'no');
+}
+
 function setMaintRequest(val, silent) {
   if (!silent) {
     if (!state.uco) state.uco = {};
@@ -1270,7 +1286,7 @@ function setMaintRequest(val, silent) {
 function bindUCOFields() {
   [['uco-unit','unit'],['uco-date','date'],['uco-mileage','mileage'],
    ['uco-name','name'],['uco-radio','radio'],
-   ['uco-repairs','repairs'],['uco-fuelcard','fuelcard'],['uco-extinguisher','extinguisher']].forEach(([id, key]) => {
+   ['uco-repairs','repairs'],['uco-extinguisher','extinguisher']].forEach(([id, key]) => {
     document.getElementById(id).addEventListener('input', e => {
       if (!state.uco) state.uco = {};
       state.uco[key] = e.target.value;
@@ -1374,9 +1390,34 @@ function getDriveFilename(form) {
   }
 }
 
+function getIncompleteCount(form) {
+  if (form === 'equip') {
+    const sections = getActiveSections();
+    const counts = (state.equip && state.equip.counts) || {};
+    const oosMap = (state.equip && state.equip.outOfStock) || {};
+    let n = 0;
+    sections.forEach((sec, si) => sec.items.forEach((item, ii) => {
+      const key = 'eq_' + si + '_' + ii;
+      if (oosMap[key]) return;
+      const act = parseInt(counts[key] || '', 10);
+      if (isNaN(act) || act < item.qty) n++;
+    }));
+    return n;
+  } else {
+    const checks = (state.uco && state.uco.checks) || {};
+    let n = 0;
+    UCO_SECTIONS.forEach((sec, si) => sec.items.forEach((_, ii) => {
+      if (!checks['uco_' + si + '_' + ii]) n++;
+    }));
+    return n;
+  }
+}
+
 function downloadReport(form) {
   const reportData = form === 'equip' ? getEquipReportData() : getUCOReportData();
   if (!reportData) { alert('Fill in the form first.'); return; }
+  const missing = getIncompleteCount(form);
+  if (missing > 0 && !confirm(`⚠️ ${missing} item${missing > 1 ? 's are' : ' is'} not yet complete.\n\nDownload anyway?`)) return;
   const reportHTML = buildPrintHTML(reportData);
   const win = window.open('', '_blank');
   if (win) {
@@ -1430,6 +1471,8 @@ function getEquipReportData() {
       const act = counts[key] !== undefined ? counts[key] : '';
       const actNum = act !== '' ? parseInt(act, 10) : null;
       const ok = !isOOS && actNum !== null && !isNaN(actNum) && actNum >= item.qty;
+      const isLow = !isOOS && actNum !== null && !isNaN(actNum) && actNum > 0 && actNum < item.qty;
+      const isBlank = !isOOS && (actNum === null || isNaN(actNum));
       if (ok) done++;
       let expStr = '';
       if (!isOOS && item.expiry) {
@@ -1439,7 +1482,7 @@ function getEquipReportData() {
       const label = isOOS
         ? `${item.label} ×${item.qty}`
         : `${item.label} ×${item.qty}  Act:${act || '—'}${expStr}`;
-      return { label, done: ok, oos: isOOS };
+      return { label, done: ok, low: isLow, blank: isBlank, oos: isOOS };
     });
     return { title: sec.title, items, done, total: sec.items.length };
   });
@@ -1520,6 +1563,25 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
           <span style="font-size:9px;font-weight:700;color:#c00;white-space:nowrap;margin-top:2px">OUT OF STOCK</span>
         </div>`;
       }
+      if (item.done) {
+        return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
+          <span style="font-size:13px;line-height:1.4;margin-top:1px;color:#166534">☑</span>
+          <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
+        </div>`;
+      }
+      if (item.low) {
+        return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee;background:#fffbeb">
+          <span style="font-size:11px;line-height:1.4;margin-top:2px;color:#92400e">⚠</span>
+          <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
+          <span style="font-size:9px;font-weight:700;color:#b45309;background:#fef3c7;padding:1px 5px;border-radius:3px;white-space:nowrap;margin-top:2px">BELOW MIN</span>
+        </div>`;
+      }
+      if (item.blank !== undefined) {
+        return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
+          <span style="font-size:11px;line-height:1.4;margin-top:2px;color:#d1d5db">—</span>
+          <span style="font-size:11px;line-height:1.4;flex:1;color:#9ca3af">${item.label}</span>
+        </div>`;
+      }
       return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
         <span style="font-size:14px;line-height:1;margin-top:1px">${item.done ? '☑' : '☐'}</span>
         <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
@@ -1540,7 +1602,7 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
       <div style="min-height:28px;border-bottom:1px solid #aaa;padding-bottom:2px">${closing.repairs || ''}</div>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px;font-size:11px">
-      <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fuel Card:</b> ${closing.fuelcard || ''}</div>
+      <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fuel Card:</b> ${closing.fuelcard ? closing.fuelcard.toUpperCase() : '☐ YES  ☐ NO'}</div>
       <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fire Extinguisher:</b> ${closing.extinguisher || ''}</div>
       <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Maint. Request?</b> ${closing.maint ? closing.maint.toUpperCase() : '☐ YES  ☐ NO'}</div>
     </div>` : '';
