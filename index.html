@@ -138,6 +138,8 @@
   .btn:active { opacity: .75; }
   .btn-danger { border-color: rgba(239,68,68,.4); background: rgba(239,68,68,.07); color: var(--red); }
   .btn-success { border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.07); color: var(--green); }
+  .btn-fillable { border-color: #0891b2; background: rgba(8,145,178,.10); color: #0891b2; width: 100%; margin-top: 8px; }
+  html[data-theme="light"] .btn-fillable { color: #0369a1; border-color: #0369a1; background: rgba(3,105,161,.08); }
   .helper-text { font-size: 11px; color: var(--muted); text-align: center; margin-top: 6px; }
 
   #update-banner { display: none; position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; z-index: 999; box-shadow: 0 4px 20px rgba(59,130,246,.4); }
@@ -374,7 +376,7 @@
 
 <!-- FLOATING CONTROLS -->
 <div class="ctrl-bar">
-  <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit sections">✏</button>
+  <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit sections" style="display:none">✏</button>
   <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
   <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
 </div>
@@ -425,6 +427,7 @@
         <button class="role-btn" data-unit="bls-emt" onclick="setUnit('bls-emt')">BLS-EMT</button>
       </div>
     </div>
+    <button class="btn btn-fillable" onclick="downloadFillable('equip')">🖨 Print Fillable</button>
 
     <div id="equip-progress" class="equip-progress" style="display:none">
       <div class="equip-progress-bar"><div id="equip-progress-fill" class="equip-progress-fill"></div></div>
@@ -434,7 +437,6 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
-      <button class="btn" onclick="downloadFillable('equip')">Fillable</button>
       <button class="btn" onclick="downloadReport('equip')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
     </div>
@@ -453,6 +455,7 @@
         <div class="field"><label>Radio #</label><input id="uco-radio" type="text" placeholder="Radio #"></div>
       </div>
     </div>
+    <button class="btn btn-fillable" onclick="downloadFillable('uco')">🖨 Print Fillable</button>
 
     <div id="uco-sections"></div>
 
@@ -483,7 +486,6 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
-      <button class="btn" onclick="downloadFillable('uco')">Fillable</button>
       <button class="btn" onclick="downloadReport('uco')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
@@ -2494,6 +2496,9 @@ buildUCO();
 bindUCOFields();
 updateNetStatus();
 applyPrefs();
+if (new URLSearchParams(window.location.search).get('admin') === '1') {
+  document.getElementById('edit-btn').style.display = '';
+}
 </script>
 
 <script>
