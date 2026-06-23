@@ -917,43 +917,265 @@ const BLS_EMT_SECTIONS = [
   },
 ];
 
-// ALS-AEMT: all BLS items + nebulizer in Airway + AEMT medications + advanced airway section
-const ALS_AEMT_SECTIONS = BLS_EMT_SECTIONS.map(sec => {
-  if (sec.title === 'Airway') {
-    return {
-      ...sec,
-      items: [
-        ...sec.items,
-        { label: 'Nebulizer', qty: 1 },
-        { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
-      ]
-    };
-  }
-  if (sec.title === 'EMT Medications') {
-    return {
-      title: 'AEMT Medications',
-      items: [
-        ...sec.items,
-        { label: 'NS 1000mL', qty: 2 },
-        { label: 'NS 500mL', qty: 1 },
-        { label: 'D10', qty: 2, expiry: true },
-        { label: 'Epi 1:1000 (Injectable)', qty: 2, expiry: true },
-        { label: 'Atrovent', qty: 4, expiry: true },
-        { label: 'Glucagon', qty: 1, expiry: true },
-        { label: 'Benadryl (Diphenhydramine)', qty: 2, expiry: true },
-        { label: 'Zofran (Ondansetron)', qty: 2, expiry: true },
-      ]
-    };
-  }
-  return sec;
-}).concat([
+// ─── ALS-AEMT SECTIONS ────────────────────────────────────────────────────────
+
+const ALS_AEMT_SECTIONS = [
   {
-    title: 'AEMT Advanced Airway',
+    title: 'Assessment & Monitoring',
     items: [
-      { label: 'Multi-Lumen Airway (iGel / King LT)', qty: 1 },
+      { label: 'Stethoscope', qty: 1 },
+      { label: 'BP Cuff — Lg. Adult', qty: 1 },
+      { label: 'BP Cuff — Adult', qty: 1 },
+      { label: 'BP Cuff — Child', qty: 1 },
+      { label: 'BP Cuff — Infant', qty: 1 },
+      { label: 'Pulse Oximeter', qty: 1 },
+      { label: 'Pulse Ox Probe — Adult', qty: 1 },
+      { label: 'Pulse Ox Probe — Pedi', qty: 1 },
+      { label: 'Thermometer', qty: 1 },
+      { label: 'Glucometer', qty: 1 },
+      { label: 'Glucometer Strips (Bottle)', qty: 1 },
+      { label: 'Lancets', qty: 20 },
+      { label: 'Pen Light', qty: 1 },
+      { label: 'Pediatric Drug Reference', qty: 1 },
     ]
-  }
-]);
+  },
+  {
+    title: 'AED  (Required if No Cardiac Monitor Present)',
+    items: [
+      { label: 'AED Unit', qty: 1 },
+      { label: 'Adult Pads', qty: 2 },
+      { label: 'Pediatric Pads', qty: 2 },
+    ]
+  },
+  {
+    title: 'Cardiac Monitor  (If Available)',
+    items: [
+      { label: 'Electrodes — Adult (Packs)', qty: 20 },
+      { label: 'Electrodes — Pedi', qty: 5 },
+      { label: 'EKG Paper Roll', qty: 1 },
+      { label: 'BP Cuff — Sm. Adult', qty: 1 },
+      { label: 'BP Cuff — Adult (Navy)', qty: 1 },
+      { label: 'BP Cuff — Lg. Adult (Burgundy)', qty: 1 },
+      { label: 'BP Cuff — Thigh (Black)', qty: 1 },
+      { label: 'Pedi Pulse Ox', qty: 2 },
+      { label: 'ETT EtCO2', qty: 2 },
+      { label: 'NC EtCO2', qty: 1 },
+      { label: '4-Lead Cable', qty: 1 },
+      { label: '12-Lead Cable (Acquire/Tx Only)', qty: 1 },
+    ]
+  },
+  {
+    title: 'BSI Supplies',
+    items: [
+      { label: 'Exam Gloves (1 Box)', qty: 1 },
+      { label: 'Isolation Kits', qty: 2 },
+      { label: 'N95/N100 Respirator', qty: 1 },
+      { label: 'Eye Protection (Goggles)', qty: 2 },
+      { label: 'Antiseptic Hand Cleaner', qty: 1 },
+    ]
+  },
+  {
+    title: 'Soft Goods & Wound Care',
+    items: [
+      { label: '4×4 Pads', qty: 6 },
+      { label: 'Roller Gauze', qty: 6 },
+      { label: 'Tape 1"', qty: 2 },
+      { label: 'Tape 2"', qty: 2 },
+      { label: 'Triangular Bandages', qty: 6 },
+      { label: 'OB Kit', qty: 2 },
+    ]
+  },
+  {
+    title: 'Trauma',
+    items: [
+      { label: 'Trauma Dressing', qty: 4 },
+      { label: 'ABD Pads', qty: 12 },
+      { label: 'Sterile 4×4', qty: 10 },
+      { label: 'Non-Sterile 4×4', qty: 40 },
+      { label: 'Occlusive Dressing', qty: 2 },
+      { label: 'Vaseline Gauze', qty: 4 },
+      { label: 'Hemostatic Agent', qty: 1 },
+      { label: 'Kling', qty: 10 },
+      { label: 'Silk Tape 2 inch', qty: 2 },
+      { label: 'Silk Tape 1 inch', qty: 2 },
+      { label: 'Betadine (Bottle)', qty: 1 },
+      { label: 'Cold Pack', qty: 4 },
+      { label: 'Box of Bandaids', qty: 1 },
+      { label: 'SAM Splints', qty: 2 },
+      { label: 'Triangular Bandages', qty: 1 },
+      { label: 'CAT Tourniquet', qty: 1 },
+      { label: 'Sterile Water', qty: 2 },
+      { label: 'Comm. Tourniquet (CAT)', qty: 2 },
+      { label: 'TXA (Trauma)', qty: 2, expiry: true },
+    ]
+  },
+  {
+    title: 'Airway',
+    items: [
+      { label: 'OPA Set (Adult / Child / Infant)', qty: 1 },
+      { label: 'NPA Set', qty: 1 },
+      { label: 'Nasal Cannula — Adult', qty: 8 },
+      { label: 'Nasal Cannula — Pedi', qty: 8 },
+      { label: 'NRB Mask — Adult', qty: 4 },
+      { label: 'NRB Mask — Pedi', qty: 2 },
+      { label: 'NRB Mask — Infant', qty: 2 },
+      { label: 'Adult BVM (>1000mL)', qty: 2 },
+      { label: 'Pedi BVM (450–750mL)', qty: 1 },
+      { label: 'Infant BVM (150–300mL)', qty: 1 },
+      { label: 'Magill Forceps — Adult', qty: 1 },
+      { label: 'Magill Forceps — Pedi', qty: 1 },
+      { label: 'Nebulizer', qty: 1 },
+      { label: 'Sterile Saline (Neb.)', qty: 1 },
+      { label: 'EtCO2 Nasal Cannula', qty: 2 },
+      { label: 'CPAP', qty: 2 },
+    ]
+  },
+  {
+    title: 'Suction Supplies',
+    items: [
+      { label: 'Portable Suction Unit', qty: 1 },
+      { label: 'On-Board Suction Unit', qty: 1 },
+      { label: 'Suction Tubing', qty: 2 },
+      { label: 'Catheter 8fr / 10fr', qty: 1 },
+      { label: 'Catheter 12fr', qty: 1 },
+      { label: 'Catheter 14fr / 18fr', qty: 1 },
+      { label: 'Rigid Suction Tip', qty: 1 },
+    ]
+  },
+  {
+    title: 'Supraglottic / Adv. Airway',
+    items: [
+      { label: 'Air-Q Size 0', qty: 1 },
+      { label: 'Air-Q Size 0.5', qty: 1 },
+      { label: 'Air-Q Size 1.0', qty: 1 },
+      { label: 'Air-Q Size 1.5', qty: 1 },
+      { label: 'Air-Q Size 2.0', qty: 1 },
+      { label: 'Air-Q Size 2.5', qty: 1 },
+      { label: 'Air-Q Size 3.0', qty: 1 },
+      { label: 'Air-Q Size 3.5', qty: 1 },
+      { label: 'Air-Q Size 4.0', qty: 1 },
+      { label: 'Air-Q Size 4.5', qty: 1 },
+      { label: 'Air-Q Size 5 or Combitube', qty: 1 },
+      { label: 'NPA — Assorted Sizes', qty: 1 },
+      { label: 'OPA — Assorted Sizes', qty: 1 },
+      { label: 'ETT CO2 Detector', qty: 2 },
+      { label: 'Scalpel', qty: 1 },
+      { label: 'KY Jelly', qty: 3 },
+    ]
+  },
+  {
+    title: 'Immobilization',
+    items: [
+      { label: 'KED or Equivalent', qty: 1 },
+      { label: 'Spine Board + Straps', qty: 2 },
+      { label: 'Pedi Restraint System', qty: 1 },
+      { label: 'Head Immob. Device', qty: 1 },
+      { label: 'Cervical Collar — Adult', qty: 3 },
+      { label: 'Cervical Collar — Pedi', qty: 2 },
+      { label: 'Cervical Collar — Infant', qty: 1 },
+    ]
+  },
+  {
+    title: 'Splints & Transport',
+    items: [
+      { label: 'Padded Extremity Splints', qty: 1 },
+      { label: 'Traction Splint', qty: 1 },
+      { label: 'Elevating Stretcher', qty: 1 },
+      { label: 'Stair Chair / Scoop', qty: 1 },
+    ]
+  },
+  {
+    title: 'IO Bag',
+    items: [
+      { label: 'IO Drill (EZ-IO)', qty: 1 },
+      { label: 'IO Needle 15mm (Pink)', qty: 2 },
+      { label: 'IO Needle 25mm (Blue)', qty: 2 },
+      { label: 'IO Needle 45mm (Yellow)', qty: 1 },
+      { label: 'IO Stabilizer', qty: 2 },
+      { label: 'Extension Set', qty: 2 },
+    ]
+  },
+  {
+    title: 'AEMT Medications',
+    items: [
+      { label: 'Oral Glucose', qty: 1, expiry: true },
+      { label: 'Aspirin Bottle', qty: 1, expiry: true },
+      { label: 'Albuterol (Unit Dose)', qty: 4, expiry: true },
+      { label: 'Epi Auto-Injector Adult', qty: 2, expiry: true },
+      { label: 'Epi 1:10,000 (Injectable)', qty: 2, expiry: true },
+      { label: 'Epi 1:1,000 (Injectable)', qty: 2, expiry: true },
+      { label: 'Naloxone (Narcan) Nasal', qty: 4, expiry: true },
+      { label: 'MAD Device (Atomizer)', qty: 1 },
+      { label: 'D10', qty: 2, expiry: true },
+      { label: 'Atrovent', qty: 4, expiry: true },
+      { label: 'Benadryl (Diphenhydramine)', qty: 2, expiry: true },
+      { label: 'Zofran (Ondansetron)', qty: 2, expiry: true },
+      { label: 'Tylenol (Acetaminophen)', qty: 2, expiry: true },
+      { label: 'TXA (Tranexamic Acid)', qty: 2, expiry: true },
+    ]
+  },
+  {
+    title: 'Medication Supplies',
+    items: [
+      { label: '18g Needles', qty: 8 },
+      { label: '20g Needles', qty: 8 },
+      { label: '21g Needles', qty: 4 },
+      { label: '20mL Syringe', qty: 2 },
+      { label: '10mL Syringe', qty: 8 },
+      { label: '3mL Syringe', qty: 6 },
+      { label: '1mL Syringe', qty: 1 },
+      { label: 'Roll of Med Labels', qty: 1 },
+      { label: 'Med Labels / Tape', qty: 4 },
+    ]
+  },
+  {
+    title: 'IV Supplies',
+    items: [
+      { label: 'NS 1000mL', qty: 2, expiry: true },
+      { label: 'LR 1000mL', qty: 4, expiry: true },
+      { label: 'Dial-a-Flow', qty: 2 },
+      { label: '10 gtts Set', qty: 4 },
+      { label: 'Saline Lock', qty: 4, expiry: true },
+      { label: 'Saline Flush', qty: 4, expiry: true },
+      { label: '14g Catheter (Angiocath)', qty: 2 },
+      { label: '16g Catheter (Angiocath)', qty: 2 },
+      { label: '18g Catheter (Angiocath)', qty: 4 },
+      { label: '20g Catheter (Angiocath)', qty: 4 },
+      { label: '22g Catheter (Angiocath)', qty: 4 },
+      { label: '24g Catheter (Angiocath)', qty: 2 },
+      { label: 'Alcohol Preps', qty: 8 },
+      { label: '1" Clear Tape', qty: 2 },
+    ]
+  },
+  {
+    title: 'Miscellaneous',
+    items: [
+      { label: 'Fire Extinguisher', qty: 1 },
+      { label: 'HAZ-MAT Reference Guide', qty: 1 },
+      { label: 'Reflective Vests', qty: 3 },
+      { label: 'Flashlight + Batteries', qty: 1 },
+      { label: 'Linens / Blankets / Towels', qty: 6 },
+      { label: 'Gloves — Small (box)', qty: 1 },
+      { label: 'Gloves — Medium (box)', qty: 1 },
+      { label: 'Gloves — Large (box)', qty: 1 },
+      { label: 'Gloves — XL (box)', qty: 1 },
+      { label: 'Emesis Basin', qty: 1 },
+      { label: 'Sharps Container', qty: 1 },
+      { label: 'EMT Shears', qty: 1 },
+      { label: 'Hemostat', qty: 1 },
+      { label: 'Lubricating Jelly', qty: 1 },
+      { label: 'Window Punch', qty: 1 },
+      { label: 'Disinfectant Spray / Wipes', qty: 1 },
+      { label: 'Thermometer w/ Covers', qty: 1 },
+      { label: 'Biohazard Bags', qty: 5 },
+      { label: 'Heater or Ice Chest (Seasonal)', qty: 1 },
+      { label: 'Heating Pad (Seasonal)', qty: 1 },
+      { label: 'START Triage Bag', qty: 1 },
+      { label: 'Mega Mover', qty: 2 },
+      { label: 'Car Seat or Pedi-Mate', qty: 1 },
+    ]
+  },
+];
 
 // ─── UNIT CHECK OFF DATA ─────────────────────────────────────────────────────
 
