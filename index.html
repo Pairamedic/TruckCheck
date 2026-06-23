@@ -521,7 +521,7 @@ const ALS_PARA_SECTIONS = [
       { label: '4×4 Pads', qty: 6 },
       { label: 'ABD Pads', qty: 2 },
       { label: 'Roller Gauze', qty: 6 },
-      { label: 'Triangular Bandages', qty: 2 },
+      { label: 'Triangular Bandages', qty: 6 },
       { label: 'Tape 1"', qty: 2 },
       { label: 'Tape 2"', qty: 2 },
       { label: 'Commercial Tourniquet', qty: 1 },
@@ -538,8 +538,9 @@ const ALS_PARA_SECTIONS = [
       { label: 'Infant BVM (150–300mL)', qty: 1 },
       { label: 'Magill Forceps — Adult', qty: 1 },
       { label: 'Magill Forceps — Pedi', qty: 1 },
-      { label: 'Nebulizer', qty: 1 },
-      { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
+      { label: 'Nebulizer', qty: 2 },
+      { label: 'Sterile Saline (for Nebulizer)', qty: 2 },
+      { label: 'CPAP', qty: 2 },
     ]
   },
   {
@@ -552,6 +553,21 @@ const ALS_PARA_SECTIONS = [
       { label: 'Catheter 12fr', qty: 1 },
       { label: 'Catheter 14fr / 18fr', qty: 1 },
       { label: 'Rigid Suction Tip', qty: 1 },
+    ]
+  },
+  {
+    title: 'Supraglottic / Adv. Airway',
+    items: [
+      { label: 'Air-Q Size 0', qty: 1 },
+      { label: 'Air-Q Size 1', qty: 1 },
+      { label: 'Air-Q Size 1.5', qty: 1 },
+      { label: 'Air-Q Size 2', qty: 1 },
+      { label: 'Air-Q Size 2.5', qty: 1 },
+      { label: 'Air-Q Size 3.5', qty: 1 },
+      { label: 'Air-Q Size 4.5', qty: 1 },
+      { label: 'Tube Holder', qty: 1 },
+      { label: 'Air-Q Stylet', qty: 2 },
+      { label: 'KY Jelly', qty: 3 },
     ]
   },
   {
@@ -585,18 +601,35 @@ const ALS_PARA_SECTIONS = [
       { label: 'SpO₂ Probe — Adult', qty: 1 },
       { label: 'SpO₂ Probe — Pedi', qty: 1 },
       { label: 'ETCO₂ Cable + Filterline', qty: 1 },
+      { label: 'NC EtCO₂', qty: 1 },
+      { label: '4-Lead Cable', qty: 1 },
+      { label: '12-Lead Cable', qty: 1 },
+      { label: 'Electrodes — Adult (Packs)', qty: 20 },
+      { label: 'Electrodes — Pedi', qty: 5 },
+      { label: 'EKG Paper Roll', qty: 1 },
       { label: 'BP Cuff — Lg. Adult', qty: 1 },
       { label: 'BP Cuff — Adult', qty: 1 },
       { label: 'BP Cuff — Child', qty: 1 },
       { label: 'BP Cuff — Infant', qty: 1 },
+      { label: 'BP Cuff — Thigh (Black)', qty: 1 },
       { label: 'Stethoscope', qty: 1 },
+    ]
+  },
+  {
+    title: 'Assessment & Monitoring',
+    items: [
+      { label: 'Thermometer', qty: 1 },
+      { label: 'Glucometer', qty: 1 },
+      { label: 'Glucometer Strips (Bottle)', qty: 1, expiry: true },
+      { label: 'Lancets', qty: 20 },
+      { label: 'Pen Light', qty: 1 },
     ]
   },
   {
     title: 'IV Supplies',
     items: [
       { label: 'NS 1000mL', qty: 2, expiry: true },
-      { label: 'NS 500mL', qty: 2, expiry: true },
+      { label: 'LR 1000mL', qty: 4, expiry: true },
       { label: '10gtt Set', qty: 4 },
       { label: 'Saline Lock', qty: 4, expiry: true },
       { label: 'Saline Flush', qty: 4, expiry: true },
@@ -621,7 +654,7 @@ const ALS_PARA_SECTIONS = [
       { label: 'IO Needle 45mm (Yellow)', qty: 1 },
       { label: 'IO Stabilizer', qty: 2 },
       { label: 'Extension Set', qty: 2 },
-      { label: 'NS 500mL (IO Flush)', qty: 1, expiry: true },
+      { label: 'NS 1000mL (IO Flush)', qty: 1, expiry: true },
       { label: '60mL Syringe', qty: 2 },
     ]
   },
@@ -661,8 +694,8 @@ const ALS_PARA_SECTIONS = [
     title: 'Trauma',
     items: [
       { label: 'Trauma Dressing', qty: 4 },
-      { label: 'Occlusive Dressing', qty: 2 },
-      { label: 'Vaseline Gauze', qty: 1 },
+      { label: 'Occlusive Dressing', qty: 4 },
+      { label: 'Vaseline Gauze', qty: 2 },
       { label: 'Hemostatic Agent', qty: 1 },
       { label: 'Commercial Tourniquet (CAT)', qty: 2 },
       { label: 'TXA', qty: 2, expiry: true },
@@ -688,6 +721,7 @@ const ALS_PARA_SECTIONS = [
       { label: 'Betadine Solution', qty: 1 },
       { label: 'Pediatric Drug Reference', qty: 1 },
       { label: 'Sterile Water', qty: 1 },
+      { label: 'Car Seat or Pedi-Mate', qty: 1 },
     ]
   },
   {
@@ -700,6 +734,8 @@ const ALS_PARA_SECTIONS = [
       { label: '10mL Syringe', qty: 8 },
       { label: '3mL Syringe', qty: 6 },
       { label: '1mL Syringe', qty: 1 },
+      { label: '60mL Syringe', qty: 1 },
+      { label: 'MAD Device (Mucosal Atomizer)', qty: 1 },
       { label: 'Roll of Med Labels', qty: 1 },
       { label: 'Tape', qty: 4 },
     ]
@@ -725,7 +761,6 @@ const ALS_PARA_SECTIONS = [
       { label: 'Adenosine', qty: 3, expiry: true },
       { label: 'Zofran', qty: 4, expiry: true },
       { label: 'Labetalol', qty: 2, expiry: true },
-      { label: 'Activated Charcoal', qty: 2, expiry: true },
       { label: 'Thiamine', qty: 1, expiry: true },
       { label: 'Nitro', qty: 2, expiry: true },
       { label: 'Benadryl', qty: 2, expiry: true },
@@ -737,7 +772,6 @@ const ALS_PARA_SECTIONS = [
       { label: 'Amiodarone', qty: 2, expiry: true },
       { label: 'Glucagon', qty: 1, expiry: true },
       { label: 'Diltiazem', qty: 2, expiry: true },
-      { label: 'MAD Device (Mucosal Atomizer)', qty: 1 },
     ]
   },
   {
@@ -762,7 +796,7 @@ const ALS_PARA_SECTIONS = [
   {
     title: 'Thomas Pack — IV Pouch 2',
     items: [
-      { label: 'NS 500mL', qty: 1, expiry: true },
+      { label: 'NS 1000mL', qty: 1, expiry: true },
       { label: '10gtt Set', qty: 1 },
       { label: 'Tourniquet', qty: 1 },
       { label: 'Saline Lock', qty: 1, expiry: true },
@@ -1243,7 +1277,7 @@ const ALS_AEMT_SECTIONS = [
 const UCO_SECTIONS = [
   { title: 'Fluids & Engine', items: ['Fuel Level','Oil Level','Radiator Water Level','P/S Fluid Level','Windshield Fluid Level','Trans Fluid Level','Belts / Hose / Wires'] },
   { title: 'Cab & Controls', items: ['Vehicle Horn','Batteries – Left','Batteries – Right','Wipers','Windshield','Front Dome Light','Driver and Passenger Seatbelt','High Idle','Brakes','Test Emergency Brake','Bottle of Cleaner'] },
-  { title: 'Communications', items: ['F-3 Radio (EASI NET)','F-2 (High Band)','Hospital Radio','Sirens'] },
+  { title: 'Communications', items: ['F-3 Radio (EASI NET)','F-2 (High Band)','Hospital Radio','Sirens','Portable Radio','iPad / Tablet'] },
   { title: 'Emergency Lighting', items: ['Light Bar','Wig Wags','Strobes'] },
   { title: 'Exterior Lights', items: ['Head Lights – Low Beam','Head Lights – High Beam','Tail Lights','Back Up Lights','Scene Lights – Left','Scene Lights – Right','Scene Lights – Rear','Turn Signal – Left','Turn Signal – Right','Parking Lights','Clearance Lights','Air Horn'] },
   { title: 'Patient Compartment', items: ['Patient Compartment Lights','Patient Compartment Seatbelts / Stretcher'] },
@@ -1962,16 +1996,17 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
 <style>
   *{box-sizing:border-box}
-  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:10px 14px}
-  .sections{columns:2;column-gap:12px}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:0;width:100%}
+  .sections{columns:2;column-gap:10px;width:100%}
   .sigs{display:flex;gap:24px;margin-top:16px}
   .sigs-block{break-before:avoid;page-break-before:avoid;break-inside:avoid;page-break-inside:avoid}
+  table{width:100%;border-collapse:collapse}
   table tr{border-bottom:1px solid #f3f4f6}
   table tr:last-child{border-bottom:none}
-  @media print{body{padding:6px 10px}@page{margin:8mm}}
+  @page{size:letter portrait;margin:8mm}
 </style>
 </head><body>
-<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:10px">
+<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:8px">
   <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="${LOGO_B64}" style="height:34px;width:34px;object-fit:contain;flex-shrink:0">
@@ -2130,16 +2165,17 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>EASI — ${title}</title>
 <style>
   *{box-sizing:border-box}
-  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:10px 14px}
-  .sections{columns:2;column-gap:12px}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:0;width:100%}
+  .sections{columns:2;column-gap:10px;width:100%}
   .sigs{display:flex;gap:24px;margin-top:16px}
   .sigs-block{break-before:avoid;page-break-before:avoid;break-inside:avoid;page-break-inside:avoid}
+  table{width:100%;border-collapse:collapse}
   table tr{border-bottom:1px solid #f3f4f6}
   table tr:last-child{border-bottom:none}
-  @media print{body{padding:6px 10px}@page{margin:8mm}}
+  @page{size:letter portrait;margin:8mm}
 </style>
 </head><body>
-<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:10px">
+<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:8px">
   <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="${LOGO_B64}" style="height:34px;width:34px;object-fit:contain;flex-shrink:0">
