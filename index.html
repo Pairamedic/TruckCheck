@@ -1793,29 +1793,58 @@ function getIncompleteCount(form) {
   }
 }
 
-function downloadReport(form) {
+function loadHtml2Pdf() {
+  return new Promise((resolve, reject) => {
+    if (window.html2pdf) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('html2pdf failed to load'));
+    document.head.appendChild(s);
+  });
+}
+
+async function renderHTMLtoPDF(htmlStr, filename) {
+  await loadHtml2Pdf();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlStr, 'text/html');
+  const styleText = doc.querySelector('style') ? doc.querySelector('style').textContent.replace(/@page\{[^}]*\}/g, '') : '';
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827';
+  const styleEl = document.createElement('style');
+  styleEl.textContent = styleText;
+  container.appendChild(styleEl);
+  const inner = document.createElement('div');
+  inner.style.cssText = 'padding:8mm;box-sizing:border-box;width:100%';
+  inner.innerHTML = doc.body.innerHTML;
+  container.appendChild(inner);
+  document.body.appendChild(container);
+  try {
+    await html2pdf().set({
+      margin: 0,
+      filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'pt', format: 'letter', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'], avoid: '.sigs-block' }
+    }).from(container).save();
+  } finally {
+    document.body.removeChild(container);
+  }
+}
+
+async function downloadReport(form) {
   const reportData = form === 'equip' ? getEquipReportData() : getUCOReportData();
   if (!reportData) { alert('Fill in the form first.'); return; }
   const missing = getIncompleteCount(form);
   if (missing > 0 && !confirm(`⚠️ ${missing} item${missing > 1 ? 's are' : ' is'} not yet complete.\n\nDownload anyway?`)) return;
-  const reportHTML = buildPrintHTML(reportData);
-  const win = window.open('', '_blank');
-  if (win) {
-    win.document.write(reportHTML);
-    win.document.close();
-    win.focus();
-    setTimeout(() => { win.print(); }, 500);
-    showToast('Print / Save as PDF');
-  } else {
-    // Fallback: direct HTML download if pop-ups are blocked
-    const blob = new Blob([reportHTML], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = getDriveFilename(form);
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-    showToast('Downloaded ✓');
+  showToast('Generating PDF…');
+  try {
+    await renderHTMLtoPDF(buildPrintHTML(reportData), getDriveFilename(form).replace('.html', '.pdf'));
+    showToast('PDF Downloaded ✓');
+  } catch(e) {
+    console.warn('PDF failed:', e);
+    showToast('PDF failed — check popup blocker');
   }
 }
 
@@ -2006,7 +2035,7 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
   @page{size:letter portrait;margin:8mm}
 </style>
 </head><body>
-<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:8px">
+<div style="border:2px solid #1e2230;overflow:hidden;margin-bottom:8px">
   <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="${LOGO_B64}" style="height:34px;width:34px;object-fit:contain;flex-shrink:0">
@@ -2015,7 +2044,7 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
         <div style="font-size:9px;opacity:.6;margin-top:1px">Ambulance Equipment Check-Off</div>
       </div>
     </div>
-    <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px">${badgeLabel}</div>
+    <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;letter-spacing:.3px">${badgeLabel}</div>
   </div>
   <div style="display:flex;flex-wrap:wrap;border-top:1px solid #e5e7eb">${metaHTML}</div>
 </div>
@@ -2023,14 +2052,13 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
 ${closingHTML}
 <div class="sigs-block">
   <div class="sigs" style="margin-top:${closing?'12px':'16px'}">${sigsHTML}</div>
-  <div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Generated ${new Date().toLocaleString()}</div>
 </div>
 </body></html>`;
 }
 
 // ─── FILLABLE FORM ───────────────────────────────────────────────────────────
 
-function downloadFillable(form) {
+async function downloadFillable(form) {
   let html;
   if (form === 'equip') {
     const sections = getActiveSections();
@@ -2064,23 +2092,13 @@ function downloadFillable(form) {
     ];
     html = buildFillableHTML({ title: 'Unit Check-Off', badgeLabel: 'Unit Check', badgeColor: '#3b82f6', meta, sections: UCO_SECTIONS, sigs: ['EMT Signature', 'Supervisor'], isUCO: true });
   }
-  const win = window.open('', '_blank');
-  if (win) {
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-    setTimeout(() => win.print(), 500);
-    showToast('Print Fillable ✓');
-  } else {
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = getDriveFilename(form).replace('.html', '-fillable.html');
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-    showToast('Fillable Downloaded ✓');
+  showToast('Generating PDF…');
+  try {
+    await renderHTMLtoPDF(html, getDriveFilename(form).replace('.html', '-fillable.pdf'));
+    showToast('PDF Downloaded ✓');
+  } catch(e) {
+    console.warn('PDF failed:', e);
+    showToast('PDF failed — check popup blocker');
   }
 }
 
@@ -2110,7 +2128,7 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:28px">Min</td>
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:36px">Actual</td>
       ${hasExp ? '<td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:40px">Exp</td>' : ''}
-      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#b91c1c;letter-spacing:.3px;text-align:center;width:26px">OOS</td>
+      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:26px">OOS</td>
     </tr>`;
     const rows = sec.items.map(item =>
       `<tr style="border-bottom:1px solid #f3f4f6">
@@ -2119,11 +2137,7 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
         <td style="padding:2px 4px;font-size:9px;text-align:center;color:#374151;font-weight:700">×${item.qty}</td>
         <td style="padding:3px 8px"><div style="border-bottom:1px solid #374151;min-height:13px"></div></td>
         ${hasExp ? `<td style="padding:3px 6px">${item.expiry ? '<div style="border-bottom:1px solid #374151;min-height:13px"></div>' : ''}</td>` : ''}
-        <td style="padding:3px 4px;text-align:center;vertical-align:middle">
-          <div style="width:13px;height:13px;border:1.5px dashed #b91c1c;border-radius:3px;margin:auto;position:relative">
-            <div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fca5a5;font-weight:900;line-height:1">✕</div>
-          </div>
-        </td>
+        <td style="padding:3px 4px;text-align:center;vertical-align:middle"><div style="width:11px;height:11px;border:1.5px solid #111;margin:auto"></div></td>
       </tr>`
     ).join('');
     return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
@@ -2175,7 +2189,7 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
   @page{size:letter portrait;margin:8mm}
 </style>
 </head><body>
-<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:8px">
+<div style="border:2px solid #1e2230;overflow:hidden;margin-bottom:8px">
   <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="${LOGO_B64}" style="height:34px;width:34px;object-fit:contain;flex-shrink:0">
@@ -2184,16 +2198,14 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
         <div style="font-size:9px;opacity:.6;margin-top:1px">${isUCO ? 'Unit Check-Off' : 'Ambulance Equipment Check-Off'}</div>
       </div>
     </div>
-    <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px">${badgeLabel}</div>
+    <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;letter-spacing:.3px">${badgeLabel}</div>
   </div>
   <div style="display:flex;flex-wrap:wrap;border-top:1px solid #e5e7eb">${metaHTML}</div>
 </div>
 <div class="sections">${sectionsHTML}</div>
 ${ucoClosingHTML}
-${!isUCO ? `<div style="font-size:7px;color:#6b7280;margin-top:6px;padding:3px 6px;background:#fef2f2;border:1px solid #fecaca;border-radius:3px;display:inline-flex;align-items:center;gap:5px"><div style="width:11px;height:11px;border:1.5px dashed #b91c1c;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fca5a5;font-weight:900">✕</div><span><b style="color:#b91c1c">OOS</b> = Out of Stock — circle or fill the box if item is unavailable</span></div>` : ''}
 <div class="sigs-block">
   <div class="sigs" style="margin-top:${isUCO ? '12px' : '16px'}">${sigsHTML}</div>
-  <div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Printed ${new Date().toLocaleString()}</div>
 </div>
 </body></html>`;
 }
