@@ -394,6 +394,7 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
+      <button class="btn" onclick="downloadFillable('equip')">Fillable</button>
       <button class="btn" onclick="downloadReport('equip')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
     </div>
@@ -442,10 +443,11 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
+      <button class="btn" onclick="downloadFillable('uco')">Fillable</button>
       <button class="btn" onclick="downloadReport('uco')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
-    <p class="helper-text">Download saves the formatted report to your device.</p>
+    <p class="helper-text">Fillable = blank form to print &amp; fill by hand · Download = completed report</p>
   </div>
 
 </div>
@@ -1811,76 +1813,253 @@ function getUCOReportHTML() {
 }
 
 function buildPrintHTML({ title, meta, sections, sigs, closing }) {
+  const badgeColor = currentUnit === 'als-para' ? '#a855f7' : currentUnit === 'als-aemt' ? '#3b82f6' : currentUnit === 'bls-emt' ? '#22c55e' : '#3b82f6';
+  const badgeLabel = currentUnit === 'als-para' ? 'ALS — Paramedic' : currentUnit === 'als-aemt' ? 'ALS — AEMT' : currentUnit === 'bls-emt' ? 'BLS — EMT' : 'Unit Check';
+
   const metaHTML = meta.map(m =>
-    `<div style="display:inline-block;margin-right:16px;margin-bottom:4px">
-      <span style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.4px">${m.label}:</span>
-      <span style="font-size:11px;font-weight:600;margin-left:4px">${m.value}</span>
+    `<div style="flex:1;min-width:80px;padding:4px 8px;border-right:1px solid #e5e7eb">
+      <div style="font-size:7px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280">${m.label}</div>
+      <div style="font-size:10px;font-weight:700;border-bottom:1px solid #111;min-height:14px;margin-top:1px;padding-bottom:1px">${m.value || ''}</div>
     </div>`).join('');
 
   const sectionsHTML = sections.map(sec => {
     if (!sec.items.length) return '';
     const itemsHTML = sec.items.map(item => {
       if (item.oos) {
-        return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee;background:#fff3f3">
-          <span style="font-size:11px;line-height:1.4;margin-top:2px;color:#c00;font-weight:700">✗</span>
-          <span style="font-size:11px;line-height:1.4;flex:1;text-decoration:line-through;color:#999">${item.label}</span>
-          <span style="font-size:9px;font-weight:700;color:#c00;white-space:nowrap;margin-top:2px">OUT OF STOCK</span>
-        </div>`;
+        return `<tr style="background:#fff3f3">
+          <td style="padding:2px 4px;width:14px;text-align:center;color:#b91c1c;font-weight:700;font-size:10px">✗</td>
+          <td style="padding:2px 4px;font-size:9px;text-decoration:line-through;color:#9ca3af">${item.label}</td>
+          <td style="padding:2px 4px;font-size:8px;font-weight:700;color:#b91c1c;white-space:nowrap">OOS</td>
+        </tr>`;
       }
       if (item.done) {
-        return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
-          <span style="font-size:13px;line-height:1.4;margin-top:1px;color:#166534">☑</span>
-          <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
-        </div>`;
+        return `<tr>
+          <td style="padding:2px 4px;width:14px;text-align:center;color:#166534;font-size:12px">☑</td>
+          <td style="padding:2px 4px;font-size:9px" colspan="2">${item.label}</td>
+        </tr>`;
       }
       if (item.low) {
-        return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee;background:#fffbeb">
-          <span style="font-size:11px;line-height:1.4;margin-top:2px;color:#92400e">⚠</span>
-          <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
-          <span style="font-size:9px;font-weight:700;color:#b45309;background:#fef3c7;padding:1px 5px;border-radius:3px;white-space:nowrap;margin-top:2px">BELOW MIN</span>
-        </div>`;
+        return `<tr style="background:#fffbeb">
+          <td style="padding:2px 4px;width:14px;text-align:center;color:#92400e;font-size:10px">⚠</td>
+          <td style="padding:2px 4px;font-size:9px">${item.label}</td>
+          <td style="padding:2px 4px;font-size:8px;font-weight:700;color:#b45309;background:#fef3c7;border-radius:2px;white-space:nowrap">LOW</td>
+        </tr>`;
       }
       if (item.blank !== undefined) {
-        return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
-          <span style="font-size:11px;line-height:1.4;margin-top:2px;color:#d1d5db">—</span>
-          <span style="font-size:11px;line-height:1.4;flex:1;color:#9ca3af">${item.label}</span>
-        </div>`;
+        return `<tr>
+          <td style="padding:2px 4px;width:14px;text-align:center;color:#d1d5db;font-size:10px">—</td>
+          <td style="padding:2px 4px;font-size:9px;color:#9ca3af" colspan="2">${item.label}</td>
+        </tr>`;
       }
-      return `<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #eee">
-        <span style="font-size:14px;line-height:1;margin-top:1px">${item.done ? '☑' : '☐'}</span>
-        <span style="font-size:11px;line-height:1.4;flex:1">${item.label}</span>
-      </div>`;
+      return `<tr>
+        <td style="padding:2px 4px;width:14px;text-align:center;font-size:12px">${item.done ? '☑' : '☐'}</td>
+        <td style="padding:2px 4px;font-size:9px" colspan="2">${item.label}</td>
+      </tr>`;
     }).join('');
-    return `<div style="break-inside:avoid;margin-bottom:10px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #000;padding-bottom:2px;margin-bottom:4px">
-        ${sec.title}<span style="font-weight:400;font-size:9px;color:#666"> (${sec.done}/${sec.total})</span>
-      </div>${itemsHTML}</div>`;
+    return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
+      <div style="background:#1e2230;color:#fff;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:3px 6px;display:flex;justify-content:space-between;align-items:center">
+        <span>${sec.title}</span><span style="opacity:.6;font-weight:400">${sec.done}/${sec.total}</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse">${itemsHTML}</table>
+    </div>`;
   }).join('');
 
   const sigsHTML = (sigs || []).map(s =>
-    `<div style="flex:1;border-top:1px solid #000;padding-top:4px;font-size:10px;color:#666">${s}</div>`).join('');
+    `<div style="flex:1;border-top:1px solid #111;padding-top:3px;font-size:9px;color:#6b7280">${s}</div>`).join('');
 
   const closingHTML = closing ? `
-    <div style="margin-top:10px;border:1px solid #000;padding:6px 8px;font-size:11px">
-      <div style="font-weight:700;margin-bottom:4px">Repairs Needed / New Body Damage:</div>
-      <div style="min-height:28px;border-bottom:1px solid #aaa;padding-bottom:2px">${closing.repairs || ''}</div>
+    <div style="border:1px solid #d1d5db;border-radius:4px;padding:6px 8px;margin-top:8px">
+      <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Repairs Needed / New Body Damage</div>
+      <div style="min-height:22px;border-bottom:1px solid #9ca3af;padding-bottom:2px">${closing.repairs || ''}</div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:8px;font-size:11px">
-      <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fuel Card:</b> ${closing.fuelcard ? closing.fuelcard.toUpperCase() : '☐ YES  ☐ NO'}</div>
-      <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Fire Extinguisher:</b> ${closing.extinguisher || ''}</div>
-      <div style="flex:1;border:1px solid #000;padding:5px 8px"><b>Maint. Request?</b> ${closing.maint ? closing.maint.toUpperCase() : '☐ YES  ☐ NO'}</div>
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <div style="flex:1;border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;font-size:9px"><b>Fuel Card:</b> ${closing.fuelcard ? closing.fuelcard.toUpperCase() : '☐ YES  ☐ NO'}</div>
+      <div style="flex:1;border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;font-size:9px"><b>Fire Ext.:</b> ${closing.extinguisher || ''}</div>
+      <div style="flex:1;border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;font-size:9px"><b>Maint. Req.?</b> ${closing.maint ? closing.maint.toUpperCase() : '☐ YES  ☐ NO'}</div>
     </div>` : '';
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
-  <style>body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:0;padding:10px 14px}h1{font-size:14px;margin:0 0 2px}.subtitle{font-size:10px;color:#444;margin-bottom:6px}.meta{background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:6px 8px;margin-bottom:8px}.sections{columns:2;column-gap:16px}.sigs{display:flex;gap:30px;margin-top:18px}@media print{body{padding:6px 10px}}</style>
-  </head><body>
-  <h1>${title}</h1>
-  <div class="subtitle">Emergency Ambulance Service, Inc.</div>
-  <div class="meta">${metaHTML}</div>
-  <div class="sections">${sectionsHTML}</div>
-  ${closingHTML}
-  <div class="sigs" style="margin-top:${closing?'14px':'18px'}">${sigsHTML}</div>
-  </body></html>`;
+<style>
+  *{box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:10px 14px}
+  .sections{columns:2;column-gap:12px}
+  .sigs{display:flex;gap:24px;margin-top:16px}
+  table tr{border-bottom:1px solid #f3f4f6}
+  table tr:last-child{border-bottom:none}
+  @media print{body{padding:6px 10px}@page{margin:8mm}}
+</style>
+</head><body>
+<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:10px">
+  <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px">Emergency Ambulance Service, Inc.</div>
+      <div style="font-size:9px;opacity:.6;margin-top:1px">Ambulance Equipment Check-Off</div>
+    </div>
+    <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px">${badgeLabel}</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;border-top:1px solid #e5e7eb">${metaHTML}</div>
+</div>
+<div class="sections">${sectionsHTML}</div>
+${closingHTML}
+<div class="sigs" style="margin-top:${closing?'12px':'16px'}">${sigsHTML}</div>
+<div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Generated ${new Date().toLocaleString()}</div>
+</body></html>`;
+}
+
+// ─── FILLABLE FORM ───────────────────────────────────────────────────────────
+
+function downloadFillable(form) {
+  let html;
+  if (form === 'equip') {
+    const sections = getActiveSections();
+    if (!sections || !sections.length) { alert('No sections configured for this unit type.'); return; }
+    const s = state.equip || {};
+    const badgeLabel = currentUnit === 'als-para' ? 'ALS — Paramedic' : currentUnit === 'als-aemt' ? 'ALS — AEMT' : 'BLS — EMT';
+    const badgeColor = currentUnit === 'als-para' ? '#a855f7' : currentUnit === 'als-aemt' ? '#3b82f6' : '#22c55e';
+    const providerLabel = currentUnit === 'als-para' ? 'Paramedic' : currentUnit === 'als-aemt' ? 'AEMT' : 'EMT 1';
+    const crewLabel = currentUnit === 'bls-emt' ? 'EMT 2' : 'EMT';
+    const sigs = currentUnit === 'als-para' ? ['Paramedic Signature', 'EMT Signature']
+               : currentUnit === 'als-aemt' ? ['AEMT Signature', 'EMT Signature']
+               : ['EMT 1 Signature', 'EMT 2 Signature'];
+    const meta = [
+      { label: 'Unit #',           value: s.unit      || '' },
+      { label: 'Date',             value: s.date      || '' },
+      { label: providerLabel,      value: s.paramedic || '' },
+      { label: crewLabel,          value: s.emt       || '' },
+      { label: 'Main O₂ (PSI)',    value: s.maino2    || '' },
+      { label: 'Portable O₂ (PSI)',value: s.porto2    || '' },
+      ...(currentUnit === 'als-para' ? [{ label: 'Narcotic Seal #', value: s.sealnum || '' }] : []),
+    ];
+    html = buildFillableHTML({ title: badgeLabel + ' Equipment Check-Off', badgeLabel, badgeColor, meta, sections, sigs, isUCO: false });
+  } else {
+    const s = state.uco || {};
+    const meta = [
+      { label: 'Unit #',   value: s.unit    || '' },
+      { label: 'Date',     value: s.date    || '' },
+      { label: 'Mileage',  value: s.mileage || '' },
+      { label: 'EMT',      value: s.name    || '' },
+      { label: 'Radio #',  value: s.radio   || '' },
+    ];
+    html = buildFillableHTML({ title: 'Unit Check-Off', badgeLabel: 'Unit Check', badgeColor: '#3b82f6', meta, sections: UCO_SECTIONS, sigs: ['EMT Signature', 'Supervisor'], isUCO: true });
+  }
+  const win = window.open('', '_blank');
+  if (win) {
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 500);
+    showToast('Print Fillable ✓');
+  } else {
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = getDriveFilename(form).replace('.html', '-fillable.html');
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    showToast('Fillable Downloaded ✓');
+  }
+}
+
+function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs, isUCO }) {
+  const metaHTML = meta.map(m =>
+    `<div style="flex:1;min-width:80px;padding:4px 8px;border-right:1px solid #e5e7eb">
+      <div style="font-size:7px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280">${m.label}</div>
+      <div style="font-size:10px;font-weight:600;border-bottom:1px solid #111;min-height:15px;margin-top:1px;padding-bottom:1px">${m.value || ''}</div>
+    </div>`).join('');
+
+  const sectionsHTML = sections.map(sec => {
+    if (isUCO) {
+      const rows = sec.items.map(item =>
+        `<tr><td style="padding:3px 4px;width:18px;vertical-align:middle">
+          <div style="width:11px;height:11px;border:1.5px solid #111;margin:auto"></div>
+        </td><td style="padding:3px 4px;font-size:9px;line-height:1.35">${item}</td></tr>`
+      ).join('');
+      return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
+        <div style="background:#1e2230;color:#fff;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:3px 6px">${sec.title}</div>
+        <table style="width:100%;border-collapse:collapse">${rows}</table>
+      </div>`;
+    }
+    // Equipment — show Min, blank Actual, blank Exp (only for items with expiry)
+    const hasExp = sec.items.some(i => i.expiry);
+    const colHdr = `<tr style="background:#f9fafb">
+      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px" colspan="2">Item</td>
+      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:28px">Min</td>
+      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:36px">Actual</td>
+      ${hasExp ? '<td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:40px">Exp</td>' : ''}
+    </tr>`;
+    const rows = sec.items.map(item =>
+      `<tr style="border-bottom:1px solid #f3f4f6">
+        <td style="padding:3px 4px;width:10px;text-align:center;color:#d1d5db;font-size:8px">·</td>
+        <td style="padding:3px 4px;font-size:9px;line-height:1.3">${item.label}</td>
+        <td style="padding:2px 4px;font-size:9px;text-align:center;color:#374151;font-weight:700">×${item.qty}</td>
+        <td style="padding:3px 8px"><div style="border-bottom:1px solid #374151;min-height:13px"></div></td>
+        ${hasExp ? `<td style="padding:3px 6px">${item.expiry ? '<div style="border-bottom:1px solid #374151;min-height:13px"></div>' : ''}</td>` : ''}
+      </tr>`
+    ).join('');
+    return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
+      <div style="background:#1e2230;color:#fff;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:3px 6px">${sec.title}</div>
+      <table style="width:100%;border-collapse:collapse">${colHdr}${rows}</table>
+    </div>`;
+  }).join('');
+
+  const sigsHTML = (sigs || []).map(s =>
+    `<div style="flex:1;border-top:1px solid #111;padding-top:3px;font-size:9px;color:#6b7280">${s}</div>`).join('');
+
+  const ucoClosingHTML = isUCO ? `
+    <div style="border:1px solid #d1d5db;border-radius:4px;padding:6px 8px;margin-top:8px">
+      <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Repairs Needed / New Body Damage</div>
+      <div style="border-bottom:1px solid #374151;min-height:18px;margin-bottom:5px"></div>
+      <div style="border-bottom:1px solid #374151;min-height:18px"></div>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <div style="flex:1;border:1px solid #d1d5db;border-radius:4px;padding:5px 7px">
+        <div style="font-size:7px;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Fuel Card</div>
+        <div style="display:flex;gap:10px;font-size:9px">
+          <label style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border:1.5px solid #111;flex-shrink:0"></div> YES</label>
+          <label style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border:1.5px solid #111;flex-shrink:0"></div> NO</label>
+        </div>
+      </div>
+      <div style="flex:2;border:1px solid #d1d5db;border-radius:4px;padding:5px 7px">
+        <div style="font-size:7px;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Fire Extinguisher PSI / Status</div>
+        <div style="border-bottom:1px solid #374151;min-height:14px"></div>
+      </div>
+      <div style="flex:1;border:1px solid #d1d5db;border-radius:4px;padding:5px 7px">
+        <div style="font-size:7px;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Maint. Request Turned In</div>
+        <div style="display:flex;gap:10px;font-size:9px">
+          <label style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border:1.5px solid #111;flex-shrink:0"></div> YES</label>
+          <label style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border:1.5px solid #111;flex-shrink:0"></div> NO</label>
+        </div>
+      </div>
+    </div>` : '';
+
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>EASI — ${title}</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:10px 14px}
+  .sections{columns:2;column-gap:12px}
+  .sigs{display:flex;gap:24px;margin-top:16px}
+  table tr{border-bottom:1px solid #f3f4f6}
+  table tr:last-child{border-bottom:none}
+  @media print{body{padding:6px 10px}@page{margin:8mm}}
+</style>
+</head><body>
+<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:10px">
+  <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px">Emergency Ambulance Service, Inc.</div>
+      <div style="font-size:9px;opacity:.6;margin-top:1px">${isUCO ? 'Unit Check-Off' : 'Ambulance Equipment Check-Off'}</div>
+    </div>
+    <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px">${badgeLabel}</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;border-top:1px solid #e5e7eb">${metaHTML}</div>
+</div>
+<div class="sections">${sectionsHTML}</div>
+${ucoClosingHTML}
+<div class="sigs" style="margin-top:${isUCO ? '12px' : '16px'}">${sigsHTML}</div>
+<div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Printed ${new Date().toLocaleString()}</div>
+</body></html>`;
 }
 
 
