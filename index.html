@@ -2126,8 +2126,9 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
     const colHdr = `<tr style="background:#f9fafb">
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px" colspan="2">Item</td>
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:28px">Min</td>
-      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:50px">Actual / X=OOS</td>
+      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:36px">Actual</td>
       ${hasExp ? '<td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:40px">Exp</td>' : ''}
+      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:26px">OOS</td>
     </tr>`;
     const rows = sec.items.map(item =>
       `<tr style="border-bottom:1px solid #f3f4f6">
@@ -2136,6 +2137,7 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
         <td style="padding:2px 4px;font-size:9px;text-align:center;color:#374151;font-weight:700">×${item.qty}</td>
         <td style="padding:3px 8px"><div style="border-bottom:1px solid #374151;min-height:13px"></div></td>
         ${hasExp ? `<td style="padding:3px 6px">${item.expiry ? '<div style="border-bottom:1px solid #374151;min-height:13px"></div>' : ''}</td>` : ''}
+        <td style="padding:3px 4px;text-align:center;vertical-align:middle"><div style="width:11px;height:11px;border:1.5px solid #111;margin:auto"></div></td>
       </tr>`
     ).join('');
     return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
