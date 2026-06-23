@@ -138,6 +138,8 @@
   .btn:active { opacity: .75; }
   .btn-danger { border-color: rgba(239,68,68,.4); background: rgba(239,68,68,.07); color: var(--red); }
   .btn-success { border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.07); color: var(--green); }
+  .btn-fillable { border-color: #0891b2; background: rgba(8,145,178,.10); color: #0891b2; width: 100%; margin-top: 8px; }
+  html[data-theme="light"] .btn-fillable { color: #0369a1; border-color: #0369a1; background: rgba(3,105,161,.08); }
   .helper-text { font-size: 11px; color: var(--muted); text-align: center; margin-top: 6px; }
 
   #update-banner { display: none; position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; z-index: 999; box-shadow: 0 4px 20px rgba(59,130,246,.4); }
@@ -374,7 +376,7 @@
 
 <!-- FLOATING CONTROLS -->
 <div class="ctrl-bar">
-  <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit sections">✏</button>
+  <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit sections" style="display:none">✏</button>
   <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
   <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
 </div>
@@ -425,6 +427,7 @@
         <button class="role-btn" data-unit="bls-emt" onclick="setUnit('bls-emt')">BLS-EMT</button>
       </div>
     </div>
+    <button class="btn btn-fillable" onclick="downloadFillable('equip')">🖨 Print Fillable</button>
 
     <div id="equip-progress" class="equip-progress" style="display:none">
       <div class="equip-progress-bar"><div id="equip-progress-fill" class="equip-progress-fill"></div></div>
@@ -434,7 +437,6 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
-      <button class="btn" onclick="downloadFillable('equip')">Fillable</button>
       <button class="btn" onclick="downloadReport('equip')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
     </div>
@@ -453,6 +455,7 @@
         <div class="field"><label>Radio #</label><input id="uco-radio" type="text" placeholder="Radio #"></div>
       </div>
     </div>
+    <button class="btn btn-fillable" onclick="downloadFillable('uco')">🖨 Print Fillable</button>
 
     <div id="uco-sections"></div>
 
@@ -483,7 +486,6 @@
 
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
-      <button class="btn" onclick="downloadFillable('uco')">Fillable</button>
       <button class="btn" onclick="downloadReport('uco')">Download</button>
       <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
     </div>
@@ -497,6 +499,8 @@
 
 <script>
 // ─── FIREBASE CONFIG ─────────────────────────────────────────────────────────
+const LOGO_B64 = 'data:image/webp;base64,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';
+
 // Paste your project's config from:
 // Firebase console → Project Settings → Your apps → SDK setup → Config
 const FIREBASE_CONFIG = {
@@ -517,7 +521,7 @@ const ALS_PARA_SECTIONS = [
       { label: '4×4 Pads', qty: 6 },
       { label: 'ABD Pads', qty: 2 },
       { label: 'Roller Gauze', qty: 6 },
-      { label: 'Triangular Bandages', qty: 2 },
+      { label: 'Triangular Bandages', qty: 6 },
       { label: 'Tape 1"', qty: 2 },
       { label: 'Tape 2"', qty: 2 },
       { label: 'Commercial Tourniquet', qty: 1 },
@@ -534,8 +538,9 @@ const ALS_PARA_SECTIONS = [
       { label: 'Infant BVM (150–300mL)', qty: 1 },
       { label: 'Magill Forceps — Adult', qty: 1 },
       { label: 'Magill Forceps — Pedi', qty: 1 },
-      { label: 'Nebulizer', qty: 1 },
-      { label: 'Sterile Saline (for Nebulizer)', qty: 1 },
+      { label: 'Nebulizer', qty: 2 },
+      { label: 'Sterile Saline (for Nebulizer)', qty: 2 },
+      { label: 'CPAP', qty: 2 },
     ]
   },
   {
@@ -548,6 +553,21 @@ const ALS_PARA_SECTIONS = [
       { label: 'Catheter 12fr', qty: 1 },
       { label: 'Catheter 14fr / 18fr', qty: 1 },
       { label: 'Rigid Suction Tip', qty: 1 },
+    ]
+  },
+  {
+    title: 'Supraglottic / Adv. Airway',
+    items: [
+      { label: 'Air-Q Size 0', qty: 1 },
+      { label: 'Air-Q Size 1', qty: 1 },
+      { label: 'Air-Q Size 1.5', qty: 1 },
+      { label: 'Air-Q Size 2', qty: 1 },
+      { label: 'Air-Q Size 2.5', qty: 1 },
+      { label: 'Air-Q Size 3.5', qty: 1 },
+      { label: 'Air-Q Size 4.5', qty: 1 },
+      { label: 'Tube Holder', qty: 1 },
+      { label: 'Air-Q Stylet', qty: 2 },
+      { label: 'KY Jelly', qty: 3 },
     ]
   },
   {
@@ -581,18 +601,35 @@ const ALS_PARA_SECTIONS = [
       { label: 'SpO₂ Probe — Adult', qty: 1 },
       { label: 'SpO₂ Probe — Pedi', qty: 1 },
       { label: 'ETCO₂ Cable + Filterline', qty: 1 },
+      { label: 'NC EtCO₂', qty: 1 },
+      { label: '4-Lead Cable', qty: 1 },
+      { label: '12-Lead Cable', qty: 1 },
+      { label: 'Electrodes — Adult (Packs)', qty: 20 },
+      { label: 'Electrodes — Pedi', qty: 5 },
+      { label: 'EKG Paper Roll', qty: 1 },
       { label: 'BP Cuff — Lg. Adult', qty: 1 },
       { label: 'BP Cuff — Adult', qty: 1 },
       { label: 'BP Cuff — Child', qty: 1 },
       { label: 'BP Cuff — Infant', qty: 1 },
+      { label: 'BP Cuff — Thigh (Black)', qty: 1 },
       { label: 'Stethoscope', qty: 1 },
+    ]
+  },
+  {
+    title: 'Assessment & Monitoring',
+    items: [
+      { label: 'Thermometer', qty: 1 },
+      { label: 'Glucometer', qty: 1 },
+      { label: 'Glucometer Strips (Bottle)', qty: 1, expiry: true },
+      { label: 'Lancets', qty: 20 },
+      { label: 'Pen Light', qty: 1 },
     ]
   },
   {
     title: 'IV Supplies',
     items: [
       { label: 'NS 1000mL', qty: 2, expiry: true },
-      { label: 'NS 500mL', qty: 2, expiry: true },
+      { label: 'LR 1000mL', qty: 4, expiry: true },
       { label: '10gtt Set', qty: 4 },
       { label: 'Saline Lock', qty: 4, expiry: true },
       { label: 'Saline Flush', qty: 4, expiry: true },
@@ -617,7 +654,7 @@ const ALS_PARA_SECTIONS = [
       { label: 'IO Needle 45mm (Yellow)', qty: 1 },
       { label: 'IO Stabilizer', qty: 2 },
       { label: 'Extension Set', qty: 2 },
-      { label: 'NS 500mL (IO Flush)', qty: 1, expiry: true },
+      { label: 'NS 1000mL (IO Flush)', qty: 1, expiry: true },
       { label: '60mL Syringe', qty: 2 },
     ]
   },
@@ -657,8 +694,8 @@ const ALS_PARA_SECTIONS = [
     title: 'Trauma',
     items: [
       { label: 'Trauma Dressing', qty: 4 },
-      { label: 'Occlusive Dressing', qty: 2 },
-      { label: 'Vaseline Gauze', qty: 1 },
+      { label: 'Occlusive Dressing', qty: 4 },
+      { label: 'Vaseline Gauze', qty: 2 },
       { label: 'Hemostatic Agent', qty: 1 },
       { label: 'Commercial Tourniquet (CAT)', qty: 2 },
       { label: 'TXA', qty: 2, expiry: true },
@@ -684,6 +721,7 @@ const ALS_PARA_SECTIONS = [
       { label: 'Betadine Solution', qty: 1 },
       { label: 'Pediatric Drug Reference', qty: 1 },
       { label: 'Sterile Water', qty: 1 },
+      { label: 'Car Seat or Pedi-Mate', qty: 1 },
     ]
   },
   {
@@ -696,6 +734,8 @@ const ALS_PARA_SECTIONS = [
       { label: '10mL Syringe', qty: 8 },
       { label: '3mL Syringe', qty: 6 },
       { label: '1mL Syringe', qty: 1 },
+      { label: '60mL Syringe', qty: 1 },
+      { label: 'MAD Device (Mucosal Atomizer)', qty: 1 },
       { label: 'Roll of Med Labels', qty: 1 },
       { label: 'Tape', qty: 4 },
     ]
@@ -721,7 +761,6 @@ const ALS_PARA_SECTIONS = [
       { label: 'Adenosine', qty: 3, expiry: true },
       { label: 'Zofran', qty: 4, expiry: true },
       { label: 'Labetalol', qty: 2, expiry: true },
-      { label: 'Activated Charcoal', qty: 2, expiry: true },
       { label: 'Thiamine', qty: 1, expiry: true },
       { label: 'Nitro', qty: 2, expiry: true },
       { label: 'Benadryl', qty: 2, expiry: true },
@@ -733,7 +772,6 @@ const ALS_PARA_SECTIONS = [
       { label: 'Amiodarone', qty: 2, expiry: true },
       { label: 'Glucagon', qty: 1, expiry: true },
       { label: 'Diltiazem', qty: 2, expiry: true },
-      { label: 'MAD Device (Mucosal Atomizer)', qty: 1 },
     ]
   },
   {
@@ -758,7 +796,7 @@ const ALS_PARA_SECTIONS = [
   {
     title: 'Thomas Pack — IV Pouch 2',
     items: [
-      { label: 'NS 500mL', qty: 1, expiry: true },
+      { label: 'NS 1000mL', qty: 1, expiry: true },
       { label: '10gtt Set', qty: 1 },
       { label: 'Tourniquet', qty: 1 },
       { label: 'Saline Lock', qty: 1, expiry: true },
@@ -1239,7 +1277,7 @@ const ALS_AEMT_SECTIONS = [
 const UCO_SECTIONS = [
   { title: 'Fluids & Engine', items: ['Fuel Level','Oil Level','Radiator Water Level','P/S Fluid Level','Windshield Fluid Level','Trans Fluid Level','Belts / Hose / Wires'] },
   { title: 'Cab & Controls', items: ['Vehicle Horn','Batteries – Left','Batteries – Right','Wipers','Windshield','Front Dome Light','Driver and Passenger Seatbelt','High Idle','Brakes','Test Emergency Brake','Bottle of Cleaner'] },
-  { title: 'Communications', items: ['F-3 Radio (EASI NET)','F-2 (High Band)','Hospital Radio','Sirens'] },
+  { title: 'Communications', items: ['F-3 Radio (EASI NET)','F-2 (High Band)','Hospital Radio','Sirens','Portable Radio','iPad / Tablet'] },
   { title: 'Emergency Lighting', items: ['Light Bar','Wig Wags','Strobes'] },
   { title: 'Exterior Lights', items: ['Head Lights – Low Beam','Head Lights – High Beam','Tail Lights','Back Up Lights','Scene Lights – Left','Scene Lights – Right','Scene Lights – Rear','Turn Signal – Left','Turn Signal – Right','Parking Lights','Clearance Lights','Air Horn'] },
   { title: 'Patient Compartment', items: ['Patient Compartment Lights','Patient Compartment Seatbelts / Stretcher'] },
@@ -1958,19 +1996,24 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
 <style>
   *{box-sizing:border-box}
-  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:10px 14px}
-  .sections{columns:2;column-gap:12px}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:0;width:100%}
+  .sections{columns:2;column-gap:10px;width:100%}
   .sigs{display:flex;gap:24px;margin-top:16px}
+  .sigs-block{break-before:avoid;page-break-before:avoid;break-inside:avoid;page-break-inside:avoid}
+  table{width:100%;border-collapse:collapse}
   table tr{border-bottom:1px solid #f3f4f6}
   table tr:last-child{border-bottom:none}
-  @media print{body{padding:6px 10px}@page{margin:8mm}}
+  @page{size:letter portrait;margin:8mm}
 </style>
 </head><body>
-<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:10px">
+<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:8px">
   <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
-    <div>
-      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px">Emergency Ambulance Service, Inc.</div>
-      <div style="font-size:9px;opacity:.6;margin-top:1px">Ambulance Equipment Check-Off</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <img src="${LOGO_B64}" style="height:34px;width:34px;object-fit:contain;flex-shrink:0">
+      <div>
+        <div style="font-size:14px;font-weight:700;letter-spacing:-.2px">Emergency Ambulance Service, Inc.</div>
+        <div style="font-size:9px;opacity:.6;margin-top:1px">Ambulance Equipment Check-Off</div>
+      </div>
     </div>
     <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px">${badgeLabel}</div>
   </div>
@@ -1978,8 +2021,10 @@ function buildPrintHTML({ title, meta, sections, sigs, closing }) {
 </div>
 <div class="sections">${sectionsHTML}</div>
 ${closingHTML}
-<div class="sigs" style="margin-top:${closing?'12px':'16px'}">${sigsHTML}</div>
-<div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Generated ${new Date().toLocaleString()}</div>
+<div class="sigs-block">
+  <div class="sigs" style="margin-top:${closing?'12px':'16px'}">${sigsHTML}</div>
+  <div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Generated ${new Date().toLocaleString()}</div>
+</div>
 </body></html>`;
 }
 
@@ -2058,13 +2103,14 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
         <table style="width:100%;border-collapse:collapse">${rows}</table>
       </div>`;
     }
-    // Equipment — show Min, blank Actual, blank Exp (only for items with expiry)
+    // Equipment — show Min, blank Actual, blank Exp (only for items with expiry), OOS checkbox
     const hasExp = sec.items.some(i => i.expiry);
     const colHdr = `<tr style="background:#f9fafb">
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px" colspan="2">Item</td>
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:28px">Min</td>
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:36px">Actual</td>
       ${hasExp ? '<td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:40px">Exp</td>' : ''}
+      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#b91c1c;letter-spacing:.3px;text-align:center;width:26px">OOS</td>
     </tr>`;
     const rows = sec.items.map(item =>
       `<tr style="border-bottom:1px solid #f3f4f6">
@@ -2073,6 +2119,11 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
         <td style="padding:2px 4px;font-size:9px;text-align:center;color:#374151;font-weight:700">×${item.qty}</td>
         <td style="padding:3px 8px"><div style="border-bottom:1px solid #374151;min-height:13px"></div></td>
         ${hasExp ? `<td style="padding:3px 6px">${item.expiry ? '<div style="border-bottom:1px solid #374151;min-height:13px"></div>' : ''}</td>` : ''}
+        <td style="padding:3px 4px;text-align:center;vertical-align:middle">
+          <div style="width:13px;height:13px;border:1.5px dashed #b91c1c;border-radius:3px;margin:auto;position:relative">
+            <div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fca5a5;font-weight:900;line-height:1">✕</div>
+          </div>
+        </td>
       </tr>`
     ).join('');
     return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
@@ -2114,19 +2165,24 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>EASI — ${title}</title>
 <style>
   *{box-sizing:border-box}
-  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:10px 14px}
-  .sections{columns:2;column-gap:12px}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:0;width:100%}
+  .sections{columns:2;column-gap:10px;width:100%}
   .sigs{display:flex;gap:24px;margin-top:16px}
+  .sigs-block{break-before:avoid;page-break-before:avoid;break-inside:avoid;page-break-inside:avoid}
+  table{width:100%;border-collapse:collapse}
   table tr{border-bottom:1px solid #f3f4f6}
   table tr:last-child{border-bottom:none}
-  @media print{body{padding:6px 10px}@page{margin:8mm}}
+  @page{size:letter portrait;margin:8mm}
 </style>
 </head><body>
-<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:10px">
+<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:8px">
   <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
-    <div>
-      <div style="font-size:14px;font-weight:700;letter-spacing:-.2px">Emergency Ambulance Service, Inc.</div>
-      <div style="font-size:9px;opacity:.6;margin-top:1px">${isUCO ? 'Unit Check-Off' : 'Ambulance Equipment Check-Off'}</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <img src="${LOGO_B64}" style="height:34px;width:34px;object-fit:contain;flex-shrink:0">
+      <div>
+        <div style="font-size:14px;font-weight:700;letter-spacing:-.2px">Emergency Ambulance Service, Inc.</div>
+        <div style="font-size:9px;opacity:.6;margin-top:1px">${isUCO ? 'Unit Check-Off' : 'Ambulance Equipment Check-Off'}</div>
+      </div>
     </div>
     <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px">${badgeLabel}</div>
   </div>
@@ -2134,8 +2190,11 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
 </div>
 <div class="sections">${sectionsHTML}</div>
 ${ucoClosingHTML}
-<div class="sigs" style="margin-top:${isUCO ? '12px' : '16px'}">${sigsHTML}</div>
-<div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Printed ${new Date().toLocaleString()}</div>
+${!isUCO ? `<div style="font-size:7px;color:#6b7280;margin-top:6px;padding:3px 6px;background:#fef2f2;border:1px solid #fecaca;border-radius:3px;display:inline-flex;align-items:center;gap:5px"><div style="width:11px;height:11px;border:1.5px dashed #b91c1c;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fca5a5;font-weight:900">✕</div><span><b style="color:#b91c1c">OOS</b> = Out of Stock — circle or fill the box if item is unavailable</span></div>` : ''}
+<div class="sigs-block">
+  <div class="sigs" style="margin-top:${isUCO ? '12px' : '16px'}">${sigsHTML}</div>
+  <div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Printed ${new Date().toLocaleString()}</div>
+</div>
 </body></html>`;
 }
 
@@ -2473,6 +2532,9 @@ buildUCO();
 bindUCOFields();
 updateNetStatus();
 applyPrefs();
+if (new URLSearchParams(window.location.search).get('admin') === '1') {
+  document.getElementById('edit-btn').style.display = '';
+}
 </script>
 
 <script>
