@@ -2066,13 +2066,14 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
         <table style="width:100%;border-collapse:collapse">${rows}</table>
       </div>`;
     }
-    // Equipment — show Min, blank Actual, blank Exp (only for items with expiry)
+    // Equipment — show Min, blank Actual, blank Exp (only for items with expiry), OOS checkbox
     const hasExp = sec.items.some(i => i.expiry);
     const colHdr = `<tr style="background:#f9fafb">
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px" colspan="2">Item</td>
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:28px">Min</td>
       <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:36px">Actual</td>
       ${hasExp ? '<td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:40px">Exp</td>' : ''}
+      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#b91c1c;letter-spacing:.3px;text-align:center;width:26px">OOS</td>
     </tr>`;
     const rows = sec.items.map(item =>
       `<tr style="border-bottom:1px solid #f3f4f6">
@@ -2081,6 +2082,11 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
         <td style="padding:2px 4px;font-size:9px;text-align:center;color:#374151;font-weight:700">×${item.qty}</td>
         <td style="padding:3px 8px"><div style="border-bottom:1px solid #374151;min-height:13px"></div></td>
         ${hasExp ? `<td style="padding:3px 6px">${item.expiry ? '<div style="border-bottom:1px solid #374151;min-height:13px"></div>' : ''}</td>` : ''}
+        <td style="padding:3px 4px;text-align:center;vertical-align:middle">
+          <div style="width:13px;height:13px;border:1.5px dashed #b91c1c;border-radius:3px;margin:auto;position:relative">
+            <div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fca5a5;font-weight:900;line-height:1">✕</div>
+          </div>
+        </td>
       </tr>`
     ).join('');
     return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
@@ -2146,6 +2152,7 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
 </div>
 <div class="sections">${sectionsHTML}</div>
 ${ucoClosingHTML}
+${!isUCO ? `<div style="font-size:7px;color:#6b7280;margin-top:6px;padding:3px 6px;background:#fef2f2;border:1px solid #fecaca;border-radius:3px;display:inline-flex;align-items:center;gap:5px"><div style="width:11px;height:11px;border:1.5px dashed #b91c1c;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fca5a5;font-weight:900">✕</div><span><b style="color:#b91c1c">OOS</b> = Out of Stock — circle or fill the box if item is unavailable</span></div>` : ''}
 <div class="sigs-block">
   <div class="sigs" style="margin-top:${isUCO ? '12px' : '16px'}">${sigsHTML}</div>
   <div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Printed ${new Date().toLocaleString()}</div>
