@@ -250,20 +250,22 @@
   .check-item.item-oos .min-btn { opacity: 0.25; pointer-events: none; }
 
   /* Section complete state */
+  .section.section-done { border-color: var(--green); }
   .section.section-done .section-title { color: var(--green); }
   .section.section-done .section-meta { color: var(--green); font-weight: 700; }
-  .section.section-done .section-header { background: rgba(34,197,94,.06); }
+  .section.section-done .section-header { background: rgba(34,197,94,.08); }
   .section.section-done .section-arrow { color: var(--green); }
 
   /* Section incomplete state (has unchecked items) */
+  .section.section-incomplete { border-color: var(--red); }
   .section.section-incomplete .section-title { color: var(--red); }
   .section.section-incomplete .section-meta { color: var(--red); }
-  .section.section-incomplete .section-header { background: rgba(239,68,68,.06); }
+  .section.section-incomplete .section-header { background: rgba(239,68,68,.08); }
   .section.section-incomplete .section-arrow { color: var(--red); }
 
   /* Yes/No button active states */
-  .btn-yn-yes.active { background: rgba(34,197,94,.25) !important; border-color: var(--green) !important; color: var(--green) !important; }
-  .btn-yn-no.active { background: rgba(239,68,68,.25) !important; border-color: var(--red) !important; color: var(--red) !important; }
+  .btn-yn-yes.active { background: rgba(34,197,94,.35) !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: 800 !important; box-shadow: 0 0 0 2px rgba(34,197,94,.3) !important; }
+  .btn-yn-no.active { background: rgba(239,68,68,.35) !important; border-color: var(--red) !important; color: var(--red) !important; font-weight: 800 !important; box-shadow: 0 0 0 2px rgba(239,68,68,.3) !important; }
 
   /* Overall progress bar */
   .equip-progress { margin-bottom: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
@@ -1420,16 +1422,12 @@ async function sendEmail() {
 function getDriveFilename(form) {
   const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
   const unit = (s.unit || 'Unit').trim();
-  const date = (s.date || todayStr()).trim();
+  const date = (s.date || todayMDY()).trim();
+  const type = currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'ALS-AEMT' : 'BLS';
   if (form === 'equip') {
-    const p1 = (s.paramedic || '').trim();
-    const p2 = (s.emt || '').trim();
-    const names = [p1, p2].filter(Boolean).join(' & ') || 'Crew';
-    const type = currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS';
-    return `${unit} ${names} ${date} ${type} Stock.html`.replace(/\s+/g, ' ').trim();
+    return `${unit}-${type} Equipment Check - ${date}.html`;
   } else {
-    const name = (s.name || '').trim() || 'EMT';
-    return `${unit} ${name} ${date} Unit Check Off.html`.replace(/\s+/g, ' ').trim();
+    return `${unit}-${type} Unit Check - ${date}.html`;
   }
 }
 
