@@ -278,6 +278,45 @@
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .app-header, .tab-bar, .btn-row, .helper-text, #update-banner, .role-bar { display: none !important; }
   }
+
+  /* ── Edit Mode ─────────────────────────────────────────────────────────── */
+  .edit-mode-banner { background: rgba(59,130,246,.10); border: 1px solid rgba(59,130,246,.25); border-radius: 10px; padding: 8px 14px; margin-bottom: 10px; font-size: 11px; color: var(--accent); text-align: center; font-weight: 600; letter-spacing: .2px; }
+
+  .edit-section-header { cursor: default !important; background: rgba(59,130,246,.08) !important; border-bottom: 1px solid rgba(59,130,246,.2); gap: 8px; }
+  .edit-section-name { flex: 1; min-width: 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; background: transparent; border: none; border-bottom: 1px dashed rgba(59,130,246,.5); color: var(--text); font-family: inherit; outline: none; padding: 2px 0; }
+  .edit-del-section { font-size: 13px; padding: 2px 7px; border-radius: 5px; border: 1px solid rgba(239,68,68,.35); background: transparent; color: var(--red); cursor: pointer; flex-shrink: 0; font-family: inherit; }
+  .edit-del-section:active { opacity: .6; }
+
+  .edit-item { gap: 6px; flex-wrap: wrap; min-height: 44px; }
+  .edit-name { flex: 1; min-width: 120px; font-size: 13px; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 7px; padding: 5px 9px; color: var(--text); font-family: inherit; outline: none; transition: border-color .15s; }
+  .edit-name:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,.18); }
+  html[data-theme="light"] .edit-name { background: rgba(0,0,0,.04); }
+
+  .edit-item-meta { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+  .edit-x-label { font-size: 10px; color: var(--muted); }
+  .edit-qty { width: 46px; font-size: 12px; text-align: center; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 4px 3px; color: var(--text); outline: none; -moz-appearance: textfield; font-family: inherit; }
+  .edit-qty::-webkit-inner-spin-button, .edit-qty::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .edit-qty:focus { border-color: var(--accent); }
+  html[data-theme="light"] .edit-qty { background: rgba(0,0,0,.04); }
+
+  .edit-exp-btn { font-size: 9px; padding: 3px 6px; border-radius: 5px; border: 1px solid rgba(255,255,255,.15); background: transparent; color: var(--muted); cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .edit-exp-btn.exp-on { background: rgba(234,179,8,.18); border-color: var(--yellow); color: var(--yellow); font-weight: 700; }
+  .edit-exp-btn:active { opacity: .7; }
+
+  .edit-del-item { width: 26px; height: 26px; border-radius: 6px; border: 1px solid rgba(239,68,68,.35); background: transparent; color: var(--red); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; font-family: inherit; flex-shrink: 0; }
+  .edit-del-item:active { opacity: .6; }
+
+  .edit-add-item-row { padding: 6px 12px; border-top: 1px dashed rgba(59,130,246,.22); }
+  .edit-add-item-btn { width: 100%; padding: 6px; border-radius: 7px; border: 1px dashed rgba(59,130,246,.45); background: rgba(59,130,246,.05); color: var(--accent); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .edit-add-item-btn:active { opacity: .7; }
+
+  .edit-footer { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .edit-add-section-btn { width: 100%; padding: 11px; border-radius: 10px; border: 1px dashed rgba(59,130,246,.5); background: rgba(59,130,246,.06); color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .edit-add-section-btn:active { opacity: .7; }
+  .edit-reset-btn { width: 100%; padding: 9px; border-radius: 10px; border: 1px solid rgba(239,68,68,.25); background: rgba(239,68,68,.04); color: var(--red); font-size: 12px; cursor: pointer; font-family: inherit; }
+  .edit-reset-btn:active { opacity: .7; }
+
+  .ctrl-btn.edit-active { background: rgba(59,130,246,.2); border-color: var(--accent); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -335,6 +374,7 @@
 
 <!-- FLOATING CONTROLS -->
 <div class="ctrl-bar">
+  <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit sections">✏</button>
   <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
   <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
 </div>
@@ -452,7 +492,22 @@
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <script>
+// ─── FIREBASE CONFIG ─────────────────────────────────────────────────────────
+// Paste your project's config from:
+// Firebase console → Project Settings → Your apps → SDK setup → Config
+const FIREBASE_CONFIG = {
+  apiKey:            '',
+  authDomain:        '',
+  projectId:         '',
+  storageBucket:     '',
+  messagingSenderId: '',
+  appId:             '',
+};
+
 // ─── ALS-PARAMEDIC SECTIONS ───────────────────────────────────────────────────
 
 const ALS_PARA_SECTIONS = [
@@ -1194,12 +1249,17 @@ const UCO_SECTIONS = [
 // ─── STATE ───────────────────────────────────────────────────────────────────
 
 const STORE_KEY = 'easi-checkoff-v2';
+const CUSTOM_KEY = 'easi-custom-sections-v1';
 let state = {};
 let currentUnit = 'als-para';
+let editMode = false;
+let customSections = {};
+let _db = null;
 
 function loadState() {
   try { state = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { state = {}; }
   currentUnit = state.unitType || 'als-para';
+  try { customSections = JSON.parse(localStorage.getItem(CUSTOM_KEY)) || {}; } catch { customSections = {}; }
 }
 
 function saveState() {
@@ -1220,10 +1280,22 @@ function isExpiredMMYY(val) {
 function todayMDY() { const d=new Date(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0'),y=String(d.getFullYear()).slice(-2); return `${m}-${dd}-${y}`; }
 
 function getActiveSections() {
+  if (customSections[currentUnit] && customSections[currentUnit].length) return customSections[currentUnit];
   if (currentUnit === 'als-para') return ALS_PARA_SECTIONS;
   if (currentUnit === 'als-aemt') return ALS_AEMT_SECTIONS;
   if (currentUnit === 'bls-emt') return BLS_EMT_SECTIONS;
   return [];
+}
+
+function getDefaultSections(unit) {
+  if (unit === 'als-para') return ALS_PARA_SECTIONS;
+  if (unit === 'als-aemt') return ALS_AEMT_SECTIONS;
+  if (unit === 'bls-emt') return BLS_EMT_SECTIONS;
+  return [];
+}
+
+function getActiveUCOSections() {
+  return (customSections['uco'] && customSections['uco'].length) ? customSections['uco'] : UCO_SECTIONS;
 }
 
 // ─── TABS ────────────────────────────────────────────────────────────────────
@@ -1267,6 +1339,8 @@ function buildEquip() {
 
   const container = document.getElementById('equip-sections');
   container.innerHTML = '';
+
+  if (editMode) { buildEquipEditMode(container); return; }
 
   const sections = getActiveSections();
 
@@ -1494,9 +1568,12 @@ function buildUCO() {
 
   const container = document.getElementById('uco-sections');
   container.innerHTML = '';
+
+  if (editMode) { buildUCOEditMode(container); return; }
+
   const checks = s.checks || {};
 
-  UCO_SECTIONS.forEach((sec, si) => {
+  getActiveUCOSections().forEach((sec, si) => {
     const div = document.createElement('div');
     div.className = 'section';
     const itemsHTML = sec.items.map((item, ii) => {
@@ -2064,6 +2141,262 @@ ${ucoClosingHTML}
 
 
 
+// ─── EDIT MODE ───────────────────────────────────────────────────────────────
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('edit-btn').classList.toggle('edit-active', editMode);
+  if (!editMode) {
+    persistCustomSections();
+    showToast('Sections saved ✓');
+  } else {
+    showToast('Edit mode — tap ✏ again to save & exit');
+  }
+  buildEquip();
+  buildUCO();
+}
+
+function persistCustomSections() {
+  localStorage.setItem(CUSTOM_KEY, JSON.stringify(customSections));
+  saveToFirestore();
+}
+
+// ── Equipment edit mode ──────────────────────────────────────────────────────
+
+function _ensureCustomEquip() {
+  if (!customSections[currentUnit] || !customSections[currentUnit].length) {
+    customSections[currentUnit] = JSON.parse(JSON.stringify(getDefaultSections(currentUnit)));
+  }
+}
+
+function buildEquipEditMode(container) {
+  const banner = document.createElement('div');
+  banner.className = 'edit-mode-banner';
+  banner.textContent = '✏ Edit Mode — Customize sections & items. Tap ✏ to save & exit.';
+  container.appendChild(banner);
+
+  const sections = getActiveSections();
+
+  sections.forEach((sec, si) => {
+    const div = document.createElement('div');
+    div.className = 'section open';
+    const itemsHTML = sec.items.map((item, ii) => `
+      <div class="check-item edit-item">
+        <input class="edit-name" type="text" value="${escHtml(item.label)}" placeholder="Item name"
+          oninput="updateItemLabel(${si},${ii},this.value)">
+        <span style="font-size:11px;color:var(--muted);flex-shrink:0">×</span>
+        <input class="edit-qty" type="number" min="1" value="${item.qty}"
+          oninput="updateItemQty(${si},${ii},this.value)">
+        <button class="edit-exp-btn${item.expiry?' exp-on':''}" title="Requires expiry date"
+          onclick="toggleItemExpiry(${si},${ii},this)">EXP</button>
+        <button class="edit-del-item" onclick="deleteItem(${si},${ii})" title="Delete item">✕</button>
+      </div>`).join('');
+    div.innerHTML = `
+      <div class="section-header edit-section-header">
+        <input class="edit-section-name" type="text" value="${escHtml(sec.title)}" placeholder="Section name"
+          oninput="updateSectionTitle(${si},this.value)">
+        <button class="edit-del-section" onclick="deleteSection(${si})" title="Delete section">✕</button>
+      </div>
+      <div class="section-body">
+        ${itemsHTML}
+        <div class="edit-add-item-row">
+          <button class="edit-add-item-btn" onclick="addItem(${si})">＋ Add Item</button>
+        </div>
+      </div>`;
+    container.appendChild(div);
+  });
+
+  const footer = document.createElement('div');
+  footer.className = 'edit-footer';
+  footer.innerHTML = `
+    <button class="edit-add-section-btn" onclick="addSection()">＋ Add Section</button>
+    <button class="edit-reset-btn" onclick="resetSectionsToDefault()">↺ Reset to Default</button>`;
+  container.appendChild(footer);
+}
+
+function addSection() {
+  _ensureCustomEquip();
+  customSections[currentUnit].push({ title: 'New Section', items: [] });
+  buildEquip();
+}
+
+function deleteSection(si) {
+  _ensureCustomEquip();
+  if (!confirm('Delete this section and all its items?')) return;
+  customSections[currentUnit].splice(si, 1);
+  buildEquip();
+}
+
+function updateSectionTitle(si, val) {
+  _ensureCustomEquip();
+  customSections[currentUnit][si].title = val;
+}
+
+function addItem(si) {
+  _ensureCustomEquip();
+  customSections[currentUnit][si].items.push({ label: '', qty: 1, expiry: false });
+  buildEquip();
+}
+
+function deleteItem(si, ii) {
+  _ensureCustomEquip();
+  customSections[currentUnit][si].items.splice(ii, 1);
+  buildEquip();
+}
+
+function updateItemLabel(si, ii, val) {
+  _ensureCustomEquip();
+  customSections[currentUnit][si].items[ii].label = val;
+}
+
+function updateItemQty(si, ii, val) {
+  _ensureCustomEquip();
+  const n = parseInt(val, 10);
+  customSections[currentUnit][si].items[ii].qty = isNaN(n) || n < 1 ? 1 : n;
+}
+
+function toggleItemExpiry(si, ii, btn) {
+  _ensureCustomEquip();
+  const item = customSections[currentUnit][si].items[ii];
+  item.expiry = !item.expiry;
+  btn.classList.toggle('exp-on', item.expiry);
+}
+
+function resetSectionsToDefault() {
+  if (!confirm('Reset to default sections? All custom changes for this unit type will be lost.')) return;
+  delete customSections[currentUnit];
+  persistCustomSections();
+  buildEquip();
+}
+
+// ── UCO edit mode ─────────────────────────────────────────────────────────────
+
+function _ensureCustomUCO() {
+  if (!customSections['uco'] || !customSections['uco'].length) {
+    customSections['uco'] = JSON.parse(JSON.stringify(UCO_SECTIONS));
+  }
+}
+
+function buildUCOEditMode(container) {
+  const banner = document.createElement('div');
+  banner.className = 'edit-mode-banner';
+  banner.textContent = '✏ Edit Mode — Customize UCO sections & items. Tap ✏ to save & exit.';
+  container.appendChild(banner);
+
+  const sections = getActiveUCOSections();
+
+  sections.forEach((sec, si) => {
+    const div = document.createElement('div');
+    div.className = 'section open';
+    const itemsHTML = sec.items.map((item, ii) => `
+      <div class="check-item edit-item">
+        <input class="edit-name" type="text" value="${escHtml(item)}" placeholder="Item name"
+          oninput="updateUCOItemLabel(${si},${ii},this.value)" style="flex:1">
+        <button class="edit-del-item" onclick="deleteUCOItem(${si},${ii})" title="Delete item">✕</button>
+      </div>`).join('');
+    div.innerHTML = `
+      <div class="section-header edit-section-header">
+        <input class="edit-section-name" type="text" value="${escHtml(sec.title)}" placeholder="Section name"
+          oninput="updateUCOSectionTitle(${si},this.value)">
+        <button class="edit-del-section" onclick="deleteUCOSection(${si})" title="Delete section">✕</button>
+      </div>
+      <div class="section-body">
+        ${itemsHTML}
+        <div class="edit-add-item-row">
+          <button class="edit-add-item-btn" onclick="addUCOItem(${si})">＋ Add Item</button>
+        </div>
+      </div>`;
+    container.appendChild(div);
+  });
+
+  const footer = document.createElement('div');
+  footer.className = 'edit-footer';
+  footer.innerHTML = `
+    <button class="edit-add-section-btn" onclick="addUCOSection()">＋ Add Section</button>
+    <button class="edit-reset-btn" onclick="resetUCOSectionsToDefault()">↺ Reset to Default</button>`;
+  container.appendChild(footer);
+}
+
+function addUCOSection() {
+  _ensureCustomUCO();
+  customSections['uco'].push({ title: 'New Section', items: [] });
+  buildUCO();
+}
+
+function deleteUCOSection(si) {
+  _ensureCustomUCO();
+  if (!confirm('Delete this UCO section and all its items?')) return;
+  customSections['uco'].splice(si, 1);
+  buildUCO();
+}
+
+function updateUCOSectionTitle(si, val) {
+  _ensureCustomUCO();
+  customSections['uco'][si].title = val;
+}
+
+function addUCOItem(si) {
+  _ensureCustomUCO();
+  customSections['uco'][si].items.push('');
+  buildUCO();
+}
+
+function deleteUCOItem(si, ii) {
+  _ensureCustomUCO();
+  customSections['uco'][si].items.splice(ii, 1);
+  buildUCO();
+}
+
+function updateUCOItemLabel(si, ii, val) {
+  _ensureCustomUCO();
+  customSections['uco'][si].items[ii] = val;
+}
+
+function resetUCOSectionsToDefault() {
+  if (!confirm('Reset UCO to default sections? All custom changes will be lost.')) return;
+  delete customSections['uco'];
+  persistCustomSections();
+  buildUCO();
+}
+
+// ── Firebase ──────────────────────────────────────────────────────────────────
+
+function initFirebase() {
+  if (!FIREBASE_CONFIG.apiKey) return;
+  try {
+    const app = firebase.initializeApp(FIREBASE_CONFIG);
+    _db = firebase.firestore(app);
+    loadFromFirestore();
+  } catch(e) {
+    console.warn('Firebase init failed:', e);
+  }
+}
+
+function saveToFirestore() {
+  if (!_db) return;
+  _db.collection('easi-checkoff').doc('custom-sections').set({
+    data: customSections,
+    updatedAt: new Date().toISOString(),
+  }).catch(e => console.warn('Firestore save failed:', e));
+}
+
+function loadFromFirestore() {
+  if (!_db) return;
+  _db.collection('easi-checkoff').doc('custom-sections').get().then(doc => {
+    if (doc.exists) {
+      const remote = doc.data().data || {};
+      customSections = Object.assign({}, customSections, remote);
+      localStorage.setItem(CUSTOM_KEY, JSON.stringify(customSections));
+      buildEquip();
+      buildUCO();
+    }
+  }).catch(e => console.warn('Firestore load failed:', e));
+}
+
 // ─── NETWORK STATUS ──────────────────────────────────────────────────────────
 
 function updateNetStatus() {
@@ -2133,6 +2466,7 @@ function applyPrefs() {
 // ─── INIT ────────────────────────────────────────────────────────────────────
 
 loadState();
+initFirebase();
 buildEquip();
 bindEquipFields();
 buildUCO();
