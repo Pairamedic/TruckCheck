@@ -459,21 +459,20 @@ def equip_section_table(title, items, cw):
     """One unified table: dark header row + item rows. Fits in a Table cell."""
     has_exp = any(exp for _,_,exp in items)
 
-    # proportional widths that sum to cw
-    cb_w  = 9
+    # proportional widths that sum to cw (no leading checkbox column)
     min_w = 22
     act_w = 28
     exp_w = 26 if has_exp else 0
     oos_w = 20
-    lbl_w = cw - cb_w - min_w - act_w - exp_w - oos_w
+    lbl_w = cw - min_w - act_w - exp_w - oos_w
 
-    widths = [cb_w, lbl_w, min_w, act_w]
+    widths = [lbl_w, min_w, act_w]
     if has_exp:
         widths.append(exp_w)
     widths.append(oos_w)
 
     # Column header row
-    hdr = ['', Paragraph('Item', S['chdr_l']), Paragraph('Min', S['chdr']),
+    hdr = [Paragraph('Item', S['chdr_l']), Paragraph('Min', S['chdr']),
            Paragraph('Actual', S['chdr'])]
     if has_exp:
         hdr.append(Paragraph('Exp', S['chdr']))
@@ -502,14 +501,14 @@ def equip_section_table(title, items, cw):
         ('RIGHTPADDING',  (0, 0), (-1, -1), 2),
         ('TOPPADDING',    (0, 2), (-1, -1), 2),
         ('BOTTOMPADDING', (0, 2), (-1, -1), 2),
-        ('ALIGN',         (2, 0), (2, -1), 'CENTER'),
+        ('ALIGN',         (1, 0), (1, -1), 'CENTER'),
         ('ALIGN',         (-1, 0), (-1, -1), 'CENTER'),
         ('BOX',           (0, 0), (-1, -1), 0.5, MID_GRAY),
     ]
 
     for i, (label, qty, exp) in enumerate(items):
         row_i = i + 2  # offset for title+header rows
-        row = [CheckBox(7), Paragraph(label, S['item']),
+        row = [Paragraph(label, S['item']),
                Paragraph(f'x{qty}', S['qty']), Underline(act_w - 6)]
         if has_exp:
             row.append(Underline(exp_w - 6) if exp else '')
