@@ -2086,78 +2086,83 @@ function downloadFillable(form) {
 
 function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs, isUCO }) {
   const metaHTML = meta.map(m =>
-    `<div style="flex:1;min-width:80px;padding:4px 8px;border-right:1px solid #e5e7eb">
-      <div style="font-size:7px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280">${m.label}</div>
-      <div style="font-size:10px;font-weight:600;border-bottom:1px solid #111;min-height:15px;margin-top:1px;padding-bottom:1px">${m.value || ''}</div>
+    `<div style="flex:1;min-width:80px;padding:4px 8px;border-right:1px solid #d1d5db">
+      <div style="font-size:6px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin-bottom:2px">${m.label}</div>
+      <div style="border-bottom:1px solid #111;min-height:14px;padding-bottom:1px">${m.value || ''}</div>
     </div>`).join('');
 
-  const sectionsHTML = sections.map(sec => {
+  const sectionsHTML = sections.map((sec, si) => {
     if (isUCO) {
-      const rows = sec.items.map(item =>
-        `<tr><td style="padding:3px 4px;width:18px;vertical-align:middle">
-          <div style="width:11px;height:11px;border:1.5px solid #111;margin:auto"></div>
-        </td><td style="padding:3px 4px;font-size:9px;line-height:1.35">${item}</td></tr>`
+      const rows = sec.items.map((item, ii) =>
+        `<tr style="background:${ii%2===1?'#f9fafb':'#fff'}">
+          <td style="padding:2px 3px;width:14px;vertical-align:middle">
+            <div style="width:9px;height:9px;border:1px solid #111;margin:auto"></div>
+          </td>
+          <td style="padding:2px 4px;font-size:8px;line-height:1.3">${item}</td>
+        </tr>`
       ).join('');
-      return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
-        <div style="background:#1e2230;color:#fff;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:3px 6px">${sec.title}</div>
+      return `<div style="break-inside:avoid;margin-bottom:5px;border:1px solid #d1d5db;overflow:hidden">
+        <div style="background:#1e2230;color:#fff;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:2px 6px">${sec.title}</div>
         <table style="width:100%;border-collapse:collapse">${rows}</table>
       </div>`;
     }
-    // Equipment — show Min, blank Actual, blank Exp (only for items with expiry), OOS checkbox
+    // Equipment — Item | Min | Actual | Exp (conditional) | OOS
     const hasExp = sec.items.some(i => i.expiry);
-    const colHdr = `<tr style="background:#f9fafb">
-      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px" colspan="2">Item</td>
-      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:28px">Min</td>
-      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:36px">Actual</td>
-      ${hasExp ? '<td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:40px">Exp</td>' : ''}
-      <td style="padding:2px 4px;font-size:7px;text-transform:uppercase;color:#b91c1c;letter-spacing:.3px;text-align:center;width:26px">OOS</td>
+    const colHdr = `<tr style="background:#f9fafb;border-bottom:1px solid #d1d5db">
+      <td style="padding:1px 4px;font-size:6px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px">Item</td>
+      <td style="padding:1px 4px;font-size:6px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:26px">Min</td>
+      <td style="padding:1px 4px;font-size:6px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:34px">Actual</td>
+      ${hasExp ? '<td style="padding:1px 4px;font-size:6px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:32px">Exp</td>' : ''}
+      <td style="padding:1px 4px;font-size:6px;text-transform:uppercase;color:#6b7280;letter-spacing:.3px;text-align:center;width:22px">OOS</td>
     </tr>`;
-    const rows = sec.items.map(item =>
-      `<tr style="border-bottom:1px solid #f3f4f6">
-        <td style="padding:3px 4px;width:10px;text-align:center;color:#d1d5db;font-size:8px">·</td>
-        <td style="padding:3px 4px;font-size:9px;line-height:1.3">${item.label}</td>
-        <td style="padding:2px 4px;font-size:9px;text-align:center;color:#374151;font-weight:700">×${item.qty}</td>
-        <td style="padding:3px 8px"><div style="border-bottom:1px solid #374151;min-height:13px"></div></td>
-        ${hasExp ? `<td style="padding:3px 6px">${item.expiry ? '<div style="border-bottom:1px solid #374151;min-height:13px"></div>' : ''}</td>` : ''}
-        <td style="padding:3px 4px;text-align:center;vertical-align:middle">
-          <div style="width:13px;height:13px;border:1.5px dashed #b91c1c;border-radius:3px;margin:auto;position:relative">
-            <div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fca5a5;font-weight:900;line-height:1">✕</div>
-          </div>
+    const rows = sec.items.map((item, ii) =>
+      `<tr style="border-bottom:1px solid #f0f0f0;background:${ii%2===1?'#f9fafb':'#fff'}">
+        <td style="padding:2px 4px;font-size:8px;line-height:1.3">${item.label}</td>
+        <td style="padding:2px 4px;font-size:8px;text-align:center;color:#374151;font-weight:700">×${item.qty}</td>
+        <td style="padding:3px 6px"><div style="border-bottom:1px solid #374151;min-height:12px"></div></td>
+        ${hasExp ? `<td style="padding:3px 5px">${item.expiry ? '<div style="border-bottom:1px solid #374151;min-height:12px"></div>' : ''}</td>` : ''}
+        <td style="padding:2px 4px;text-align:center;vertical-align:middle">
+          <div style="width:9px;height:9px;border:1px solid #111;margin:auto"></div>
         </td>
       </tr>`
     ).join('');
-    return `<div style="break-inside:avoid;margin-bottom:6px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden">
-      <div style="background:#1e2230;color:#fff;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:3px 6px">${sec.title}</div>
+    return `<div style="break-inside:avoid;margin-bottom:5px;border:1px solid #d1d5db;overflow:hidden">
+      <div style="background:#1e2230;color:#fff;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:2px 6px">${sec.title}</div>
       <table style="width:100%;border-collapse:collapse">${colHdr}${rows}</table>
     </div>`;
   }).join('');
 
   const sigsHTML = (sigs || []).map(s =>
-    `<div style="flex:1;border-top:1px solid #111;padding-top:3px;font-size:9px;color:#6b7280">${s}</div>`).join('');
+    `<div style="flex:1;padding:0 4px">
+      <div style="border-bottom:1px solid #111;min-height:22px"></div>
+      <div style="font-size:7px;color:#6b7280;margin-top:2px">${s}</div>
+    </div>`).join('');
 
   const ucoClosingHTML = isUCO ? `
-    <div style="border:1px solid #d1d5db;border-radius:4px;padding:6px 8px;margin-top:8px">
-      <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Repairs Needed / New Body Damage</div>
-      <div style="border-bottom:1px solid #374151;min-height:18px;margin-bottom:5px"></div>
-      <div style="border-bottom:1px solid #374151;min-height:18px"></div>
+    <div style="border:1px solid #d1d5db;overflow:hidden;margin-top:6px">
+      <div style="background:#1e2230;color:#fff;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:2px 6px">Repairs Needed / New Body Damage</div>
+      <div style="padding:5px 8px">
+        <div style="border-bottom:1px solid #374151;min-height:16px;margin-bottom:5px"></div>
+        <div style="border-bottom:1px solid #374151;min-height:16px"></div>
+      </div>
     </div>
-    <div style="display:flex;gap:6px;margin-top:6px">
-      <div style="flex:1;border:1px solid #d1d5db;border-radius:4px;padding:5px 7px">
-        <div style="font-size:7px;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Fuel Card</div>
-        <div style="display:flex;gap:10px;font-size:9px">
-          <label style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border:1.5px solid #111;flex-shrink:0"></div> YES</label>
-          <label style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border:1.5px solid #111;flex-shrink:0"></div> NO</label>
+    <div style="display:flex;gap:5px;margin-top:5px">
+      <div style="flex:1;border:1px solid #d1d5db;padding:4px 6px">
+        <div style="font-size:6px;text-transform:uppercase;color:#6b7280;margin-bottom:3px">Fuel Card</div>
+        <div style="display:flex;gap:8px;font-size:8px;align-items:center">
+          <span style="display:flex;align-items:center;gap:3px"><div style="width:9px;height:9px;border:1px solid #111;flex-shrink:0"></div> YES</span>
+          <span style="display:flex;align-items:center;gap:3px"><div style="width:9px;height:9px;border:1px solid #111;flex-shrink:0"></div> NO</span>
         </div>
       </div>
-      <div style="flex:2;border:1px solid #d1d5db;border-radius:4px;padding:5px 7px">
-        <div style="font-size:7px;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Fire Extinguisher PSI / Status</div>
-        <div style="border-bottom:1px solid #374151;min-height:14px"></div>
+      <div style="flex:2;border:1px solid #d1d5db;padding:4px 6px">
+        <div style="font-size:6px;text-transform:uppercase;color:#6b7280;margin-bottom:3px">Fire Extinguisher PSI / Status</div>
+        <div style="border-bottom:1px solid #374151;min-height:13px"></div>
       </div>
-      <div style="flex:1;border:1px solid #d1d5db;border-radius:4px;padding:5px 7px">
-        <div style="font-size:7px;text-transform:uppercase;color:#6b7280;margin-bottom:4px">Maint. Request Turned In</div>
-        <div style="display:flex;gap:10px;font-size:9px">
-          <label style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border:1.5px solid #111;flex-shrink:0"></div> YES</label>
-          <label style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border:1.5px solid #111;flex-shrink:0"></div> NO</label>
+      <div style="flex:1;border:1px solid #d1d5db;padding:4px 6px">
+        <div style="font-size:6px;text-transform:uppercase;color:#6b7280;margin-bottom:3px">Maint. Request Turned In</div>
+        <div style="display:flex;gap:8px;font-size:8px;align-items:center">
+          <span style="display:flex;align-items:center;gap:3px"><div style="width:9px;height:9px;border:1px solid #111;flex-shrink:0"></div> YES</span>
+          <span style="display:flex;align-items:center;gap:3px"><div style="width:9px;height:9px;border:1px solid #111;flex-shrink:0"></div> NO</span>
         </div>
       </div>
     </div>` : '';
@@ -2165,35 +2170,33 @@ function buildFillableHTML({ title, badgeLabel, badgeColor, meta, sections, sigs
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>EASI — ${title}</title>
 <style>
   *{box-sizing:border-box}
-  body{font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#111827;margin:0;padding:0;width:100%}
-  .sections{columns:2;column-gap:10px;width:100%}
-  .sigs{display:flex;gap:24px;margin-top:16px}
+  body{font-family:Arial,Helvetica,sans-serif;font-size:8px;color:#111827;margin:0;padding:0;width:100%}
+  .sections{columns:2;column-gap:8px;width:100%}
   .sigs-block{break-before:avoid;page-break-before:avoid;break-inside:avoid;page-break-inside:avoid}
   table{width:100%;border-collapse:collapse}
-  table tr{border-bottom:1px solid #f3f4f6}
-  table tr:last-child{border-bottom:none}
+  table tr:last-child td{border-bottom:none}
   @page{size:letter portrait;margin:8mm}
 </style>
 </head><body>
-<div style="border:2px solid #1e2230;border-radius:6px;overflow:hidden;margin-bottom:8px">
-  <div style="background:#1e2230;color:#fff;padding:7px 10px;display:flex;align-items:center;justify-content:space-between">
+<div style="border:1.5px solid #1e2230;overflow:hidden;margin-bottom:7px">
+  <div style="background:#1e2230;color:#fff;padding:6px 10px;display:flex;align-items:center;justify-content:space-between">
     <div style="display:flex;align-items:center;gap:8px">
-      <img src="${LOGO_B64}" style="height:34px;width:34px;object-fit:contain;flex-shrink:0">
-      <div>
-        <div style="font-size:14px;font-weight:700;letter-spacing:-.2px">Emergency Ambulance Service, Inc.</div>
-        <div style="font-size:9px;opacity:.6;margin-top:1px">${isUCO ? 'Unit Check-Off' : 'Ambulance Equipment Check-Off'}</div>
-      </div>
+      <img src="${LOGO_B64}" style="height:30px;width:30px;object-fit:contain;flex-shrink:0">
+      <div style="font-size:12px;font-weight:700;letter-spacing:-.2px">Emergency Ambulance Service, Inc.</div>
     </div>
-    <div style="background:${badgeColor};color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px">${badgeLabel}</div>
+    <div style="background:${badgeColor};color:#fff;font-size:8px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px">${badgeLabel}</div>
   </div>
-  <div style="display:flex;flex-wrap:wrap;border-top:1px solid #e5e7eb">${metaHTML}</div>
+  <div style="background:#2d3347;padding:2px 10px">
+    <div style="font-size:7px;color:#aaaaaa">${isUCO ? 'Unit Check-Off' : 'Ambulance Equipment Check-Off'}</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;border-top:1px solid #d1d5db">${metaHTML}</div>
 </div>
 <div class="sections">${sectionsHTML}</div>
 ${ucoClosingHTML}
-${!isUCO ? `<div style="font-size:7px;color:#6b7280;margin-top:6px;padding:3px 6px;background:#fef2f2;border:1px solid #fecaca;border-radius:3px;display:inline-flex;align-items:center;gap:5px"><div style="width:11px;height:11px;border:1.5px dashed #b91c1c;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fca5a5;font-weight:900">✕</div><span><b style="color:#b91c1c">OOS</b> = Out of Stock — circle or fill the box if item is unavailable</span></div>` : ''}
+${!isUCO ? `<div style="font-size:7px;color:#6b7280;margin-top:5px"><b style="color:#374151">OOS</b> = Out of Stock — check the OOS box if the item is unavailable.</div>` : ''}
 <div class="sigs-block">
-  <div class="sigs" style="margin-top:${isUCO ? '12px' : '16px'}">${sigsHTML}</div>
-  <div style="font-size:7px;color:#9ca3af;text-align:right;margin-top:8px;border-top:1px solid #f3f4f6;padding-top:4px">EMS Check &nbsp;·&nbsp; Printed ${new Date().toLocaleString()}</div>
+  <div style="display:flex;gap:20px;margin-top:${isUCO ? '10px' : '14px'}">${sigsHTML}</div>
+  <div style="font-size:6px;color:#9ca3af;text-align:right;margin-top:6px;border-top:1px solid #f3f4f6;padding-top:3px">EMS Check &nbsp;·&nbsp; Printed ${new Date().toLocaleString()}</div>
 </div>
 </body></html>`;
 }
