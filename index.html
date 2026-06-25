@@ -260,6 +260,13 @@
   .files-empty { text-align: center; padding: 44px 20px; color: var(--muted); font-size: 13px; line-height: 1.6; }
   .files-empty-icon { font-size: 42px; margin-bottom: 10px; }
   .files-loading { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
+  .files-search-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .files-search-input { flex: 1; min-width: 0; background: rgba(255,255,255,.06); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13px; color: var(--text); font-family: inherit; outline: none; -webkit-appearance: none; }
+  .files-search-input:focus { border-color: var(--accent); }
+  .files-search-input::placeholder { color: var(--muted); }
+  .files-sort-toggle { display: flex; background: rgba(255,255,255,.05); border-radius: 8px; padding: 2px; gap: 2px; flex-shrink: 0; }
+  .sort-btn { font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 6px; border: none; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; font-family: inherit; transition: background .15s, color .15s; }
+  .sort-btn.active { background: var(--accent); color: #fff; }
   .files-config-note { background: rgba(59,130,246,.08); border: 1px dashed rgba(59,130,246,.4); border-radius: 10px; padding: 14px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
   .files-config-note strong { color: var(--accent); }
   .day-group { margin-bottom: 20px; }
@@ -532,6 +539,13 @@
     <div class="files-header">
       <div class="files-title">Saved Check-Offs</div>
       <button class="files-lock-btn" onclick="lockSavedFiles()">🔒 Lock</button>
+    </div>
+    <div class="files-search-row">
+      <input id="files-search" class="files-search-input" type="search" placeholder="Search unit # or provider…" oninput="renderSavedFiles()" autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="files-sort-toggle">
+        <button id="sort-date-btn" class="sort-btn active" onclick="setSavedSort('date')">By Date</button>
+        <button id="sort-unit-btn" class="sort-btn" onclick="setSavedSort('unit')">By Unit</button>
+      </div>
     </div>
     <div id="files-body"><div class="files-loading">Loading…</div></div>
   </div>
@@ -1948,6 +1962,14 @@ async function changePinAdmin() {
 // ─── SAVED FILES ──────────────────────────────────────────────────────────────
 
 let _savedRecords = [];
+let _savedSort = 'date'; // 'date' | 'unit'
+
+function setSavedSort(mode) {
+  _savedSort = mode;
+  document.getElementById('sort-date-btn').classList.toggle('active', mode === 'date');
+  document.getElementById('sort-unit-btn').classList.toggle('active', mode === 'unit');
+  renderSavedFiles();
+}
 
 async function loadSavedFiles() {
   if (!_db) return;
@@ -1979,28 +2001,47 @@ async function loadSavedFiles() {
 
 function renderSavedFiles() {
   const body = document.getElementById('files-body');
+  const q = (document.getElementById('files-search')?.value || '').trim().toLowerCase();
 
-  if (!_savedRecords.length) {
-    body.innerHTML = '<div class="files-empty"><div class="files-empty-icon">📂</div>No saved check-offs yet.<br>Complete a check-off and tap ☁ Save.</div>';
+  let records = _savedRecords;
+  if (q) {
+    records = records.filter(r =>
+      (r.unit || '').toLowerCase().includes(q) ||
+      (r.providers || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (!records.length) {
+    body.innerHTML = q
+      ? `<div class="files-empty"><div class="files-empty-icon">🔍</div>No results for "<strong>${esc(q)}</strong>"</div>`
+      : '<div class="files-empty"><div class="files-empty-icon">📂</div>No saved check-offs yet.<br>Complete a check-off and tap ☁ Save.</div>';
     return;
   }
 
   const groups = {};
-  _savedRecords.forEach(r => {
-    const key = r.dateISO || 'unknown';
+  records.forEach(r => {
+    const key = _savedSort === 'unit'
+      ? (r.unit || 'Unknown').trim()
+      : (r.dateISO || 'unknown');
     (groups[key] = groups[key] || []).push(r);
   });
 
+  const sortedKeys = Object.keys(groups).sort(_savedSort === 'unit'
+    ? (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+    : (a, b) => b.localeCompare(a)
+  );
+
   let html = '';
-  Object.keys(groups).sort().reverse().forEach(dateISO => {
-    const recs = groups[dateISO];
-    const label = fmtDate(dateISO);
+  sortedKeys.forEach(key => {
+    const recs = groups[key];
+    const label = _savedSort === 'unit' ? `Unit ${esc(key)}` : fmtDate(key);
+    const safeKey = esc(key);
     html += `<div class="day-group">
       <div class="day-header">
         <div class="day-label">${label}</div>
         <div class="day-actions">
-          <button class="day-btn" onclick="downloadAllForDay('${dateISO}')">⬇ All</button>
-          <button class="day-btn danger" onclick="deleteAllForDay('${dateISO}')">🗑 All</button>
+          <button class="day-btn" onclick="downloadGroup('${safeKey}')">⬇ All</button>
+          <button class="day-btn danger" onclick="deleteGroup('${safeKey}')">🗑 All</button>
         </div>
       </div>`;
     recs.forEach(r => {
@@ -2009,6 +2050,7 @@ function renderSavedFiles() {
       const sl = r.status === 'complete' ? 'Complete' : `Incomplete (${r.incompleteCount || '?'} missing)`;
       const ts = r.uploadedAt ? fmtTime(r.uploadedAt.toDate ? r.uploadedAt.toDate() : new Date(r.uploadedAt)) : '';
       const exp = daysLeft(r.expiresAt);
+      const dateSubline = _savedSort === 'unit' ? `${fmtDate(r.dateISO || '')} · ` : '';
       html += `<div class="file-card">
         <div class="file-top">
           <span class="file-unit">${esc(r.unit||'N/A')}</span>
@@ -2016,7 +2058,7 @@ function renderSavedFiles() {
           <span class="file-badge ${sc}">${sl}</span>
         </div>
         <div class="file-providers">${esc(r.providers||'Unknown')}</div>
-        <div class="file-meta">Saved ${ts} · Auto-deletes in ${exp} day${exp!==1?'s':''}</div>
+        <div class="file-meta">${dateSubline}Saved ${ts} · Auto-deletes in ${exp} day${exp!==1?'s':''}</div>
         <div class="file-actions">
           <button class="file-action-btn fa-dl" onclick="downloadSavedFile('${esc(r.storagePath)}','${esc(r.filename)}')">⬇ Download</button>
           <button class="file-action-btn fa-del" onclick="deleteSavedFile('${r.id}','${esc(r.storagePath)}')">🗑 Delete</button>
@@ -2064,6 +2106,43 @@ async function deleteSavedFile(docId, storagePath) {
     _savedRecords = _savedRecords.filter(r => r.id !== docId);
     renderSavedFiles();
     showToast('Deleted ✓');
+  } catch (e) { alert('Delete failed: ' + e.message); }
+}
+
+function _getGroupRecs(key) {
+  const q = (document.getElementById('files-search')?.value || '').trim().toLowerCase();
+  let recs = q
+    ? _savedRecords.filter(r => (r.unit||'').toLowerCase().includes(q) || (r.providers||'').toLowerCase().includes(q))
+    : _savedRecords;
+  return _savedSort === 'unit'
+    ? recs.filter(r => (r.unit || 'Unknown').trim() === key)
+    : recs.filter(r => (r.dateISO || 'unknown') === key);
+}
+
+async function downloadGroup(key) {
+  const recs = _getGroupRecs(key);
+  if (!recs.length) return;
+  showToast(`Downloading ${recs.length} file(s)…`);
+  for (let i = 0; i < recs.length; i++) {
+    await new Promise(r => setTimeout(r, i * 700));
+    await downloadSavedFile(recs[i].storagePath, recs[i].filename);
+  }
+}
+
+async function deleteGroup(key) {
+  const recs = _getGroupRecs(key);
+  if (!recs.length) return;
+  const groupLabel = _savedSort === 'unit' ? `Unit ${key}` : fmtDate(key);
+  if (!confirm(`Delete ALL ${recs.length} check-off(s) for ${groupLabel}?\n\nThis cannot be undone.`)) return;
+  try {
+    const batch = _db.batch();
+    recs.forEach(r => batch.delete(_db.collection('checkoff-records').doc(r.id)));
+    await batch.commit();
+    if (_storage) await Promise.all(recs.map(r => r.storagePath ? _storage.ref(r.storagePath).delete().catch(()=>{}) : Promise.resolve()));
+    const ids = new Set(recs.map(r => r.id));
+    _savedRecords = _savedRecords.filter(r => !ids.has(r.id));
+    renderSavedFiles();
+    showToast(`Deleted ${recs.length} records ✓`);
   } catch (e) { alert('Delete failed: ' + e.message); }
 }
 
