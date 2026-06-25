@@ -216,20 +216,20 @@
   .recip-item { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: background .12s; }
   .recip-item:hover { background: rgba(255,255,255,.08); }
   .recip-item.selected { border-color: var(--accent); background: rgba(59,130,246,.10); }
-  .recip-item.ops-only { border-color: rgba(234,179,8,.25); }
-  .recip-item.ops-only.selected { border-color: var(--yellow); background: rgba(234,179,8,.10); }
   .recip-check { width: 20px; height: 20px; min-width: 20px; border-radius: 5px; border: 2px solid rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; transition: all .12s; }
   .recip-item.selected .recip-check { background: var(--accent); border-color: var(--accent); }
-  .recip-item.ops-only.selected .recip-check { background: var(--yellow); border-color: var(--yellow); }
   .recip-item.selected .recip-check::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 800; }
-  .recip-item.ops-only.selected .recip-check::after { color: #000; }
   .recip-info { flex: 1; }
   .recip-name { font-size: 13px; font-weight: 600; }
   .recip-email { font-size: 11px; color: var(--muted); margin-top: 1px; }
-  .recip-note { font-size: 10px; color: var(--yellow); margin-top: 2px; }
+  .recip-note { font-size: 10px; color: var(--yellow); margin-top: 3px; line-height: 1.4; }
   .recip-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
   .tag-sup { background: rgba(59,130,246,.18); color: var(--aemt-color); }
-  .tag-ops { background: rgba(234,179,8,.18); color: var(--yellow); }
+  .tag-sms { background: rgba(34,197,94,.18); color: var(--green); }
+  .recip-item.recip-phone { border-color: rgba(34,197,94,.35); }
+  .recip-item.recip-phone:hover { background: rgba(34,197,94,.08); border-color: var(--green); }
+  .recip-item.recip-phone:active { background: rgba(34,197,94,.15); }
+  .recip-phone-icon { font-size: 18px; width: 20px; height: 20px; min-width: 20px; display: flex; align-items: center; justify-content: center; border: none; background: none; }
   .modal-actions { display: flex; gap: 8px; }
   .modal-btn { flex: 1; padding: 11px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: opacity .12s; }
   .modal-btn:active { opacity: .7; }
@@ -331,45 +331,38 @@
     <div class="modal-handle"></div>
     <div class="modal-title">Send Report</div>
     <div class="modal-sub">Select recipients — then tap Send</div>
-    <div class="email-warning">⚠ <strong>Only email supervisors if there is a significant problem requiring immediate attention.</strong> For routine check-offs, use <strong>Save to Drive</strong> instead.</div>
+    <div class="email-warning">⚠ <strong>Only contact supervisors when required for check-off submission or if there is a significant problem.</strong></div>
     <div class="recip-list">
+      <div class="recip-item recip-phone" onclick="textSupervisor()">
+        <div class="recip-phone-icon">💬</div>
+        <div class="recip-info">
+          <div class="recip-name">Supervisor Phone</div>
+          <div class="recip-email">+1 (870) 329-2491</div>
+          <div class="recip-note">⚠ Only when Shanna or Aaron Caldwell is on shift — unless authorized by another active supervisor to submit your check-off this way.</div>
+        </div>
+        <span class="recip-tag tag-sms">Text</span>
+      </div>
       <div class="recip-item" data-email="smcdonnel@easimedics.com" onclick="toggleRecip(this)">
         <div class="recip-check"></div>
         <div class="recip-info">
-          <div class="recip-name">S. McDonnel</div>
+          <div class="recip-name">Shanna McDonnel</div>
           <div class="recip-email">smcdonnel@easimedics.com</div>
         </div>
         <span class="recip-tag tag-sup">Supervisor</span>
       </div>
-      <div class="recip-item" data-email="aanderson@easimedics.com" onclick="toggleRecip(this)">
+      <div class="recip-item" data-email="acaldwell@easimedics.com" onclick="toggleRecip(this)">
         <div class="recip-check"></div>
         <div class="recip-info">
-          <div class="recip-name">A. Anderson</div>
-          <div class="recip-email">aanderson@easimedics.com</div>
+          <div class="recip-name">Aaron Caldwell</div>
+          <div class="recip-email">acaldwell@easimedics.com</div>
+          <div class="recip-note">Relief Supervisor / App Manager</div>
         </div>
         <span class="recip-tag tag-sup">Supervisor</span>
-      </div>
-      <div class="recip-item" data-email="dcollins@easimedics.com" onclick="toggleRecip(this)">
-        <div class="recip-check"></div>
-        <div class="recip-info">
-          <div class="recip-name">D. Collins</div>
-          <div class="recip-email">dcollins@easimedics.com</div>
-        </div>
-        <span class="recip-tag tag-sup">Supervisor</span>
-      </div>
-      <div class="recip-item ops-only" data-email="cmcdaniel@easimedics.com" onclick="toggleRecip(this)">
-        <div class="recip-check"></div>
-        <div class="recip-info">
-          <div class="recip-name">C. McDaniel</div>
-          <div class="recip-email">cmcdaniel@easimedics.com</div>
-          <div class="recip-note">⚠ Operations — select only if directed</div>
-        </div>
-        <span class="recip-tag tag-ops">Operations</span>
       </div>
     </div>
     <div class="modal-actions">
       <button class="modal-btn modal-cancel" onclick="closeEmailModal()">Cancel</button>
-      <button class="modal-btn modal-send" onclick="sendEmail()">Send</button>
+      <button class="modal-btn modal-send" onclick="sendEmail()">Send Email</button>
     </div>
   </div>
 </div>
@@ -377,6 +370,7 @@
 <!-- FLOATING CONTROLS -->
 <div class="ctrl-bar">
   <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit sections" style="display:none">✏</button>
+  <button class="ctrl-btn" id="notif-btn" onclick="toggleNotifications()" title="Enable push notifications">🔕</button>
   <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
   <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
 </div>
@@ -1342,7 +1336,8 @@ function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
+  else document.querySelector(`.tab-btn[onclick*="'${id}'"]`)?.classList.add('active');
 }
 
 // ─── UNIT TYPE ────────────────────────────────────────────────────────────────
@@ -1684,6 +1679,118 @@ function resetUCO() {
   state.uco = {};
   buildUCO();
   saveState();
+}
+
+// ─── SUPERVISOR TEXT / SMS ───────────────────────────────────────────────────
+
+function getFormSummary(form) {
+  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
+  const unitLabel = currentUnit === 'als-para' ? 'ALS-Paramedic' : currentUnit === 'als-aemt' ? 'ALS-AEMT' : 'BLS-EMT';
+  if (form === 'equip') {
+    const sections = getActiveSections();
+    const total = sections.reduce((n, sec) => n + sec.items.length, 0);
+    const incomplete = getIncompleteCount('equip');
+    let msg = `EASI EMS Check — ${unitLabel} Equipment\n`;
+    msg += `Unit: ${s.unit || 'N/A'}  |  Date: ${s.date || 'N/A'}\n`;
+    msg += `Provider: ${s.paramedic || 'N/A'} / ${s.emt || 'N/A'}\n`;
+    msg += `O2 Main: ${s.maino2 || '?'} PSI  Portable: ${s.porto2 || '?'} PSI\n`;
+    if (s.sealnum) msg += `Seal #: ${s.sealnum}\n`;
+    msg += `Completed: ${total - incomplete}/${total} items checked`;
+    return msg;
+  } else {
+    const total = getActiveUCOSections().reduce((n, sec) => n + sec.items.length, 0);
+    const incomplete = getIncompleteCount('uco');
+    let msg = `EASI EMS Check — Unit Check Off\n`;
+    msg += `Unit: ${s.unit || 'N/A'}  |  Date: ${s.date || 'N/A'}\n`;
+    msg += `Mileage: ${s.mileage || 'N/A'}  |  EMT: ${s.name || 'N/A'}\n`;
+    msg += `Radio: ${s.radio || 'N/A'}\n`;
+    msg += `Completed: ${total - incomplete}/${total} items checked`;
+    if (s.repairs) msg += `\nRepairs/Notes: ${s.repairs}`;
+    return msg;
+  }
+}
+
+function textSupervisor() {
+  closeEmailModal();
+  const confirmed = confirm(
+    'Send check-off summary via text to Supervisor?\n\n' +
+    '⚠️ Only send this way when Shanna or Aaron Caldwell is on shift, or when authorized by another active supervisor.\n\n' +
+    'Tap OK to open your messaging app.'
+  );
+  if (!confirmed) return;
+  const summary = getFormSummary(_emailForm);
+  window.location.href = 'sms:+18703292491?body=' + encodeURIComponent(summary);
+}
+
+// ─── PUSH NOTIFICATIONS ──────────────────────────────────────────────────────
+// To enable: add your VAPID public key from Firebase Console
+// Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
+const VAPID_PUBLIC_KEY = ''; // REPLACE WITH YOUR VAPID PUBLIC KEY
+
+function urlBase64ToUint8Array(b64) {
+  const pad = '='.repeat((4 - b64.length % 4) % 4);
+  const base64 = (b64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+async function subscribePush() {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    alert('Push notifications are not supported in this browser.');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') { showToast('Notification permission denied'); return; }
+  if (!VAPID_PUBLIC_KEY) { showToast('Notifications not configured — contact admin'); return; }
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+    localStorage.setItem('push-sub', JSON.stringify(sub));
+    showToast('Notifications enabled');
+    updateNotifBtn();
+  } catch (e) {
+    console.error('Push subscribe error:', e);
+    showToast('Failed to enable notifications');
+  }
+}
+
+async function unsubscribePush() {
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if (sub) await sub.unsubscribe();
+    localStorage.removeItem('push-sub');
+    showToast('Notifications disabled');
+    updateNotifBtn();
+  } catch (e) {
+    showToast('Failed to disable notifications');
+  }
+}
+
+function updateNotifBtn() {
+  const btn = document.getElementById('notif-btn');
+  if (!btn || !('Notification' in window)) return;
+  if (Notification.permission !== 'granted') { btn.textContent = '🔕'; return; }
+  navigator.serviceWorker.ready.then(reg =>
+    reg.pushManager.getSubscription().then(sub => {
+      btn.textContent = sub ? '🔔' : '🔕';
+      btn.title = sub ? 'Notifications on — tap to disable' : 'Tap to enable notifications';
+    })
+  );
+}
+
+async function toggleNotifications() {
+  if (!('Notification' in window)) { alert('Notifications not supported in this browser.'); return; }
+  if (Notification.permission === 'denied') {
+    alert('Notifications are blocked. Please enable them in your browser or device settings, then try again.');
+    return;
+  }
+  const reg = await navigator.serviceWorker.ready;
+  const sub = await reg.pushManager.getSubscription();
+  if (sub) await unsubscribePush(); else await subscribePush();
 }
 
 // ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
@@ -2535,9 +2642,20 @@ buildUCO();
 bindUCOFields();
 updateNetStatus();
 applyPrefs();
-if (new URLSearchParams(window.location.search).get('admin') === '1') {
-  document.getElementById('edit-btn').style.display = '';
-}
+updateNotifBtn();
+
+// Handle PWA shortcuts — override unit/tab based on launch URL
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const admin = params.get('admin');
+  const shortcut = params.get('shortcut');
+  if (admin === '1') document.getElementById('edit-btn').style.display = '';
+  if (shortcut === 'als-para' || shortcut === 'als-aemt' || shortcut === 'bls-emt') {
+    setUnit(shortcut);
+  } else if (shortcut === 'uco') {
+    switchTab('uco', null);
+  }
+})();
 </script>
 
 <script>
