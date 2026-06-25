@@ -212,32 +212,87 @@
   .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
   .modal-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
   .modal-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+  /* ── Recipient list (email modal) ──────────────────── */
   .recip-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
   .recip-item { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: background .12s; }
   .recip-item:hover { background: rgba(255,255,255,.08); }
   .recip-item.selected { border-color: var(--accent); background: rgba(59,130,246,.10); }
-  .recip-item.ops-only { border-color: rgba(234,179,8,.25); }
-  .recip-item.ops-only.selected { border-color: var(--yellow); background: rgba(234,179,8,.10); }
   .recip-check { width: 20px; height: 20px; min-width: 20px; border-radius: 5px; border: 2px solid rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; transition: all .12s; }
   .recip-item.selected .recip-check { background: var(--accent); border-color: var(--accent); }
-  .recip-item.ops-only.selected .recip-check { background: var(--yellow); border-color: var(--yellow); }
   .recip-item.selected .recip-check::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 800; }
-  .recip-item.ops-only.selected .recip-check::after { color: #000; }
   .recip-info { flex: 1; }
   .recip-name { font-size: 13px; font-weight: 600; }
   .recip-email { font-size: 11px; color: var(--muted); margin-top: 1px; }
-  .recip-note { font-size: 10px; color: var(--yellow); margin-top: 2px; }
+  .recip-note { font-size: 10px; color: var(--yellow); margin-top: 3px; line-height: 1.4; }
   .recip-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
   .tag-sup { background: rgba(59,130,246,.18); color: var(--aemt-color); }
-  .tag-ops { background: rgba(234,179,8,.18); color: var(--yellow); }
-  .modal-actions { display: flex; gap: 8px; }
+  .tag-sms { background: rgba(34,197,94,.18); color: var(--green); }
+  .recip-item.recip-phone { border-color: rgba(34,197,94,.35); }
+  .recip-item.recip-phone:hover { background: rgba(34,197,94,.08); border-color: var(--green); }
+  .recip-item.recip-phone:active { background: rgba(34,197,94,.15); }
+  .recip-phone-icon { font-size: 18px; width: 20px; height: 20px; min-width: 20px; display: flex; align-items: center; justify-content: center; border: none; background: none; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 4px; }
   .modal-btn { flex: 1; padding: 11px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: opacity .12s; }
   .modal-btn:active { opacity: .7; }
-  .modal-send { background: var(--accent); color: #fff; }
+  .modal-primary { background: var(--accent); color: #fff; }
   .modal-cancel { background: rgba(255,255,255,.07); color: var(--muted); border: 1px solid var(--border); }
+  .modal-warn { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: var(--red); margin-bottom: 14px; line-height: 1.55; }
+  .modal-warn strong { color: var(--red); }
 
-  .email-warning { background: rgba(239,68,68,.10); border: 1px solid rgba(239,68,68,.30); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: var(--red); margin-bottom: 14px; line-height: 1.55; }
-  .email-warning strong { color: var(--red); }
+  /* ── PIN modal ─────────────────────────────────────── */
+  .pin-sub { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; }
+  .pin-dots { display: flex; gap: 16px; justify-content: center; margin: 14px 0 8px; }
+  .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); background: transparent; transition: all .12s; }
+  .pin-dot.filled { background: var(--accent); border-color: var(--accent); transform: scale(1.2); }
+  .pin-error { color: var(--red); font-size: 11px; text-align: center; min-height: 16px; margin: 6px 0 10px; }
+  .pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 230px; margin: 0 auto; }
+  .pin-key { padding: 14px 0; border-radius: 12px; font-size: 22px; font-weight: 600; background: rgba(255,255,255,.07); border: 1px solid var(--border); cursor: pointer; text-align: center; color: var(--text); user-select: none; transition: background .08s, transform .08s; }
+  .pin-key:active { background: rgba(59,130,246,.25); transform: scale(.92); }
+  .pin-del { font-size: 18px; }
+  .pin-blank { background: transparent; border-color: transparent; pointer-events: none; }
+  .pin-hint { font-size: 10px; color: var(--muted); text-align: center; margin-top: 14px; line-height: 1.5; }
+  .pin-change-btn { display: block; text-align: center; font-size: 11px; color: var(--accent); background: none; border: none; cursor: pointer; padding: 8px 0; text-decoration: underline; }
+
+  /* ── Saved Files tab ───────────────────────────────── */
+  .files-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .files-title { font-size: 16px; font-weight: 700; }
+  .files-lock-btn { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 8px; background: rgba(255,255,255,.06); border: 1px solid var(--border); color: var(--muted); cursor: pointer; }
+  .files-empty { text-align: center; padding: 44px 20px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+  .files-empty-icon { font-size: 42px; margin-bottom: 10px; }
+  .files-loading { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
+  .files-search-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .files-search-input { flex: 1; min-width: 0; background: rgba(255,255,255,.06); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13px; color: var(--text); font-family: inherit; outline: none; -webkit-appearance: none; }
+  .files-search-input:focus { border-color: var(--accent); }
+  .files-search-input::placeholder { color: var(--muted); }
+  .files-sort-toggle { display: flex; background: rgba(255,255,255,.05); border-radius: 8px; padding: 2px; gap: 2px; flex-shrink: 0; }
+  .sort-btn { font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 6px; border: none; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; font-family: inherit; transition: background .15s, color .15s; }
+  .sort-btn.active { background: var(--accent); color: #fff; }
+  .files-config-note { background: rgba(59,130,246,.08); border: 1px dashed rgba(59,130,246,.4); border-radius: 10px; padding: 14px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
+  .files-config-note strong { color: var(--accent); }
+  .day-group { margin-bottom: 20px; }
+  .day-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 0 8px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .day-label { font-size: 13px; font-weight: 700; }
+  .day-actions { display: flex; gap: 6px; }
+  .day-btn { font-size: 10px; font-weight: 600; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,.05); color: var(--muted); cursor: pointer; }
+  .day-btn:active { opacity: .6; }
+  .day-btn.danger { color: var(--red); border-color: rgba(239,68,68,.35); }
+  .file-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+  .file-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 5px; }
+  .file-unit { font-size: 16px; font-weight: 700; }
+  .file-badge { font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 5px; text-transform: uppercase; letter-spacing: .3px; flex-shrink: 0; }
+  .fb-als  { background: rgba(168,85,247,.2); color: var(--para-color); }
+  .fb-aemt { background: rgba(59,130,246,.2); color: var(--aemt-color); }
+  .fb-bls  { background: rgba(34,197,94,.2); color: var(--green); }
+  .fb-uco  { background: rgba(234,179,8,.2); color: var(--yellow); }
+  .fb-ok   { background: rgba(34,197,94,.15); color: var(--green); }
+  .fb-inc  { background: rgba(239,68,68,.15); color: var(--red); }
+  .file-providers { font-size: 12px; color: var(--subtext); margin-bottom: 3px; }
+  .file-meta { font-size: 10px; color: var(--muted); }
+  .file-actions { display: flex; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.05); }
+  .file-action-btn { flex: 1; padding: 7px 4px; border-radius: 8px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: opacity .12s; }
+  .file-action-btn:active { opacity: .6; }
+  .fa-dl  { background: rgba(59,130,246,.15); color: var(--accent); }
+  .fa-del { background: rgba(239,68,68,.1); color: var(--red); }
 
   #toast { position: fixed; bottom: 72px; left: 50%; transform: translateX(-50%) translateY(20px); background: #22c55e; color: #000; padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; z-index: 998; opacity: 0; transition: opacity .25s, transform .25s; white-space: nowrap; pointer-events: none; }
 
@@ -325,51 +380,36 @@
 
 <div id="update-banner" onclick="applyUpdate()">🔄 Update available — tap to reload</div>
 
-<!-- EMAIL MODAL -->
-<div class="modal-overlay" id="email-modal" onclick="if(event.target===this)closeEmailModal()">
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pin-modal" onclick="if(event.target===this)closePinModal()">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Send Report</div>
-    <div class="modal-sub">Select recipients — then tap Send</div>
-    <div class="email-warning">⚠ <strong>Only email supervisors if there is a significant problem requiring immediate attention.</strong> For routine check-offs, use <strong>Save to Drive</strong> instead.</div>
-    <div class="recip-list">
-      <div class="recip-item" data-email="smcdonnel@easimedics.com" onclick="toggleRecip(this)">
-        <div class="recip-check"></div>
-        <div class="recip-info">
-          <div class="recip-name">S. McDonnel</div>
-          <div class="recip-email">smcdonnel@easimedics.com</div>
-        </div>
-        <span class="recip-tag tag-sup">Supervisor</span>
-      </div>
-      <div class="recip-item" data-email="aanderson@easimedics.com" onclick="toggleRecip(this)">
-        <div class="recip-check"></div>
-        <div class="recip-info">
-          <div class="recip-name">A. Anderson</div>
-          <div class="recip-email">aanderson@easimedics.com</div>
-        </div>
-        <span class="recip-tag tag-sup">Supervisor</span>
-      </div>
-      <div class="recip-item" data-email="dcollins@easimedics.com" onclick="toggleRecip(this)">
-        <div class="recip-check"></div>
-        <div class="recip-info">
-          <div class="recip-name">D. Collins</div>
-          <div class="recip-email">dcollins@easimedics.com</div>
-        </div>
-        <span class="recip-tag tag-sup">Supervisor</span>
-      </div>
-      <div class="recip-item ops-only" data-email="cmcdaniel@easimedics.com" onclick="toggleRecip(this)">
-        <div class="recip-check"></div>
-        <div class="recip-info">
-          <div class="recip-name">C. McDaniel</div>
-          <div class="recip-email">cmcdaniel@easimedics.com</div>
-          <div class="recip-note">⚠ Operations — select only if directed</div>
-        </div>
-        <span class="recip-tag tag-ops">Operations</span>
-      </div>
+    <div class="modal-title" id="pin-modal-title" style="text-align:center">Saved Files</div>
+    <div class="pin-sub" id="pin-label">Enter PIN to access saved check-offs</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
     </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-cancel" onclick="closeEmailModal()">Cancel</button>
-      <button class="modal-btn modal-send" onclick="sendEmail()">Send</button>
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinInput('1')">1</button>
+      <button class="pin-key" onclick="pinInput('2')">2</button>
+      <button class="pin-key" onclick="pinInput('3')">3</button>
+      <button class="pin-key" onclick="pinInput('4')">4</button>
+      <button class="pin-key" onclick="pinInput('5')">5</button>
+      <button class="pin-key" onclick="pinInput('6')">6</button>
+      <button class="pin-key" onclick="pinInput('7')">7</button>
+      <button class="pin-key" onclick="pinInput('8')">8</button>
+      <button class="pin-key" onclick="pinInput('9')">9</button>
+      <button class="pin-key pin-blank"></button>
+      <button class="pin-key" onclick="pinInput('0')">0</button>
+      <button class="pin-key pin-del" onclick="pinBackspace()">⌫</button>
+    </div>
+    <div class="pin-hint" id="pin-hint"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="modal-btn modal-cancel" onclick="closePinModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -377,6 +417,7 @@
 <!-- FLOATING CONTROLS -->
 <div class="ctrl-bar">
   <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit sections" style="display:none">✏</button>
+  <button class="ctrl-btn" id="notif-btn" onclick="toggleNotifications()" title="Enable push notifications">🔕</button>
   <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
   <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
 </div>
@@ -399,6 +440,7 @@
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('equip',this)">Equipment Check</button>
     <button class="tab-btn" onclick="switchTab('uco',this)">Unit Check Off</button>
+    <button class="tab-btn" onclick="openSavedFilesTab(this)">📁 Saved</button>
   </div>
 </div>
 
@@ -438,7 +480,7 @@
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
       <button class="btn" onclick="downloadReport('equip')">Download</button>
-      <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
+      <button class="btn btn-success" onclick="saveToCloud('equip')">☁ Save</button>
     </div>
     <p class="helper-text">×N = required qty · Enter actual count · EXP = MM-YY · Red = expired · OOS = out of stock</p>
   </div>
@@ -487,15 +529,32 @@
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
       <button class="btn" onclick="downloadReport('uco')">Download</button>
-      <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
+      <button class="btn btn-success" onclick="saveToCloud('uco')">☁ Save</button>
     </div>
     <p class="helper-text">Fillable = blank form to print &amp; fill by hand · Download = completed report</p>
+  </div>
+
+  <!-- SAVED FILES TAB -->
+  <div id="tab-saved" class="tab-panel">
+    <div class="files-header">
+      <div class="files-title">Saved Check-Offs</div>
+      <button class="files-lock-btn" onclick="lockSavedFiles()">🔒 Lock</button>
+    </div>
+    <div class="files-search-row">
+      <input id="files-search" class="files-search-input" type="search" placeholder="Search unit # or provider…" oninput="renderSavedFiles()" autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="files-sort-toggle">
+        <button id="sort-date-btn" class="sort-btn active" onclick="setSavedSort('date')">By Date</button>
+        <button id="sort-unit-btn" class="sort-btn" onclick="setSavedSort('unit')">By Unit</button>
+      </div>
+    </div>
+    <div id="files-body"><div class="files-loading">Loading…</div></div>
   </div>
 
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
 <script>
 // ─── FIREBASE CONFIG ─────────────────────────────────────────────────────────
@@ -504,12 +563,12 @@ const LOGO_B64 = 'data:image/webp;base64,UklGRr48AABXRUJQVlA4TLI8AAAvN8QNEX+huG3
 // Paste your project's config from:
 // Firebase console → Project Settings → Your apps → SDK setup → Config
 const FIREBASE_CONFIG = {
-  apiKey:            '',
-  authDomain:        '',
-  projectId:         '',
-  storageBucket:     '',
-  messagingSenderId: '',
-  appId:             '',
+  apiKey:            'AIzaSyCtWsLp050aRdYeKmI5U66LqeGdRl2IPGw',
+  authDomain:        'emscheck-d3891.firebaseapp.com',
+  projectId:         'emscheck-d3891',
+  storageBucket:     'emscheck-d3891.firebasestorage.app',
+  messagingSenderId: '957341847178',
+  appId:             '1:957341847178:web:228486316e5ac87206a773',
 };
 
 // ─── ALS-PARAMEDIC SECTIONS ───────────────────────────────────────────────────
@@ -1293,6 +1352,7 @@ let currentUnit = 'als-para';
 let editMode = false;
 let customSections = {};
 let _db = null;
+let _storage = null;
 
 function loadState() {
   try { state = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { state = {}; }
@@ -1342,7 +1402,8 @@ function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
+  else document.querySelector(`.tab-btn[onclick*="'${id}'"]`)?.classList.add('active');
 }
 
 // ─── UNIT TYPE ────────────────────────────────────────────────────────────────
@@ -1686,76 +1747,502 @@ function resetUCO() {
   saveState();
 }
 
-// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
+// ─── CLOUD SAVE ──────────────────────────────────────────────────────────────
 
-let _emailForm = 'equip';
-
-function openEmailModal(form) {
-  _emailForm = form;
-  document.getElementById('email-modal').classList.add('open');
+function getSaveFilename(form) {
+  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
+  const unit = (s.unit || 'Unit').replace(/[^a-zA-Z0-9\-]/g, '').trim() || 'Unit';
+  const typeCode = form === 'equip'
+    ? (currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS')
+    : 'UCO';
+  const p1 = (s.paramedic || s.name || '').split(' ').slice(-1)[0].replace(/[^a-zA-Z]/g, '') || '';
+  const p2 = (s.emt || '').split(' ').slice(-1)[0].replace(/[^a-zA-Z]/g, '') || '';
+  const names = [p1, p2].filter(Boolean).join('_') || 'Unknown';
+  const status = getIncompleteCount(form) === 0 ? 'complete' : 'incomplete';
+  return `${unit}-${typeCode}-${names}-${status}-${Date.now()}.html`;
 }
 
-function closeEmailModal() {
-  document.getElementById('email-modal').classList.remove('open');
+function getProviderNames(form) {
+  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
+  if (form === 'equip') return [s.paramedic, s.emt].filter(Boolean).join(' / ') || 'Unknown';
+  return s.name || 'Unknown';
 }
 
-function toggleRecip(el) { el.classList.toggle('selected'); }
+function getTypeLabel(form) {
+  if (form === 'uco') return 'Unit Check Off';
+  return currentUnit === 'als-para' ? 'ALS-Paramedic' : currentUnit === 'als-aemt' ? 'ALS-AEMT' : 'BLS-EMT';
+}
 
-async function sendEmail() {
-  const recipients = [...document.querySelectorAll('.recip-item.selected')].map(el => el.dataset.email);
-  if (!recipients.length) { alert('Select at least one recipient.'); return; }
-  closeEmailModal();
+function getTypeBadge(form) {
+  if (form === 'uco') return 'uco';
+  return currentUnit === 'als-para' ? 'als' : currentUnit === 'als-aemt' ? 'aemt' : 'bls';
+}
 
-  const s = _emailForm === 'equip' ? (state.equip || {}) : (state.uco || {});
-  const unitLabel = currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS';
-  const subject = _emailForm === 'equip'
-    ? `EMS Check — ${unitLabel} Stock Sheet — ${s.unit || ''} ${s.date || ''}`
-    : `EMS Check — Unit Check Off — ${s.unit || ''} ${s.date || ''}`;
-  const slug = (s.unit || 'unit').replace(/\W+/g, '-') + '-' + (s.date || todayStr());
-  const prefix = _emailForm === 'equip' ? unitLabel.toLowerCase() + '-stock-' : 'unit-check-';
-  const filename = prefix + slug + '.html';
+async function saveToCloud(form) {
+  if (!_db || !_storage) {
+    alert('Firebase is not configured yet.\n\nPaste your Firebase config into FIREBASE_CONFIG in the source code.\nFirebase Console → Project Settings → Your Apps → SDK setup → Config');
+    return;
+  }
+  const html = form === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
+  if (!html) { showToast('Fill in the form first'); return; }
 
-  const html = _emailForm === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
-  if (!html) { alert('No form configured for this unit type yet.'); return; }
+  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
+  const unit = (s.unit || 'N/A').trim();
+  const dateStr = (s.date || todayStr()).trim();
+  const incomplete = getIncompleteCount(form);
+  const total = form === 'equip'
+    ? getActiveSections().reduce((n, sec) => n + sec.items.length, 0)
+    : getActiveUCOSections().reduce((n, sec) => n + sec.items.length, 0);
+  const status = incomplete === 0 ? 'complete' : 'incomplete';
 
-  const blob = new Blob([html], { type: 'text/html' });
-  const file = new File([blob], filename, { type: 'text/html' });
-
-  // Mobile: try Web Share API — opens native share sheet with file attached
-  // User picks Mail app and file is attached directly
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({
-        files: [file],
-        title: subject,
-        text: 'To: ' + recipients.join(', '),
-      });
-      return;
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-      // Share failed — fall through to download+mailto
+  let dateISO = new Date().toISOString().slice(0, 10);
+  if (dateStr && dateStr.includes('-')) {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[2]) + 2000;
+      dateISO = `${year}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
     }
   }
 
-  // Desktop fallback: auto-download report file, then open email client
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  const filename = getSaveFilename(form);
+  const storagePath = `checkoffs/${dateISO}/${filename}`;
 
-  // Open email after brief delay so download can start
-  setTimeout(() => {
-    window.location.href = 'mailto:' + recipients.join(',')
-      + '?subject=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent('Please attach the downloaded report: ' + filename);
-  }, 700);
+  showToast('Saving…');
+  try {
+    const ref = _storage.ref(storagePath);
+    await ref.putString(html, 'raw', { contentType: 'text/html' });
+
+    const now = firebase.firestore.Timestamp.now();
+    const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + 15 * 24 * 60 * 60 * 1000);
+
+    await _db.collection('checkoff-records').add({
+      unit, date: dateStr, dateISO,
+      type: form === 'equip' ? (currentUnit || 'als-para') : 'uco',
+      typeLabel: getTypeLabel(form),
+      typeBadge: getTypeBadge(form),
+      providers: getProviderNames(form),
+      status, incompleteCount: incomplete, totalItems: total,
+      storagePath, filename,
+      uploadedAt: now, expiresAt,
+    });
+
+    showToast('Saved to cloud ✓');
+  } catch (e) {
+    console.error('Save to cloud failed:', e);
+    showToast('Save failed — check Firebase config');
+  }
 }
 
-// ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
+// ─── PIN MODAL ────────────────────────────────────────────────────────────────
+
+let _pinBuffer = '';
+let _pinMode = 'verify';
+let _pinSavedFilesUnlocked = false;
+let _savedFilesTabBtn = null;
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function openSavedFilesTab(btn) {
+  _savedFilesTabBtn = btn;
+  if (_pinSavedFilesUnlocked) { activateSavedFilesTab(); return; }
+  if (!_db) {
+    alert('Firebase is not configured yet.\n\nPaste your Firebase config into FIREBASE_CONFIG in the source code.');
+    return;
+  }
+  _openPinModal();
+}
+
+function activateSavedFilesTab() {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-saved').classList.add('active');
+  if (_savedFilesTabBtn) _savedFilesTabBtn.classList.add('active');
+  loadSavedFiles();
+}
+
+async function _openPinModal() {
+  _pinBuffer = '';
+  document.getElementById('pin-error').textContent = '';
+  updatePinDots();
+  try {
+    const doc = await _db.collection('easi-admin').doc('config').get();
+    if (doc.exists && doc.data().pinHash) {
+      _pinMode = 'verify';
+      document.getElementById('pin-modal-title').textContent = 'Saved Files';
+      document.getElementById('pin-label').textContent = 'Enter PIN to access saved check-offs';
+      document.getElementById('pin-hint').textContent = '';
+    } else {
+      _pinMode = 'setup';
+      document.getElementById('pin-modal-title').textContent = 'Create PIN';
+      document.getElementById('pin-label').textContent = 'Create a 4-digit PIN to protect saved check-offs';
+      document.getElementById('pin-hint').textContent = 'You\'ll need this PIN each time you open Saved Files. Store it somewhere safe — it cannot be recovered.';
+    }
+  } catch { /* no connection — default to setup check */ }
+  document.getElementById('pin-modal').classList.add('open');
+}
+
+function closePinModal() {
+  document.getElementById('pin-modal').classList.remove('open');
+  _pinBuffer = '';
+  updatePinDots();
+}
+
+function pinInput(digit) {
+  if (_pinBuffer.length >= 4) return;
+  _pinBuffer += digit;
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+  if (_pinBuffer.length === 4) setTimeout(submitPin, 120);
+}
+
+function pinBackspace() {
+  if (!_pinBuffer.length) return;
+  _pinBuffer = _pinBuffer.slice(0, -1);
+  updatePinDots();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++)
+    document.getElementById('pd' + i).classList.toggle('filled', i < _pinBuffer.length);
+}
+
+async function submitPin() {
+  const hash = await sha256(_pinBuffer);
+  _pinBuffer = '';
+  updatePinDots();
+
+  if (_pinMode === 'setup') {
+    try {
+      await _db.collection('easi-admin').doc('config').set({ pinHash: hash }, { merge: true });
+      closePinModal();
+      _pinSavedFilesUnlocked = true;
+      activateSavedFilesTab();
+    } catch (e) {
+      document.getElementById('pin-error').textContent = 'Failed to save PIN — check Firebase connection.';
+    }
+  } else {
+    try {
+      const doc = await _db.collection('easi-admin').doc('config').get();
+      const storedHash = doc.exists ? doc.data().pinHash : null;
+      if (storedHash && storedHash === hash) {
+        closePinModal();
+        _pinSavedFilesUnlocked = true;
+        activateSavedFilesTab();
+      } else {
+        document.getElementById('pin-error').textContent = 'Incorrect PIN — try again';
+      }
+    } catch (e) {
+      document.getElementById('pin-error').textContent = 'Could not verify PIN — check connection.';
+    }
+  }
+}
+
+function lockSavedFiles() {
+  _pinSavedFilesUnlocked = false;
+  switchTab('equip', document.querySelector('.tab-btn'));
+  showToast('Saved Files locked 🔒');
+}
+
+// Admin: change PIN — callable from admin mode
+async function changePinAdmin() {
+  if (!_db) return;
+  _pinMode = 'setup';
+  _pinBuffer = '';
+  document.getElementById('pin-modal-title').textContent = 'Change PIN';
+  document.getElementById('pin-label').textContent = 'Enter a new 4-digit PIN';
+  document.getElementById('pin-hint').textContent = 'This will replace the existing PIN immediately.';
+  document.getElementById('pin-error').textContent = '';
+  updatePinDots();
+  document.getElementById('pin-modal').classList.add('open');
+}
+
+// ─── SAVED FILES ──────────────────────────────────────────────────────────────
+
+let _savedRecords = [];
+let _savedSort = 'date'; // 'date' | 'unit'
+
+function setSavedSort(mode) {
+  _savedSort = mode;
+  document.getElementById('sort-date-btn').classList.toggle('active', mode === 'date');
+  document.getElementById('sort-unit-btn').classList.toggle('active', mode === 'unit');
+  renderSavedFiles();
+}
+
+async function loadSavedFiles() {
+  if (!_db) return;
+  const body = document.getElementById('files-body');
+  body.innerHTML = '<div class="files-loading">Loading…</div>';
+  try {
+    // Expire records older than 15 days
+    const now = firebase.firestore.Timestamp.now();
+    const expiredSnap = await _db.collection('checkoff-records').where('expiresAt', '<=', now).get();
+    if (!expiredSnap.empty) {
+      const batch = _db.batch();
+      expiredSnap.forEach(doc => {
+        batch.delete(doc.ref);
+        if (_storage && doc.data().storagePath)
+          _storage.ref(doc.data().storagePath).delete().catch(() => {});
+      });
+      await batch.commit();
+    }
+
+    const snap = await _db.collection('checkoff-records').orderBy('uploadedAt', 'desc').get();
+    _savedRecords = [];
+    snap.forEach(doc => _savedRecords.push({ id: doc.id, ...doc.data() }));
+    renderSavedFiles();
+  } catch (e) {
+    console.error('Load saved files:', e);
+    body.innerHTML = '<div class="files-empty">Failed to load — check Firebase config and Firestore rules.</div>';
+  }
+}
+
+function renderSavedFiles() {
+  const body = document.getElementById('files-body');
+  const q = (document.getElementById('files-search')?.value || '').trim().toLowerCase();
+
+  let records = _savedRecords;
+  if (q) {
+    records = records.filter(r =>
+      (r.unit || '').toLowerCase().includes(q) ||
+      (r.providers || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (!records.length) {
+    body.innerHTML = q
+      ? `<div class="files-empty"><div class="files-empty-icon">🔍</div>No results for "<strong>${esc(q)}</strong>"</div>`
+      : '<div class="files-empty"><div class="files-empty-icon">📂</div>No saved check-offs yet.<br>Complete a check-off and tap ☁ Save.</div>';
+    return;
+  }
+
+  const groups = {};
+  records.forEach(r => {
+    const key = _savedSort === 'unit'
+      ? (r.unit || 'Unknown').trim()
+      : (r.dateISO || 'unknown');
+    (groups[key] = groups[key] || []).push(r);
+  });
+
+  const sortedKeys = Object.keys(groups).sort(_savedSort === 'unit'
+    ? (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+    : (a, b) => b.localeCompare(a)
+  );
+
+  let html = '';
+  sortedKeys.forEach(key => {
+    const recs = groups[key];
+    const label = _savedSort === 'unit' ? `Unit ${esc(key)}` : fmtDate(key);
+    const safeKey = esc(key);
+    html += `<div class="day-group">
+      <div class="day-header">
+        <div class="day-label">${label}</div>
+        <div class="day-actions">
+          <button class="day-btn" onclick="downloadGroup('${safeKey}')">⬇ All</button>
+          <button class="day-btn danger" onclick="deleteGroup('${safeKey}')">🗑 All</button>
+        </div>
+      </div>`;
+    recs.forEach(r => {
+      const tc = 'fb-' + (r.typeBadge || 'als');
+      const sc = r.status === 'complete' ? 'fb-ok' : 'fb-inc';
+      const sl = r.status === 'complete' ? 'Complete' : `Incomplete (${r.incompleteCount || '?'} missing)`;
+      const ts = r.uploadedAt ? fmtTime(r.uploadedAt.toDate ? r.uploadedAt.toDate() : new Date(r.uploadedAt)) : '';
+      const exp = daysLeft(r.expiresAt);
+      const dateSubline = _savedSort === 'unit' ? `${fmtDate(r.dateISO || '')} · ` : '';
+      html += `<div class="file-card">
+        <div class="file-top">
+          <span class="file-unit">${esc(r.unit||'N/A')}</span>
+          <span class="file-badge ${tc}">${esc(r.typeLabel||r.type||'')}</span>
+          <span class="file-badge ${sc}">${sl}</span>
+        </div>
+        <div class="file-providers">${esc(r.providers||'Unknown')}</div>
+        <div class="file-meta">${dateSubline}Saved ${ts} · Auto-deletes in ${exp} day${exp!==1?'s':''}</div>
+        <div class="file-actions">
+          <button class="file-action-btn fa-dl" onclick="downloadSavedFile('${esc(r.storagePath)}','${esc(r.filename)}')">⬇ Download</button>
+          <button class="file-action-btn fa-del" onclick="deleteSavedFile('${r.id}','${esc(r.storagePath)}')">🗑 Delete</button>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  body.innerHTML = html;
+}
+
+function fmtDate(iso) {
+  try { return new Date(iso+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}); }
+  catch { return iso; }
+}
+function fmtTime(d) {
+  try { return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); }
+  catch { return ''; }
+}
+function daysLeft(expiresAt) {
+  try {
+    const exp = expiresAt.toDate ? expiresAt.toDate() : new Date(expiresAt);
+    return Math.max(0, Math.ceil((exp - Date.now()) / 86400000));
+  } catch { return '?'; }
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+async function downloadSavedFile(storagePath, filename) {
+  if (!_storage) return;
+  try {
+    const url = await _storage.ref(storagePath).getDownloadURL();
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.target = '_blank';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  } catch { alert('Download failed — file may have been removed.'); }
+}
+
+async function deleteSavedFile(docId, storagePath) {
+  if (!confirm('Delete this check-off?\n\nThis cannot be undone.')) return;
+  try {
+    if (_storage && storagePath) await _storage.ref(storagePath).delete().catch(() => {});
+    await _db.collection('checkoff-records').doc(docId).delete();
+    _savedRecords = _savedRecords.filter(r => r.id !== docId);
+    renderSavedFiles();
+    showToast('Deleted ✓');
+  } catch (e) { alert('Delete failed: ' + e.message); }
+}
+
+function _getGroupRecs(key) {
+  const q = (document.getElementById('files-search')?.value || '').trim().toLowerCase();
+  let recs = q
+    ? _savedRecords.filter(r => (r.unit||'').toLowerCase().includes(q) || (r.providers||'').toLowerCase().includes(q))
+    : _savedRecords;
+  return _savedSort === 'unit'
+    ? recs.filter(r => (r.unit || 'Unknown').trim() === key)
+    : recs.filter(r => (r.dateISO || 'unknown') === key);
+}
+
+async function downloadGroup(key) {
+  const recs = _getGroupRecs(key);
+  if (!recs.length) return;
+  showToast(`Downloading ${recs.length} file(s)…`);
+  for (let i = 0; i < recs.length; i++) {
+    await new Promise(r => setTimeout(r, i * 700));
+    await downloadSavedFile(recs[i].storagePath, recs[i].filename);
+  }
+}
+
+async function deleteGroup(key) {
+  const recs = _getGroupRecs(key);
+  if (!recs.length) return;
+  const groupLabel = _savedSort === 'unit' ? `Unit ${key}` : fmtDate(key);
+  if (!confirm(`Delete ALL ${recs.length} check-off(s) for ${groupLabel}?\n\nThis cannot be undone.`)) return;
+  try {
+    const batch = _db.batch();
+    recs.forEach(r => batch.delete(_db.collection('checkoff-records').doc(r.id)));
+    await batch.commit();
+    if (_storage) await Promise.all(recs.map(r => r.storagePath ? _storage.ref(r.storagePath).delete().catch(()=>{}) : Promise.resolve()));
+    const ids = new Set(recs.map(r => r.id));
+    _savedRecords = _savedRecords.filter(r => !ids.has(r.id));
+    renderSavedFiles();
+    showToast(`Deleted ${recs.length} records ✓`);
+  } catch (e) { alert('Delete failed: ' + e.message); }
+}
+
+async function downloadAllForDay(dateISO) {
+  const recs = _savedRecords.filter(r => r.dateISO === dateISO);
+  if (!recs.length) return;
+  showToast(`Downloading ${recs.length} file(s)…`);
+  for (let i = 0; i < recs.length; i++) {
+    await new Promise(r => setTimeout(r, i * 700));
+    await downloadSavedFile(recs[i].storagePath, recs[i].filename);
+  }
+}
+
+async function deleteAllForDay(dateISO) {
+  const recs = _savedRecords.filter(r => r.dateISO === dateISO);
+  if (!recs.length) return;
+  if (!confirm(`Delete ALL ${recs.length} check-off(s) from ${fmtDate(dateISO)}?\n\nThis cannot be undone.`)) return;
+  try {
+    const batch = _db.batch();
+    recs.forEach(r => batch.delete(_db.collection('checkoff-records').doc(r.id)));
+    await batch.commit();
+    if (_storage) await Promise.all(recs.map(r => r.storagePath ? _storage.ref(r.storagePath).delete().catch(()=>{}) : Promise.resolve()));
+    _savedRecords = _savedRecords.filter(r => r.dateISO !== dateISO);
+    renderSavedFiles();
+    showToast(`Deleted ${recs.length} records ✓`);
+  } catch (e) { alert('Delete failed: ' + e.message); }
+}
+
+// ─── PUSH NOTIFICATIONS ──────────────────────────────────────────────────────
+// To enable: add your VAPID public key from Firebase Console
+// Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
+const VAPID_PUBLIC_KEY = ''; // REPLACE WITH YOUR VAPID PUBLIC KEY
+
+function urlBase64ToUint8Array(b64) {
+  const pad = '='.repeat((4 - b64.length % 4) % 4);
+  const base64 = (b64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+async function subscribePush() {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    alert('Push notifications are not supported in this browser.');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') { showToast('Notification permission denied'); return; }
+  if (!VAPID_PUBLIC_KEY) { showToast('Notifications not configured — contact admin'); return; }
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+    localStorage.setItem('push-sub', JSON.stringify(sub));
+    showToast('Notifications enabled');
+    updateNotifBtn();
+  } catch (e) {
+    console.error('Push subscribe error:', e);
+    showToast('Failed to enable notifications');
+  }
+}
+
+async function unsubscribePush() {
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if (sub) await sub.unsubscribe();
+    localStorage.removeItem('push-sub');
+    showToast('Notifications disabled');
+    updateNotifBtn();
+  } catch (e) {
+    showToast('Failed to disable notifications');
+  }
+}
+
+function updateNotifBtn() {
+  const btn = document.getElementById('notif-btn');
+  if (!btn || !('Notification' in window)) return;
+  if (Notification.permission !== 'granted') { btn.textContent = '🔕'; return; }
+  navigator.serviceWorker.ready.then(reg =>
+    reg.pushManager.getSubscription().then(sub => {
+      btn.textContent = sub ? '🔔' : '🔕';
+      btn.title = sub ? 'Notifications on — tap to disable' : 'Tap to enable notifications';
+    })
+  );
+}
+
+async function toggleNotifications() {
+  if (!('Notification' in window)) { alert('Notifications not supported in this browser.'); return; }
+  if (Notification.permission === 'denied') {
+    alert('Notifications are blocked. Please enable them in your browser or device settings, then try again.');
+    return;
+  }
+  const reg = await navigator.serviceWorker.ready;
+  const sub = await reg.pushManager.getSubscription();
+  if (sub) await unsubscribePush(); else await subscribePush();
+}
+
+// ─── DOWNLOAD / EXPORT ───────────────────────────────────────────────────────
 
 
 function getDriveFilename(form) {
@@ -2430,8 +2917,9 @@ function resetUCOSectionsToDefault() {
 function initFirebase() {
   if (!FIREBASE_CONFIG.apiKey) return;
   try {
-    const app = firebase.initializeApp(FIREBASE_CONFIG);
+    const app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(FIREBASE_CONFIG);
     _db = firebase.firestore(app);
+    _storage = firebase.storage(app);
     loadFromFirestore();
   } catch(e) {
     console.warn('Firebase init failed:', e);
@@ -2535,9 +3023,20 @@ buildUCO();
 bindUCOFields();
 updateNetStatus();
 applyPrefs();
-if (new URLSearchParams(window.location.search).get('admin') === '1') {
-  document.getElementById('edit-btn').style.display = '';
-}
+updateNotifBtn();
+
+// Handle PWA shortcuts — override unit/tab based on launch URL
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const admin = params.get('admin');
+  const shortcut = params.get('shortcut');
+  if (admin === '1') document.getElementById('edit-btn').style.display = '';
+  if (shortcut === 'als-para' || shortcut === 'als-aemt' || shortcut === 'bls-emt') {
+    setUnit(shortcut);
+  } else if (shortcut === 'uco') {
+    switchTab('uco', null);
+  }
+})();
 </script>
 
 <script>

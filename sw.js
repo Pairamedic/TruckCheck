@@ -1,4 +1,4 @@
-const CACHE = 'easi-checkoff-v25';
+const CACHE = 'easi-checkoff-v26';
 const ASSETS = [
   './',
   './index.html',
@@ -43,4 +43,33 @@ self.addEventListener('fetch', e => {
 
 self.addEventListener('message', e => {
   if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
+// ─── PUSH NOTIFICATIONS ──────────────────────────────────────────────────────
+
+self.addEventListener('push', e => {
+  let data = {};
+  try { data = e.data ? e.data.json() : {}; } catch (_) { data = { body: e.data ? e.data.text() : '' }; }
+  const title = data.title || 'EMS Check';
+  const options = {
+    body: data.body || 'New notification from EASI EMS Check',
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    tag: data.tag || 'easi-notify',
+    requireInteraction: data.requireInteraction || false,
+    data: { url: data.url || './' }
+  };
+  e.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || './';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const match = list.find(c => c.url.includes(self.registration.scope));
+      if (match) return match.focus();
+      return self.clients.openWindow(url);
+    })
+  );
 });
