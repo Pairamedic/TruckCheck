@@ -212,6 +212,7 @@
   .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
   .modal-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
   .modal-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+  /* ── Recipient list (email modal) ──────────────────── */
   .recip-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
   .recip-item { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: background .12s; }
   .recip-item:hover { background: rgba(255,255,255,.08); }
@@ -230,14 +231,61 @@
   .recip-item.recip-phone:hover { background: rgba(34,197,94,.08); border-color: var(--green); }
   .recip-item.recip-phone:active { background: rgba(34,197,94,.15); }
   .recip-phone-icon { font-size: 18px; width: 20px; height: 20px; min-width: 20px; display: flex; align-items: center; justify-content: center; border: none; background: none; }
-  .modal-actions { display: flex; gap: 8px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 4px; }
   .modal-btn { flex: 1; padding: 11px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: opacity .12s; }
   .modal-btn:active { opacity: .7; }
-  .modal-send { background: var(--accent); color: #fff; }
+  .modal-primary { background: var(--accent); color: #fff; }
   .modal-cancel { background: rgba(255,255,255,.07); color: var(--muted); border: 1px solid var(--border); }
+  .modal-warn { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: var(--red); margin-bottom: 14px; line-height: 1.55; }
+  .modal-warn strong { color: var(--red); }
 
-  .email-warning { background: rgba(239,68,68,.10); border: 1px solid rgba(239,68,68,.30); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: var(--red); margin-bottom: 14px; line-height: 1.55; }
-  .email-warning strong { color: var(--red); }
+  /* ── PIN modal ─────────────────────────────────────── */
+  .pin-sub { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; }
+  .pin-dots { display: flex; gap: 16px; justify-content: center; margin: 14px 0 8px; }
+  .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); background: transparent; transition: all .12s; }
+  .pin-dot.filled { background: var(--accent); border-color: var(--accent); transform: scale(1.2); }
+  .pin-error { color: var(--red); font-size: 11px; text-align: center; min-height: 16px; margin: 6px 0 10px; }
+  .pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 230px; margin: 0 auto; }
+  .pin-key { padding: 14px 0; border-radius: 12px; font-size: 22px; font-weight: 600; background: rgba(255,255,255,.07); border: 1px solid var(--border); cursor: pointer; text-align: center; color: var(--text); user-select: none; transition: background .08s, transform .08s; }
+  .pin-key:active { background: rgba(59,130,246,.25); transform: scale(.92); }
+  .pin-del { font-size: 18px; }
+  .pin-blank { background: transparent; border-color: transparent; pointer-events: none; }
+  .pin-hint { font-size: 10px; color: var(--muted); text-align: center; margin-top: 14px; line-height: 1.5; }
+  .pin-change-btn { display: block; text-align: center; font-size: 11px; color: var(--accent); background: none; border: none; cursor: pointer; padding: 8px 0; text-decoration: underline; }
+
+  /* ── Saved Files tab ───────────────────────────────── */
+  .files-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .files-title { font-size: 16px; font-weight: 700; }
+  .files-lock-btn { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 8px; background: rgba(255,255,255,.06); border: 1px solid var(--border); color: var(--muted); cursor: pointer; }
+  .files-empty { text-align: center; padding: 44px 20px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+  .files-empty-icon { font-size: 42px; margin-bottom: 10px; }
+  .files-loading { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
+  .files-config-note { background: rgba(59,130,246,.08); border: 1px dashed rgba(59,130,246,.4); border-radius: 10px; padding: 14px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
+  .files-config-note strong { color: var(--accent); }
+  .day-group { margin-bottom: 20px; }
+  .day-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 0 8px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .day-label { font-size: 13px; font-weight: 700; }
+  .day-actions { display: flex; gap: 6px; }
+  .day-btn { font-size: 10px; font-weight: 600; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,.05); color: var(--muted); cursor: pointer; }
+  .day-btn:active { opacity: .6; }
+  .day-btn.danger { color: var(--red); border-color: rgba(239,68,68,.35); }
+  .file-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+  .file-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 5px; }
+  .file-unit { font-size: 16px; font-weight: 700; }
+  .file-badge { font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 5px; text-transform: uppercase; letter-spacing: .3px; flex-shrink: 0; }
+  .fb-als  { background: rgba(168,85,247,.2); color: var(--para-color); }
+  .fb-aemt { background: rgba(59,130,246,.2); color: var(--aemt-color); }
+  .fb-bls  { background: rgba(34,197,94,.2); color: var(--green); }
+  .fb-uco  { background: rgba(234,179,8,.2); color: var(--yellow); }
+  .fb-ok   { background: rgba(34,197,94,.15); color: var(--green); }
+  .fb-inc  { background: rgba(239,68,68,.15); color: var(--red); }
+  .file-providers { font-size: 12px; color: var(--subtext); margin-bottom: 3px; }
+  .file-meta { font-size: 10px; color: var(--muted); }
+  .file-actions { display: flex; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.05); }
+  .file-action-btn { flex: 1; padding: 7px 4px; border-radius: 8px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: opacity .12s; }
+  .file-action-btn:active { opacity: .6; }
+  .fa-dl  { background: rgba(59,130,246,.15); color: var(--accent); }
+  .fa-del { background: rgba(239,68,68,.1); color: var(--red); }
 
   #toast { position: fixed; bottom: 72px; left: 50%; transform: translateX(-50%) translateY(20px); background: #22c55e; color: #000; padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; z-index: 998; opacity: 0; transition: opacity .25s, transform .25s; white-space: nowrap; pointer-events: none; }
 
@@ -325,44 +373,36 @@
 
 <div id="update-banner" onclick="applyUpdate()">🔄 Update available — tap to reload</div>
 
-<!-- EMAIL MODAL -->
-<div class="modal-overlay" id="email-modal" onclick="if(event.target===this)closeEmailModal()">
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pin-modal" onclick="if(event.target===this)closePinModal()">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Send Report</div>
-    <div class="modal-sub">Select recipients — then tap Send</div>
-    <div class="email-warning">⚠ <strong>Only contact supervisors when required for check-off submission or if there is a significant problem.</strong></div>
-    <div class="recip-list">
-      <div class="recip-item recip-phone" onclick="textSupervisor()">
-        <div class="recip-phone-icon">💬</div>
-        <div class="recip-info">
-          <div class="recip-name">Supervisor Phone</div>
-          <div class="recip-email">+1 (870) 329-2491</div>
-          <div class="recip-note">⚠ Only when Shanna or Aaron Caldwell is on shift — unless authorized by another active supervisor to submit your check-off this way.</div>
-        </div>
-        <span class="recip-tag tag-sms">Text</span>
-      </div>
-      <div class="recip-item" data-email="smcdonnel@easimedics.com" onclick="toggleRecip(this)">
-        <div class="recip-check"></div>
-        <div class="recip-info">
-          <div class="recip-name">Shanna McDonnel</div>
-          <div class="recip-email">smcdonnel@easimedics.com</div>
-        </div>
-        <span class="recip-tag tag-sup">Supervisor</span>
-      </div>
-      <div class="recip-item" data-email="acaldwell@easimedics.com" onclick="toggleRecip(this)">
-        <div class="recip-check"></div>
-        <div class="recip-info">
-          <div class="recip-name">Aaron Caldwell</div>
-          <div class="recip-email">acaldwell@easimedics.com</div>
-          <div class="recip-note">Relief Supervisor / App Manager</div>
-        </div>
-        <span class="recip-tag tag-sup">Supervisor</span>
-      </div>
+    <div class="modal-title" id="pin-modal-title" style="text-align:center">Saved Files</div>
+    <div class="pin-sub" id="pin-label">Enter PIN to access saved check-offs</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
     </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-cancel" onclick="closeEmailModal()">Cancel</button>
-      <button class="modal-btn modal-send" onclick="sendEmail()">Send Email</button>
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinInput('1')">1</button>
+      <button class="pin-key" onclick="pinInput('2')">2</button>
+      <button class="pin-key" onclick="pinInput('3')">3</button>
+      <button class="pin-key" onclick="pinInput('4')">4</button>
+      <button class="pin-key" onclick="pinInput('5')">5</button>
+      <button class="pin-key" onclick="pinInput('6')">6</button>
+      <button class="pin-key" onclick="pinInput('7')">7</button>
+      <button class="pin-key" onclick="pinInput('8')">8</button>
+      <button class="pin-key" onclick="pinInput('9')">9</button>
+      <button class="pin-key pin-blank"></button>
+      <button class="pin-key" onclick="pinInput('0')">0</button>
+      <button class="pin-key pin-del" onclick="pinBackspace()">⌫</button>
+    </div>
+    <div class="pin-hint" id="pin-hint"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="modal-btn modal-cancel" onclick="closePinModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -393,6 +433,7 @@
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('equip',this)">Equipment Check</button>
     <button class="tab-btn" onclick="switchTab('uco',this)">Unit Check Off</button>
+    <button class="tab-btn" onclick="openSavedFilesTab(this)">📁 Saved</button>
   </div>
 </div>
 
@@ -432,7 +473,7 @@
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetEquip()">🗑 Reset</button>
       <button class="btn" onclick="downloadReport('equip')">Download</button>
-      <button class="btn btn-success" onclick="openEmailModal('equip')">Email</button>
+      <button class="btn btn-success" onclick="saveToCloud('equip')">☁ Save</button>
     </div>
     <p class="helper-text">×N = required qty · Enter actual count · EXP = MM-YY · Red = expired · OOS = out of stock</p>
   </div>
@@ -481,15 +522,25 @@
     <div class="btn-row">
       <button class="btn btn-danger" onclick="resetUCO()">🗑 Reset</button>
       <button class="btn" onclick="downloadReport('uco')">Download</button>
-      <button class="btn btn-success" onclick="openEmailModal('uco')">Email</button>
+      <button class="btn btn-success" onclick="saveToCloud('uco')">☁ Save</button>
     </div>
     <p class="helper-text">Fillable = blank form to print &amp; fill by hand · Download = completed report</p>
+  </div>
+
+  <!-- SAVED FILES TAB -->
+  <div id="tab-saved" class="tab-panel">
+    <div class="files-header">
+      <div class="files-title">Saved Check-Offs</div>
+      <button class="files-lock-btn" onclick="lockSavedFiles()">🔒 Lock</button>
+    </div>
+    <div id="files-body"><div class="files-loading">Loading…</div></div>
   </div>
 
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
 <script>
 // ─── FIREBASE CONFIG ─────────────────────────────────────────────────────────
@@ -1287,6 +1338,7 @@ let currentUnit = 'als-para';
 let editMode = false;
 let customSections = {};
 let _db = null;
+let _storage = null;
 
 function loadState() {
   try { state = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { state = {}; }
@@ -1681,45 +1733,363 @@ function resetUCO() {
   saveState();
 }
 
-// ─── SUPERVISOR TEXT / SMS ───────────────────────────────────────────────────
+// ─── CLOUD SAVE ──────────────────────────────────────────────────────────────
 
-function getFormSummary(form) {
+function getSaveFilename(form) {
   const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
-  const unitLabel = currentUnit === 'als-para' ? 'ALS-Paramedic' : currentUnit === 'als-aemt' ? 'ALS-AEMT' : 'BLS-EMT';
-  if (form === 'equip') {
-    const sections = getActiveSections();
-    const total = sections.reduce((n, sec) => n + sec.items.length, 0);
-    const incomplete = getIncompleteCount('equip');
-    let msg = `EASI EMS Check — ${unitLabel} Equipment\n`;
-    msg += `Unit: ${s.unit || 'N/A'}  |  Date: ${s.date || 'N/A'}\n`;
-    msg += `Provider: ${s.paramedic || 'N/A'} / ${s.emt || 'N/A'}\n`;
-    msg += `O2 Main: ${s.maino2 || '?'} PSI  Portable: ${s.porto2 || '?'} PSI\n`;
-    if (s.sealnum) msg += `Seal #: ${s.sealnum}\n`;
-    msg += `Completed: ${total - incomplete}/${total} items checked`;
-    return msg;
-  } else {
-    const total = getActiveUCOSections().reduce((n, sec) => n + sec.items.length, 0);
-    const incomplete = getIncompleteCount('uco');
-    let msg = `EASI EMS Check — Unit Check Off\n`;
-    msg += `Unit: ${s.unit || 'N/A'}  |  Date: ${s.date || 'N/A'}\n`;
-    msg += `Mileage: ${s.mileage || 'N/A'}  |  EMT: ${s.name || 'N/A'}\n`;
-    msg += `Radio: ${s.radio || 'N/A'}\n`;
-    msg += `Completed: ${total - incomplete}/${total} items checked`;
-    if (s.repairs) msg += `\nRepairs/Notes: ${s.repairs}`;
-    return msg;
+  const unit = (s.unit || 'Unit').replace(/[^a-zA-Z0-9\-]/g, '').trim() || 'Unit';
+  const typeCode = form === 'equip'
+    ? (currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS')
+    : 'UCO';
+  const p1 = (s.paramedic || s.name || '').split(' ').slice(-1)[0].replace(/[^a-zA-Z]/g, '') || '';
+  const p2 = (s.emt || '').split(' ').slice(-1)[0].replace(/[^a-zA-Z]/g, '') || '';
+  const names = [p1, p2].filter(Boolean).join('_') || 'Unknown';
+  const status = getIncompleteCount(form) === 0 ? 'complete' : 'incomplete';
+  return `${unit}-${typeCode}-${names}-${status}-${Date.now()}.html`;
+}
+
+function getProviderNames(form) {
+  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
+  if (form === 'equip') return [s.paramedic, s.emt].filter(Boolean).join(' / ') || 'Unknown';
+  return s.name || 'Unknown';
+}
+
+function getTypeLabel(form) {
+  if (form === 'uco') return 'Unit Check Off';
+  return currentUnit === 'als-para' ? 'ALS-Paramedic' : currentUnit === 'als-aemt' ? 'ALS-AEMT' : 'BLS-EMT';
+}
+
+function getTypeBadge(form) {
+  if (form === 'uco') return 'uco';
+  return currentUnit === 'als-para' ? 'als' : currentUnit === 'als-aemt' ? 'aemt' : 'bls';
+}
+
+async function saveToCloud(form) {
+  if (!_db || !_storage) {
+    alert('Firebase is not configured yet.\n\nPaste your Firebase config into FIREBASE_CONFIG in the source code.\nFirebase Console → Project Settings → Your Apps → SDK setup → Config');
+    return;
+  }
+  const html = form === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
+  if (!html) { showToast('Fill in the form first'); return; }
+
+  const s = form === 'equip' ? (state.equip || {}) : (state.uco || {});
+  const unit = (s.unit || 'N/A').trim();
+  const dateStr = (s.date || todayStr()).trim();
+  const incomplete = getIncompleteCount(form);
+  const total = form === 'equip'
+    ? getActiveSections().reduce((n, sec) => n + sec.items.length, 0)
+    : getActiveUCOSections().reduce((n, sec) => n + sec.items.length, 0);
+  const status = incomplete === 0 ? 'complete' : 'incomplete';
+
+  let dateISO = new Date().toISOString().slice(0, 10);
+  if (dateStr && dateStr.includes('-')) {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[2]) + 2000;
+      dateISO = `${year}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+    }
+  }
+
+  const filename = getSaveFilename(form);
+  const storagePath = `checkoffs/${dateISO}/${filename}`;
+
+  showToast('Saving…');
+  try {
+    const ref = _storage.ref(storagePath);
+    await ref.putString(html, 'raw', { contentType: 'text/html' });
+
+    const now = firebase.firestore.Timestamp.now();
+    const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + 15 * 24 * 60 * 60 * 1000);
+
+    await _db.collection('checkoff-records').add({
+      unit, date: dateStr, dateISO,
+      type: form === 'equip' ? (currentUnit || 'als-para') : 'uco',
+      typeLabel: getTypeLabel(form),
+      typeBadge: getTypeBadge(form),
+      providers: getProviderNames(form),
+      status, incompleteCount: incomplete, totalItems: total,
+      storagePath, filename,
+      uploadedAt: now, expiresAt,
+    });
+
+    showToast('Saved to cloud ✓');
+  } catch (e) {
+    console.error('Save to cloud failed:', e);
+    showToast('Save failed — check Firebase config');
   }
 }
 
-function textSupervisor() {
-  closeEmailModal();
-  const confirmed = confirm(
-    'Send check-off summary via text to Supervisor?\n\n' +
-    '⚠️ Only send this way when Shanna or Aaron Caldwell is on shift, or when authorized by another active supervisor.\n\n' +
-    'Tap OK to open your messaging app.'
-  );
-  if (!confirmed) return;
-  const summary = getFormSummary(_emailForm);
-  window.location.href = 'sms:+18703292491?body=' + encodeURIComponent(summary);
+// ─── PIN MODAL ────────────────────────────────────────────────────────────────
+
+let _pinBuffer = '';
+let _pinMode = 'verify';
+let _pinSavedFilesUnlocked = false;
+let _savedFilesTabBtn = null;
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function openSavedFilesTab(btn) {
+  _savedFilesTabBtn = btn;
+  if (_pinSavedFilesUnlocked) { activateSavedFilesTab(); return; }
+  if (!_db) {
+    alert('Firebase is not configured yet.\n\nPaste your Firebase config into FIREBASE_CONFIG in the source code.');
+    return;
+  }
+  _openPinModal();
+}
+
+function activateSavedFilesTab() {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-saved').classList.add('active');
+  if (_savedFilesTabBtn) _savedFilesTabBtn.classList.add('active');
+  loadSavedFiles();
+}
+
+async function _openPinModal() {
+  _pinBuffer = '';
+  document.getElementById('pin-error').textContent = '';
+  updatePinDots();
+  try {
+    const doc = await _db.collection('easi-admin').doc('config').get();
+    if (doc.exists && doc.data().pinHash) {
+      _pinMode = 'verify';
+      document.getElementById('pin-modal-title').textContent = 'Saved Files';
+      document.getElementById('pin-label').textContent = 'Enter PIN to access saved check-offs';
+      document.getElementById('pin-hint').textContent = '';
+    } else {
+      _pinMode = 'setup';
+      document.getElementById('pin-modal-title').textContent = 'Create PIN';
+      document.getElementById('pin-label').textContent = 'Create a 4-digit PIN to protect saved check-offs';
+      document.getElementById('pin-hint').textContent = 'You\'ll need this PIN each time you open Saved Files. Store it somewhere safe — it cannot be recovered.';
+    }
+  } catch { /* no connection — default to setup check */ }
+  document.getElementById('pin-modal').classList.add('open');
+}
+
+function closePinModal() {
+  document.getElementById('pin-modal').classList.remove('open');
+  _pinBuffer = '';
+  updatePinDots();
+}
+
+function pinInput(digit) {
+  if (_pinBuffer.length >= 4) return;
+  _pinBuffer += digit;
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+  if (_pinBuffer.length === 4) setTimeout(submitPin, 120);
+}
+
+function pinBackspace() {
+  if (!_pinBuffer.length) return;
+  _pinBuffer = _pinBuffer.slice(0, -1);
+  updatePinDots();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++)
+    document.getElementById('pd' + i).classList.toggle('filled', i < _pinBuffer.length);
+}
+
+async function submitPin() {
+  const hash = await sha256(_pinBuffer);
+  _pinBuffer = '';
+  updatePinDots();
+
+  if (_pinMode === 'setup') {
+    try {
+      await _db.collection('easi-admin').doc('config').set({ pinHash: hash }, { merge: true });
+      closePinModal();
+      _pinSavedFilesUnlocked = true;
+      activateSavedFilesTab();
+    } catch (e) {
+      document.getElementById('pin-error').textContent = 'Failed to save PIN — check Firebase connection.';
+    }
+  } else {
+    try {
+      const doc = await _db.collection('easi-admin').doc('config').get();
+      const storedHash = doc.exists ? doc.data().pinHash : null;
+      if (storedHash && storedHash === hash) {
+        closePinModal();
+        _pinSavedFilesUnlocked = true;
+        activateSavedFilesTab();
+      } else {
+        document.getElementById('pin-error').textContent = 'Incorrect PIN — try again';
+      }
+    } catch (e) {
+      document.getElementById('pin-error').textContent = 'Could not verify PIN — check connection.';
+    }
+  }
+}
+
+function lockSavedFiles() {
+  _pinSavedFilesUnlocked = false;
+  switchTab('equip', document.querySelector('.tab-btn'));
+  showToast('Saved Files locked 🔒');
+}
+
+// Admin: change PIN — callable from admin mode
+async function changePinAdmin() {
+  if (!_db) return;
+  _pinMode = 'setup';
+  _pinBuffer = '';
+  document.getElementById('pin-modal-title').textContent = 'Change PIN';
+  document.getElementById('pin-label').textContent = 'Enter a new 4-digit PIN';
+  document.getElementById('pin-hint').textContent = 'This will replace the existing PIN immediately.';
+  document.getElementById('pin-error').textContent = '';
+  updatePinDots();
+  document.getElementById('pin-modal').classList.add('open');
+}
+
+// ─── SAVED FILES ──────────────────────────────────────────────────────────────
+
+let _savedRecords = [];
+
+async function loadSavedFiles() {
+  if (!_db) return;
+  const body = document.getElementById('files-body');
+  body.innerHTML = '<div class="files-loading">Loading…</div>';
+  try {
+    // Expire records older than 15 days
+    const now = firebase.firestore.Timestamp.now();
+    const expiredSnap = await _db.collection('checkoff-records').where('expiresAt', '<=', now).get();
+    if (!expiredSnap.empty) {
+      const batch = _db.batch();
+      expiredSnap.forEach(doc => {
+        batch.delete(doc.ref);
+        if (_storage && doc.data().storagePath)
+          _storage.ref(doc.data().storagePath).delete().catch(() => {});
+      });
+      await batch.commit();
+    }
+
+    const snap = await _db.collection('checkoff-records').orderBy('uploadedAt', 'desc').get();
+    _savedRecords = [];
+    snap.forEach(doc => _savedRecords.push({ id: doc.id, ...doc.data() }));
+    renderSavedFiles();
+  } catch (e) {
+    console.error('Load saved files:', e);
+    body.innerHTML = '<div class="files-empty">Failed to load — check Firebase config and Firestore rules.</div>';
+  }
+}
+
+function renderSavedFiles() {
+  const body = document.getElementById('files-body');
+
+  if (!_savedRecords.length) {
+    body.innerHTML = '<div class="files-empty"><div class="files-empty-icon">📂</div>No saved check-offs yet.<br>Complete a check-off and tap ☁ Save.</div>';
+    return;
+  }
+
+  const groups = {};
+  _savedRecords.forEach(r => {
+    const key = r.dateISO || 'unknown';
+    (groups[key] = groups[key] || []).push(r);
+  });
+
+  let html = '';
+  Object.keys(groups).sort().reverse().forEach(dateISO => {
+    const recs = groups[dateISO];
+    const label = fmtDate(dateISO);
+    html += `<div class="day-group">
+      <div class="day-header">
+        <div class="day-label">${label}</div>
+        <div class="day-actions">
+          <button class="day-btn" onclick="downloadAllForDay('${dateISO}')">⬇ All</button>
+          <button class="day-btn danger" onclick="deleteAllForDay('${dateISO}')">🗑 All</button>
+        </div>
+      </div>`;
+    recs.forEach(r => {
+      const tc = 'fb-' + (r.typeBadge || 'als');
+      const sc = r.status === 'complete' ? 'fb-ok' : 'fb-inc';
+      const sl = r.status === 'complete' ? 'Complete' : `Incomplete (${r.incompleteCount || '?'} missing)`;
+      const ts = r.uploadedAt ? fmtTime(r.uploadedAt.toDate ? r.uploadedAt.toDate() : new Date(r.uploadedAt)) : '';
+      const exp = daysLeft(r.expiresAt);
+      html += `<div class="file-card">
+        <div class="file-top">
+          <span class="file-unit">${esc(r.unit||'N/A')}</span>
+          <span class="file-badge ${tc}">${esc(r.typeLabel||r.type||'')}</span>
+          <span class="file-badge ${sc}">${sl}</span>
+        </div>
+        <div class="file-providers">${esc(r.providers||'Unknown')}</div>
+        <div class="file-meta">Saved ${ts} · Auto-deletes in ${exp} day${exp!==1?'s':''}</div>
+        <div class="file-actions">
+          <button class="file-action-btn fa-dl" onclick="downloadSavedFile('${esc(r.storagePath)}','${esc(r.filename)}')">⬇ Download</button>
+          <button class="file-action-btn fa-del" onclick="deleteSavedFile('${r.id}','${esc(r.storagePath)}')">🗑 Delete</button>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  body.innerHTML = html;
+}
+
+function fmtDate(iso) {
+  try { return new Date(iso+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}); }
+  catch { return iso; }
+}
+function fmtTime(d) {
+  try { return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); }
+  catch { return ''; }
+}
+function daysLeft(expiresAt) {
+  try {
+    const exp = expiresAt.toDate ? expiresAt.toDate() : new Date(expiresAt);
+    return Math.max(0, Math.ceil((exp - Date.now()) / 86400000));
+  } catch { return '?'; }
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+async function downloadSavedFile(storagePath, filename) {
+  if (!_storage) return;
+  try {
+    const url = await _storage.ref(storagePath).getDownloadURL();
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.target = '_blank';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  } catch { alert('Download failed — file may have been removed.'); }
+}
+
+async function deleteSavedFile(docId, storagePath) {
+  if (!confirm('Delete this check-off?\n\nThis cannot be undone.')) return;
+  try {
+    if (_storage && storagePath) await _storage.ref(storagePath).delete().catch(() => {});
+    await _db.collection('checkoff-records').doc(docId).delete();
+    _savedRecords = _savedRecords.filter(r => r.id !== docId);
+    renderSavedFiles();
+    showToast('Deleted ✓');
+  } catch (e) { alert('Delete failed: ' + e.message); }
+}
+
+async function downloadAllForDay(dateISO) {
+  const recs = _savedRecords.filter(r => r.dateISO === dateISO);
+  if (!recs.length) return;
+  showToast(`Downloading ${recs.length} file(s)…`);
+  for (let i = 0; i < recs.length; i++) {
+    await new Promise(r => setTimeout(r, i * 700));
+    await downloadSavedFile(recs[i].storagePath, recs[i].filename);
+  }
+}
+
+async function deleteAllForDay(dateISO) {
+  const recs = _savedRecords.filter(r => r.dateISO === dateISO);
+  if (!recs.length) return;
+  if (!confirm(`Delete ALL ${recs.length} check-off(s) from ${fmtDate(dateISO)}?\n\nThis cannot be undone.`)) return;
+  try {
+    const batch = _db.batch();
+    recs.forEach(r => batch.delete(_db.collection('checkoff-records').doc(r.id)));
+    await batch.commit();
+    if (_storage) await Promise.all(recs.map(r => r.storagePath ? _storage.ref(r.storagePath).delete().catch(()=>{}) : Promise.resolve()));
+    _savedRecords = _savedRecords.filter(r => r.dateISO !== dateISO);
+    renderSavedFiles();
+    showToast(`Deleted ${recs.length} records ✓`);
+  } catch (e) { alert('Delete failed: ' + e.message); }
 }
 
 // ─── PUSH NOTIFICATIONS ──────────────────────────────────────────────────────
@@ -1793,76 +2163,7 @@ async function toggleNotifications() {
   if (sub) await unsubscribePush(); else await subscribePush();
 }
 
-// ─── EMAIL MODAL ─────────────────────────────────────────────────────────────
-
-let _emailForm = 'equip';
-
-function openEmailModal(form) {
-  _emailForm = form;
-  document.getElementById('email-modal').classList.add('open');
-}
-
-function closeEmailModal() {
-  document.getElementById('email-modal').classList.remove('open');
-}
-
-function toggleRecip(el) { el.classList.toggle('selected'); }
-
-async function sendEmail() {
-  const recipients = [...document.querySelectorAll('.recip-item.selected')].map(el => el.dataset.email);
-  if (!recipients.length) { alert('Select at least one recipient.'); return; }
-  closeEmailModal();
-
-  const s = _emailForm === 'equip' ? (state.equip || {}) : (state.uco || {});
-  const unitLabel = currentUnit === 'als-para' ? 'ALS' : currentUnit === 'als-aemt' ? 'AEMT' : 'BLS';
-  const subject = _emailForm === 'equip'
-    ? `EMS Check — ${unitLabel} Stock Sheet — ${s.unit || ''} ${s.date || ''}`
-    : `EMS Check — Unit Check Off — ${s.unit || ''} ${s.date || ''}`;
-  const slug = (s.unit || 'unit').replace(/\W+/g, '-') + '-' + (s.date || todayStr());
-  const prefix = _emailForm === 'equip' ? unitLabel.toLowerCase() + '-stock-' : 'unit-check-';
-  const filename = prefix + slug + '.html';
-
-  const html = _emailForm === 'equip' ? getEquipReportHTML() : getUCOReportHTML();
-  if (!html) { alert('No form configured for this unit type yet.'); return; }
-
-  const blob = new Blob([html], { type: 'text/html' });
-  const file = new File([blob], filename, { type: 'text/html' });
-
-  // Mobile: try Web Share API — opens native share sheet with file attached
-  // User picks Mail app and file is attached directly
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({
-        files: [file],
-        title: subject,
-        text: 'To: ' + recipients.join(', '),
-      });
-      return;
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-      // Share failed — fall through to download+mailto
-    }
-  }
-
-  // Desktop fallback: auto-download report file, then open email client
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-
-  // Open email after brief delay so download can start
-  setTimeout(() => {
-    window.location.href = 'mailto:' + recipients.join(',')
-      + '?subject=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent('Please attach the downloaded report: ' + filename);
-  }, 700);
-}
-
-// ─── GOOGLE DRIVE UPLOAD ──────────────────────────────────────────────────────
+// ─── DOWNLOAD / EXPORT ───────────────────────────────────────────────────────
 
 
 function getDriveFilename(form) {
@@ -2537,8 +2838,9 @@ function resetUCOSectionsToDefault() {
 function initFirebase() {
   if (!FIREBASE_CONFIG.apiKey) return;
   try {
-    const app = firebase.initializeApp(FIREBASE_CONFIG);
+    const app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(FIREBASE_CONFIG);
     _db = firebase.firestore(app);
+    _storage = firebase.storage(app);
     loadFromFirestore();
   } catch(e) {
     console.warn('Firebase init failed:', e);
