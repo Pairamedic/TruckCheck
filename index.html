@@ -416,7 +416,7 @@
 
 <!-- FLOATING CONTROLS -->
 <div class="ctrl-bar">
-  <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit sections" style="display:none">✏</button>
+  <button class="ctrl-btn" id="edit-btn" onclick="toggleEditMode()" title="Edit Min List & Sections">✏</button>
   <button class="ctrl-btn" id="notif-btn" onclick="toggleNotifications()" title="Enable push notifications">🔕</button>
   <button class="ctrl-btn" id="size-btn" onclick="cycleSize()" title="Text size">A</button>
   <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
@@ -1404,6 +1404,7 @@ function switchTab(id, btn) {
   document.getElementById('tab-' + id).classList.add('active');
   if (btn) btn.classList.add('active');
   else document.querySelector(`.tab-btn[onclick*="'${id}'"]`)?.classList.add('active');
+  document.getElementById('edit-btn').style.display = '';
 }
 
 // ─── UNIT TYPE ────────────────────────────────────────────────────────────────
@@ -1847,6 +1848,7 @@ async function sha256(text) {
 
 function openSavedFilesTab(btn) {
   _savedFilesTabBtn = btn;
+  document.getElementById('edit-btn').style.display = 'none';
   if (_pinSavedFilesUnlocked) { activateSavedFilesTab(); return; }
   if (!_db) {
     alert('Firebase is not configured yet.\n\nPaste your Firebase config into FIREBASE_CONFIG in the source code.');
@@ -2725,7 +2727,7 @@ function _ensureCustomEquip() {
 function buildEquipEditMode(container) {
   const banner = document.createElement('div');
   banner.className = 'edit-mode-banner';
-  banner.textContent = '✏ Edit Mode — Customize sections & items. Tap ✏ to save & exit.';
+  banner.textContent = '✏ Edit Mode — Update min quantities, sections & items. Tap ✏ to save & exit.';
   container.appendChild(banner);
 
   const sections = getActiveSections();
@@ -3030,7 +3032,7 @@ updateNotifBtn();
   const params = new URLSearchParams(window.location.search);
   const admin = params.get('admin');
   const shortcut = params.get('shortcut');
-  if (admin === '1') document.getElementById('edit-btn').style.display = '';
+  // edit button is always visible
   if (shortcut === 'als-para' || shortcut === 'als-aemt' || shortcut === 'bls-emt') {
     setUnit(shortcut);
   } else if (shortcut === 'uco') {
