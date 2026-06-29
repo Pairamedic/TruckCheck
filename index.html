@@ -2702,8 +2702,7 @@ function toggleEditMode() {
   editMode = !editMode;
   document.getElementById('edit-btn').classList.toggle('edit-active', editMode);
   if (!editMode) {
-    persistCustomSections();
-    showToast('Sections saved ✓');
+    persistCustomSections(true);
   } else {
     showToast('Edit mode — tap ✏ again to save & exit');
   }
@@ -2711,9 +2710,9 @@ function toggleEditMode() {
   buildUCO();
 }
 
-function persistCustomSections() {
+function persistCustomSections(showFeedback) {
   localStorage.setItem(CUSTOM_KEY, JSON.stringify(customSections));
-  saveToFirestore();
+  saveToFirestore(showFeedback);
 }
 
 // ── Equipment edit mode ──────────────────────────────────────────────────────
@@ -2820,7 +2819,7 @@ function toggleItemExpiry(si, ii, btn) {
 function resetSectionsToDefault() {
   if (!confirm('Reset to default sections? All custom changes for this unit type will be lost.')) return;
   delete customSections[currentUnit];
-  persistCustomSections();
+  persistCustomSections(true);
   buildEquip();
 }
 
@@ -2910,7 +2909,7 @@ function updateUCOItemLabel(si, ii, val) {
 function resetUCOSectionsToDefault() {
   if (!confirm('Reset UCO to default sections? All custom changes will be lost.')) return;
   delete customSections['uco'];
-  persistCustomSections();
+  persistCustomSections(true);
   buildUCO();
 }
 
@@ -2928,12 +2927,21 @@ function initFirebase() {
   }
 }
 
-function saveToFirestore() {
-  if (!_db) return;
+function saveToFirestore(showFeedback) {
+  if (!_db) {
+    if (showFeedback) showToast('Saved locally — Firebase not configured');
+    return;
+  }
+  if (showFeedback) showToast('Saving to Firebase…');
   _db.collection('easi-checkoff').doc('custom-sections').set({
     data: customSections,
     updatedAt: new Date().toISOString(),
-  }).catch(e => console.warn('Firestore save failed:', e));
+  }).then(() => {
+    if (showFeedback) showToast('Min list saved to Firebase ✓');
+  }).catch(e => {
+    console.warn('Firestore save failed:', e);
+    if (showFeedback) showToast('Firebase save failed — saved locally only');
+  });
 }
 
 function loadFromFirestore() {
